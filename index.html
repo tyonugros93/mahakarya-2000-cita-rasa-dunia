@@ -23,18 +23,18 @@
     .brand b { display: block; letter-spacing: .05em; font-size: 14px; color: #fff; }
     .brand span { display: block; color: #9eb1b5; font-size: 11px; margin-top: 1px; }
     .side-label { color: #79939a; text-transform: uppercase; font-size: 10px; letter-spacing: .16em; font-weight: 800; margin: 24px 11px 9px; }
-    .collection-switch { display: grid; gap: 7px; margin: 0 0 22px; }
+    .collection-switch { display: grid; gap: 7px; margin: 0; }
     .collection-btn { display: flex; align-items: center; gap: 9px; width: 100%; padding: 11px 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.05); color: #b9cbd0; text-align: left; border-radius: 9px; font-size: 12px; }
     .collection-btn:hover, .collection-btn.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); }
     .collection-btn strong { display: block; font-size: 12px; }
     .collection-btn small { display: block; opacity: .75; font-size: 10px; }
     .business-nav { display: none; }
-    .business-nav.visible { display: block; margin: 0 -8px 20px; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; }
+    .business-nav.visible { display: block; margin: 0; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; }
     .business-nav .side-label { margin: 2px 4px 8px; color: #f0b75f; }
     .business-nav nav { display: flex; gap: 7px; overflow-x: auto; padding: 0 0 6px; scrollbar-color: #8da0a4 rgba(255,255,255,.12); }
     .business-nav .nav-item { min-width: 205px; flex: 0 0 205px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
     .business-nav .nav-item:hover, .business-nav .nav-item.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); box-shadow: none; }
-    #chapterNav { display: block; margin: 0 -8px 20px; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; }
+    #chapterNav { display: block; margin: 0; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; }
     .library-subcategories, .nested-nav { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 6px; scrollbar-color: #8da0a4 rgba(255,255,255,.12); }
     .nested-nav { margin-top: 3px; padding-top: 7px; border-top: 1px solid rgba(240,183,95,.2); }
     .library-subcategories .nav-item, .nested-nav .nav-item { min-width: 205px; flex: 0 0 205px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
@@ -49,6 +49,12 @@
     .side-note strong { color: #fff; display: block; margin-bottom: 5px; }
     .main { min-width: 0; }
     .topbar { height: 72px; padding: 0 46px; background: rgba(255,255,255,.9); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 20px; position: sticky; top: 0; z-index: 5; backdrop-filter: blur(12px); }
+    .collection-dock { width: min(1080px, calc(100% - 48px)); margin: 18px auto 0; padding: 12px; display: grid; gap: 9px; background: var(--navy); border: 1px solid rgba(240,183,95,.38); border-radius: 14px; box-shadow: var(--shadow); }
+    .collection-dock .side-label { margin: 0 4px; color: #f0b75f; }
+    .collection-dock .collection-switch { grid-template-columns: minmax(230px, 280px); }
+    .collection-dock .collection-btn { background: rgba(255,255,255,.08); color: #dce7e8; }
+    .collection-dock .collection-btn:hover, .collection-dock .collection-btn.active { background: #f0b75f; color: var(--navy); }
+    .collection-dock #chapterNav, .collection-dock .business-nav { background: rgba(240,183,95,.08); }
     .crumb { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
     .crumb strong { color: var(--ink); }
     .actions { display: flex; align-items: center; gap: 10px; }
@@ -100,6 +106,7 @@
     .recipe { background: #fff; border: 1px solid var(--line); border-radius: 11px; padding: 17px; transition: .2s ease; }
     .recipe:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: #b9ded7; }
     .recipe-top { display: flex; justify-content: space-between; gap: 10px; color: var(--teal); font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    .recipe-type { display: inline-flex; align-items: center; max-width: 62%; padding: 3px 7px; border: 1px solid #e9c987; border-radius: 999px; background: var(--soft-gold); color: #a86414; font-size: 9px; line-height: 1.2; letter-spacing: .04em; text-align: right; }
     .recipe h3 { font-size: 16px; line-height: 1.3; margin: 8px 0 7px; }
     .recipe p { color: var(--muted); font-size: 12px; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .recipe-foot { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #edf1f2; margin-top: 15px; padding-top: 11px; color: var(--muted); font-size: 11px; }
@@ -126,23 +133,13 @@
     .nutrition-item b { display: block; font-size: 14px; color: var(--navy); }
     .nutrition-item span { color: var(--muted); font-size: 10px; }
     @media (max-width: 1050px) { .app { grid-template-columns: 224px minmax(0,1fr); } .content, .topbar { padding-left: 27px; padding-right: 27px; } .dashboard-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 720px) { .app { display: block; } .sidebar { position: static; height: auto; padding: 17px; } .brand { margin-bottom: 16px; } .side-label, .side-note { display: none; } .sidebar nav { display: flex; overflow-x: auto; gap: 5px; } .nav-item { min-width: max-content; } .topbar { height: auto; padding: 13px 17px; align-items: stretch; flex-direction: column; gap: 10px; } .search { width: 100%; } .content { padding: 22px 17px 50px; } .hero { padding: 30px 24px; min-height: 0; } .hero-meta { gap: 13px; } .stats { grid-template-columns: repeat(2, 1fr); } .recipe-list { grid-template-columns: 1fr; } .section-head { align-items: start; flex-direction: column; gap: 7px; } }
+    @media (max-width: 720px) { .app { display: block; } .sidebar { position: static; height: auto; padding: 17px; } .brand { margin-bottom: 16px; } .sidebar > .side-label, .sidebar > .collection-switch, .sidebar > #chapterNav, .sidebar > .business-nav, .side-note { display: none; } .sidebar nav { display: flex; overflow-x: auto; gap: 5px; } .nav-item { min-width: max-content; } .collection-dock { width: calc(100% - 34px); margin-top: 12px; padding: 10px; } .collection-dock .collection-switch { grid-template-columns: 1fr; } .collection-dock .side-label { display: block; } .topbar { height: auto; padding: 13px 17px; align-items: stretch; flex-direction: column; gap: 10px; } .search { width: 100%; } .content { padding: 22px 17px 50px; } .hero { padding: 30px 24px; min-height: 0; } .hero-meta { gap: 13px; } .stats { grid-template-columns: repeat(2, 1fr); } .recipe-list { grid-template-columns: 1fr; } .section-head { align-items: start; flex-direction: column; gap: 7px; } }
   </style>
 </head>
 <body>
   <div class="app">
     <aside class="sidebar">
       <div class="brand"><div class="brand-mark">✦</div><div><b>MAHAKARYA</b><span><span id="brandTotal">2.962</span> Cita Rasa Dunia</span></div></div>
-      <div class="side-label">Library keseluruhan</div>
-      <div class="collection-switch" id="collectionSwitch">
-        <button class="collection-btn active" data-root><span>▦</span><span><strong>2500+ Mahakarya</strong><small>library utama dan turunannya</small></span></button>
-      </div>
-      <div class="side-label" id="navigationLabel">Cita Rasa Dunia · 11 kategori</div>
-      <nav id="chapterNav"></nav>
-      <div class="business-nav" id="businessNav">
-        <div class="side-label">Menu bisnis</div>
-        <nav id="businessChapterNav"></nav>
-      </div>
       <div class="side-label">Referensi</div>
       <button class="nav-item" data-scroll="foreword"><span><span class="nav-num">✦</span> Kata Pengantar</span></button>
       <button class="nav-item" data-scroll="glossary"><span><span class="nav-num">Aa</span> Glosarium & Indeks</span></button>
@@ -157,6 +154,17 @@
           <button class="icon-btn" id="fontUp" aria-label="Perbesar teks">A+</button>
         </div>
       </header>
+      <div class="collection-dock" aria-label="Navigasi koleksi">
+        <div class="side-label" id="navigationLabel">Cita Rasa Dunia · 11 kategori</div>
+        <div class="collection-switch" id="collectionSwitch">
+          <button class="collection-btn active" data-root><span>▦</span><span><strong>2500+ Mahakarya</strong><small>library utama dan turunannya</small></span></button>
+        </div>
+        <nav id="chapterNav"></nav>
+        <div class="business-nav" id="businessNav">
+          <div class="side-label">Menu bisnis</div>
+          <nav id="businessChapterNav"></nav>
+        </div>
+      </div>
       <div class="content">
         <section class="hero" id="overview">
           <div class="hero-copy">
@@ -335,12 +343,63 @@
       const match = rules.find(([, pattern]) => pattern.test(text));
       return match ? match[0] : 6;
     }
+    function normalizeSearchText(value) {
+      return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
+    }
+    function menuTypeLabel(recipe) {
+      const text = normalizeSearchText([recipe.menuType, recipe.title, recipe.desc, recipe.cat].join(' '));
+      if (/\b(dessert|desserts|pencuci mulut|sweet|petit four|wagashi|pastry|bakery|cake|kue|tart|pie|pudding|ice cream|gelato|cookie|biscuit|mousse|chocolate)\b/.test(text)) return 'Dessert / Pastry';
+      if (/\b(beverage|drink|drinks|coffee|kopi|tea|teh|mocktail|juice|jus|smoothie|minuman)\b/.test(text)) return 'Beverage';
+      if (/\b(soup|sup|soupe|broth|kaldu|consomme|bisque)\b/.test(text)) return 'Soup';
+      if (/\b(appetizer|appetiser|appetizers|hidangan pembuka|pembuka|antipasti|amuse bouche|dim sum|hors d oeuvre|starter|entrée|entree)\b/.test(text)) return 'Appetizer';
+      if (/\b(snack|snacks|cemilan|camilan|kudapan|jajanan|street food|finger food)\b/.test(text)) return 'Snack / Cemilan';
+      if (/\b(salad|acar|pickle|pendamping|side dish|side)\b/.test(text)) return 'Salad / Side Dish';
+      if (/\b(sauce|saus|condiment|dressing|gravy|sambal)\b/.test(text)) return 'Sauce / Condiment';
+      if (/\b(main course|maincourse|hidangan utama|secondi|entree|signature|vegetarian)\b/.test(text)) return 'Main Course';
+      if (/\b(breakfast|sarapan)\b/.test(text)) return 'Breakfast';
+      if (/\b(pastry|bakery|bread|roti|viennoiserie)\b/.test(text)) return 'Pastry / Bakery';
+      return 'Other';
+    }
     const classifiedBusinessRecipes = businessMenuSets.map(recipe => ({ ...recipe, chapter: classifyBusinessChapter(recipe) }));
     const coreRecipes = uniqueRecipes([...recipes, ...classifiedBusinessRecipes]);
     const businessRecipes = businessMenuSets;
     const uniqueCollectionTotal = coreRecipes.length;
     const coreChapters = chapters.slice(0, 11);
     const businessChapters = chapters.slice(11);
+    const searchAliasGroups = [
+      ['chinese', 'tiongkok', 'china', 'chinese food'],
+      ['appetizer', 'appetiser', 'hidangan pembuka', 'pembuka', 'antipasti', 'amuse bouche', 'starter'],
+      ['soup', 'sup', 'soupe', 'broth', 'kaldu', 'kuah'],
+      ['main course', 'maincourse', 'hidangan utama', 'utama', 'secondi'],
+      ['snack', 'cemilan', 'camilan', 'kudapan', 'jajanan'],
+      ['fine dining', 'fine-dining', 'find dining', 'haute cuisine', 'restoran fine dining'],
+      ['nusantara', 'indonesia', 'indonesian', 'estetika nusantara'],
+      ['sauce', 'saus', 'condiment', 'dressing', 'gravy', 'sambal'],
+      ['pastry', 'pastri', 'bakery', 'roti'],
+      ['coffee', 'kopi'],
+      ['restaurant', 'restoran', 'coffee shop', 'kedai']
+    ];
+    function searchRequirements(value) {
+      let remaining = normalizeSearchText(value);
+      const requirements = [];
+      searchAliasGroups.slice().sort((a, b) => b[0].length - a[0].length).forEach(group => {
+        const aliases = group.map(normalizeSearchText).sort((a, b) => b.length - a.length);
+        const matchedAlias = aliases.find(alias => remaining.includes(alias));
+        if (!matchedAlias) return;
+        remaining = remaining.replace(matchedAlias, ' ');
+        requirements.push(aliases);
+      });
+      remaining.split(/\s+/).filter(Boolean).forEach(term => requirements.push([term]));
+      return requirements;
+    }
+    function searchableText(recipe) {
+      return normalizeSearchText([
+        recipe.title, recipe.desc, recipe.description, recipe.authenticFlavor, recipe.menuType,
+        menuTypeLabel(recipe), recipe.cat, chapterLabel(recipe.chapter), recipe.ingredients,
+        recipe.mainIngredients, recipe.spices, recipe.sauce, recipe.steps, recipe.presentation,
+        recipe.garnish, recipe.note, recipe.source
+      ].flat().filter(Boolean).join(' '));
+    }
     const nav = document.getElementById('chapterNav'), businessPanel = document.getElementById('businessNav'), filters = document.getElementById('filters'), list = document.getElementById('recipeList');
     let collectionMode = 'core', activeChapter = 0, query = '', librarySection = 'root';
 
@@ -410,8 +469,14 @@
     document.querySelectorAll('[data-mode]').forEach(button => button.onclick = () => setCollectionMode(button.dataset.mode));
     document.querySelectorAll('[data-root]').forEach(button => button.onclick = () => { librarySection = 'root'; collectionMode = 'core'; activeChapter = 0; query = ''; document.getElementById('searchInput').value = ''; updateCollectionCopy(); renderNavigation(); render(); });
     function render() {
-      const filtered = currentRecipes().filter(r => (!activeChapter || r.chapter === activeChapter) && (!query || `${r.title} ${r.desc} ${r.cat} ${r.menuType || ''} ${r.ingredients || ''} ${r.spices || ''} ${r.sauce || ''} ${r.authenticFlavor || ''}`.toLowerCase().includes(query)));
-      list.innerHTML = filtered.length ? filtered.map(r => `<article class="recipe"><div class="recipe-top"><span>No. ${String(r.no).padStart(4,'0')}</span><span>${escapeHtml(collectionMode === 'business' ? r.cat : chapterLabel(r.chapter))}</span></div><h3>${formatRichText(r.title)}</h3><p>${formatRichText(r.desc)}</p><div class="recipe-foot"><span>◷ ${escapeHtml(r.time)} &nbsp; · &nbsp; ${escapeHtml(r.serve)}</span><button class="detail-btn" data-recipe="${r.no}">Buka resep →</button></div></article>`).join('') : '<div class="empty">Tidak ada resep yang cocok. Coba kata kunci lain.</div>';
+      const searchTerms = searchRequirements(query);
+      const filtered = currentRecipes().filter(r => {
+        const matchesChapter = !activeChapter || r.chapter === activeChapter;
+        const corpus = searchableText(r);
+        const matchesQuery = !searchTerms.length || searchTerms.every(options => options.some(term => corpus.includes(term)));
+        return matchesChapter && matchesQuery;
+      });
+      list.innerHTML = filtered.length ? filtered.map(r => `<article class="recipe"><div class="recipe-top"><span>No. ${String(r.no).padStart(4,'0')}</span><span>${escapeHtml(collectionMode === 'business' ? r.cat : chapterLabel(r.chapter))}</span>${collectionMode === 'business' ? `<span class="recipe-type">${escapeHtml(menuTypeLabel(r))}</span>` : ''}</div><h3>${formatRichText(r.title)}</h3><p>${formatRichText(r.desc)}</p><div class="recipe-foot"><span>◷ ${escapeHtml(r.time)} &nbsp; · &nbsp; ${escapeHtml(r.serve)}</span><button class="detail-btn" data-recipe="${r.no}">Buka resep →</button></div></article>`).join('') : '<div class="empty">Tidak ada resep yang cocok. Coba kata kunci lain.</div>';
       document.getElementById('visibleCount').textContent = filtered.length; document.getElementById('resultLabel').textContent = `${filtered.length} hasil`;
       document.querySelectorAll('[data-recipe]').forEach(b => b.addEventListener('click', () => openRecipe(Number(b.dataset.recipe))));
     }
@@ -479,7 +544,7 @@
     document.getElementById('modalBackdrop').onclick=e=>{if(e.target.id==='modalBackdrop')e.currentTarget.classList.remove('open')};
     document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modalBackdrop').classList.remove('open')});
     document.querySelectorAll('[data-scroll]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.scroll).scrollIntoView());
-    document.getElementById('searchInput').oninput=e=>{query=e.target.value.toLowerCase().trim(); render();};
+    document.getElementById('searchInput').oninput=e=>{query=e.target.value.trim(); render();};
     document.getElementById('fontUp').onclick=()=>document.body.style.fontSize='16px';
     document.getElementById('fontDown').onclick=()=>document.body.style.fontSize='14px';
     updateCollectionCopy();
