@@ -34,9 +34,12 @@
     .business-nav nav { display: flex; gap: 7px; overflow-x: auto; padding: 0 0 6px; scrollbar-color: #8da0a4 rgba(255,255,255,.12); }
     .business-nav .nav-item { min-width: 205px; flex: 0 0 205px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
     .business-nav .nav-item:hover, .business-nav .nav-item.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); box-shadow: none; }
-    #chapterNav { display: flex; gap: 7px; overflow-x: auto; margin: 0 -8px 20px; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; scrollbar-color: #8da0a4 rgba(255,255,255,.12); }
-    #chapterNav .nav-item { min-width: 205px; flex: 0 0 205px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
-    #chapterNav .nav-item:hover, #chapterNav .nav-item.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); box-shadow: none; }
+    #chapterNav { display: block; margin: 0 -8px 20px; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; }
+    .library-subcategories, .nested-nav { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 6px; scrollbar-color: #8da0a4 rgba(255,255,255,.12); }
+    .nested-nav { margin-top: 3px; padding-top: 7px; border-top: 1px solid rgba(240,183,95,.2); }
+    .library-subcategories .nav-item, .nested-nav .nav-item { min-width: 205px; flex: 0 0 205px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
+    .library-subcategories .nav-item:hover, .library-subcategories .nav-item.active, .nested-nav .nav-item:hover, .nested-nav .nav-item.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); box-shadow: none; }
+    .nested-nav .nav-item { background: rgba(255,255,255,.035); border-color: rgba(255,255,255,.08); }
     .nav-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 10px 11px; border: 0; background: transparent; color: #b9cbd0; text-align: left; border-radius: 9px; font-size: 13px; }
     .nav-item:hover, .nav-item.active { background: rgba(255,255,255,.11); color: #fff; }
     .nav-item.active { box-shadow: inset 3px 0 var(--gold); }
@@ -130,12 +133,11 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand"><div class="brand-mark">✦</div><div><b>MAHAKARYA</b><span><span id="brandTotal">2.962</span> Cita Rasa Dunia</span></div></div>
-      <div class="side-label">Pilih koleksi</div>
+      <div class="side-label">Library keseluruhan</div>
       <div class="collection-switch" id="collectionSwitch">
-        <button class="collection-btn active" data-mode="core"><span>▦</span><span><strong>2500+ Mahakarya</strong><small>11 kategori kuliner dunia</small></span></button>
-        <button class="collection-btn" data-mode="business"><span>⌂</span><span><strong>Fullset Menu Business F&amp;B</strong><small>1.000 menu siap pakai</small></span></button>
+        <button class="collection-btn active" data-root><span>▦</span><span><strong>2500+ Mahakarya</strong><small>library utama dan turunannya</small></span></button>
       </div>
-      <div class="side-label" id="navigationLabel">Navigasi buku</div>
+      <div class="side-label" id="navigationLabel">Cita Rasa Dunia · 11 kategori</div>
       <nav id="chapterNav"></nav>
       <div class="business-nav" id="businessNav">
         <div class="side-label">Menu bisnis</div>
@@ -314,13 +316,33 @@
       const seen = new Set();
       return recipeList.filter(recipe => { const key = recipeKey(recipe); if (seen.has(key)) return false; seen.add(key); return true; });
     }
-    const coreRecipes = uniqueRecipes(recipes);
-    const businessRecipes = uniqueRecipes(businessMenuSets);
-    const uniqueCollectionTotal = coreRecipes.length + businessRecipes.length;
+    function classifyBusinessChapter(recipe) {
+      const text = [recipe.title, recipe.desc, recipe.authenticFlavor, recipe.menuType, recipe.ingredients, recipe.spices, recipe.sauce, recipe.steps]
+        .flat().filter(Boolean).join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      const rules = [
+        [1, /\b(nusantara|indonesia|indonesian|sambal|rendang|satay|sate|gado|nasi goreng|bakso|soto|tempe|tahu|javanese|balinese|padang|betawi|sunda|manado|makassar|sumatra|java|bali)\b/],
+        [2, /\b(mpasi|bayi|baby|infant|toddler)\b/],
+        [3, /\b(india|indian|curry|masala|tandoor|tikka|naan|biryani|dosa|vindaloo|korma|samosa|paneer)\b/],
+        [4, /\b(middle east|middle eastern|arabic|arab|lebanese|turkish|persian|moroccan|morocco|shawarma|hummus|falafel|kebab|couscous|harissa|baklava)\b/],
+        [7, /\b(italian|italy|pasta|pizza|risotto|ravioli|gnocchi|lasagna|tiramisu|bruschetta|bolognese)\b/],
+        [10, /\b(japanese|japan|sushi|sashimi|ramen|udon|soba|tempura|teriyaki|miso|matcha|yakitori|donburi|onigiri|nori|wasabi|dashi|shoyu|yuzu)\b/],
+        [11, /\b(chinese|china|szechuan|sichuan|cantonese|canton|dim sum|dumpling|wonton|bao|chow mein|kung pao|hoisin|doubanjiang|douchi|wok|mandarin)\b/],
+        [8, /\b(pastry|bakery|bread|cake|cookie|croissant|tart|pie|dessert|chocolate|mousse|custard|pudding|brioche|danish|macaron|eclair|ice cream|gelato|donut|brownie)\b/],
+        [9, /\b(french|france|beurre blanc|veloute|bisque|consomme|hollandaise|coq|bouillabaisse|ratatouille|provence|bourguignon)\b/],
+        [5, /\b(american|america|new york|burger|hot dog|barbecue|bbq|buffalo|clam chowder|mac and cheese|pancake)\b/],
+        [6, /\b(continental|european|german|greek|spanish|swiss|austrian|english|scandinavian|mediterranean|europe|wellington|carpaccio|osso buco)\b/]
+      ];
+      const match = rules.find(([, pattern]) => pattern.test(text));
+      return match ? match[0] : 6;
+    }
+    const classifiedBusinessRecipes = businessMenuSets.map(recipe => ({ ...recipe, chapter: classifyBusinessChapter(recipe) }));
+    const coreRecipes = uniqueRecipes([...recipes, ...classifiedBusinessRecipes]);
+    const businessRecipes = businessMenuSets;
+    const uniqueCollectionTotal = coreRecipes.length;
     const coreChapters = chapters.slice(0, 11);
     const businessChapters = chapters.slice(11);
     const nav = document.getElementById('chapterNav'), businessPanel = document.getElementById('businessNav'), filters = document.getElementById('filters'), list = document.getElementById('recipeList');
-    let collectionMode = 'core', activeChapter = 0, query = '';
+    let collectionMode = 'core', activeChapter = 0, query = '', librarySection = 'root';
 
     function currentChapters() { return collectionMode === 'business' ? businessChapters : coreChapters; }
     function currentRecipes() { return collectionMode === 'business' ? businessRecipes : coreRecipes; }
@@ -336,30 +358,36 @@
       setText('brandTotal', totalLabel);
       setText('collectionTotalHeading', totalLabel);
       document.body.classList.toggle('business-mode', business);
-      document.querySelectorAll('[data-mode]').forEach(button => button.classList.toggle('active', button.dataset.mode === collectionMode));
-      document.getElementById('businessNav').classList.toggle('visible', business);
-      setText('navigationLabel', business ? 'Navigasi Fullset Business F&B' : 'Navigasi Mahakarya');
+      document.querySelectorAll('[data-root]').forEach(button => button.classList.toggle('active', librarySection === 'root'));
+      document.getElementById('businessNav').classList.toggle('visible', librarySection === 'business');
+      setText('navigationLabel', librarySection === 'root' ? '2500+ Mahakarya · 2 subkategori' : business ? 'Fullset Menu Business F&B · 4 kategori' : 'Cita Rasa Dunia · 11 kategori');
       setText('sideNoteTitle', business ? 'Fullset Menu Business F&B' : '2500+ Mahakarya');
-      setText('sideNoteText', business ? 'Empat koleksi siap pakai untuk restoran, cafe, coffee shop, dan pastry shop.' : 'Koleksi inti untuk eksplorasi kuliner lintas budaya.');
+      setText('sideNoteText', business ? 'Empat koleksi siap pakai untuk restoran, cafe, coffee shop, dan pastry shop.' : 'Library utama unik: 11 kategori Cita Rasa Dunia plus turunan Fullset Business F&B.');
       setText('crumbText', business ? 'FULLSET MENU BUSINESS F&B · 1.000 MENU' : '2500+ MAHAKARYA');
       setText('heroDescription', business ? 'Koleksi menu khusus untuk kebutuhan operasional restoran, fine dining, Chinese restaurant, coffee shop, dan pastry & bakery shop.' : 'Menjelajah resep otentik dari Nusantara hingga kuliner Tiongkok dalam pengalaman membaca yang terstruktur, tenang, dan mudah dipindai.');
-      setText('heroTotal', business ? '1.000' : '1.962');
-      setText('heroTotalLabel', business ? 'menu unik bisnis' : 'judul unik');
+      setText('heroTotal', business ? '1.000' : totalLabel);
+      setText('heroTotalLabel', business ? 'menu business' : 'library unik');
       setText('heroChapterCount', business ? '4' : '11');
       setText('heroChapterLabel', business ? 'kategori bisnis' : 'bab pilihan');
-      setText('totalCollection', business ? '1.000' : '1.962');
-      setText('totalCollectionNote', business ? 'khusus operasional F&B' : 'dari 2500+ Mahakarya');
+      setText('totalCollection', business ? '1.000' : totalLabel);
+      setText('totalCollectionNote', business ? 'fullset, duplicate diperbolehkan' : 'library utama unik');
       setText('chapterCount', business ? '4' : '11');
       setText('chapterCountNote', business ? 'kategori bisnis khusus' : 'lintas budaya dunia');
-      setText('chapterChartTitle', business ? 'Distribusi 1.000 menu bisnis' : 'Distribusi judul unik Mahakarya');
-      setText('recipeHeading', business ? 'Fullset Menu Business F&B menurut kategori' : 'Mahakarya unik menurut urutan');
+      setText('chapterChartTitle', business ? 'Distribusi 1.000 menu business' : 'Distribusi library utama unik');
+      setText('recipeHeading', business ? 'Fullset Menu Business F&B menurut kategori' : '2500+ Mahakarya · library unik');
       setText('recipeSubheading', business ? 'Pilih tipe usaha atau cari menu berdasarkan nama, bahan, dan teknik.' : 'Pilih kategori atau gunakan pencarian untuk menemukan hidangan dengan cepat.');
     }
     function renderNavigation() {
       const chaptersForMode = currentChapters();
       const countForChapter = no => currentRecipes().filter(recipe => recipe.chapter === Number(no)).length;
-      nav.innerHTML = collectionMode === 'core' ? chaptersForMode.map(([no, name]) => { const count = countForChapter(no); return `<button class="nav-item${activeChapter === Number(no) ? ' active' : ''}" data-chapter="${no}"><span><span class="nav-num">${no.padStart(2,'0')}</span> ${name}</span><small>${count} unik</small></button>`; }).join('') : '';
-      businessPanel.innerHTML = collectionMode === 'business' ? `<div class="side-label">Kategori Fullset Menu</div><nav id="businessChapterNav">${chaptersForMode.map(([no, name]) => { const count = countForChapter(no); return `<button class="nav-item${activeChapter === Number(no) ? ' active' : ''}" data-chapter="${no}"><span><span class="nav-num">${no.padStart(2,'0')}</span> ${name}</span><small>${count} menu</small></button>`; }).join('')}</nav>` : '';
+      const subcategories = `<div class="library-subcategories"><button class="nav-item${librarySection === 'cita' ? ' active' : ''}" data-section="cita"><span><span class="nav-num">01</span> Cita Rasa Dunia</span><small>11 bab</small></button><button class="nav-item${librarySection === 'business' ? ' active' : ''}" data-section="business"><span><span class="nav-num">02</span> Fullset Menu Business F&amp;B</span><small>4 kategori</small></button></div>`;
+      const childNavigation = librarySection === 'cita'
+        ? coreChapters.map(([no, name]) => { const count = countForChapter(no); return `<button class="nav-item${activeChapter === Number(no) ? ' active' : ''}" data-chapter="${no}"><span><span class="nav-num">${no.padStart(2,'0')}</span> ${name}</span><small>${count} unik</small></button>`; }).join('')
+        : librarySection === 'business'
+          ? businessChapters.map(([no, name]) => { const count = businessRecipes.filter(recipe => recipe.chapter === Number(no)).length; return `<button class="nav-item${activeChapter === Number(no) ? ' active' : ''}" data-chapter="${no}"><span><span class="nav-num">${no.padStart(2,'0')}</span> ${name}</span><small>${count} menu</small></button>`; }).join('')
+          : '';
+      nav.innerHTML = `${subcategories}${childNavigation ? `<div class="nested-nav">${childNavigation}</div>` : ''}`;
+      businessPanel.innerHTML = '';
       filters.innerHTML = `<button class="${activeChapter ? '' : 'selected'}" data-filter="0">Semua ${collectionMode === 'business' ? 'kategori' : 'Mahakarya'}</button>` + chaptersForMode.map(([no,name]) => `<button class="${activeChapter === Number(no) ? 'selected' : ''}" data-filter="${no}">${name}</button>`).join('');
       document.getElementById('chapterChart').innerHTML = `<h3>${collectionMode === 'business' ? 'Distribusi 1.000 menu bisnis' : 'Distribusi judul unik Mahakarya'}</h3><div class="panel-sub">Proporsi koleksi berdasarkan klasifikasi utama.</div>`;
       const chapterCounts = chaptersForMode.map(([no]) => countForChapter(no));
@@ -367,9 +395,11 @@
       chaptersForMode.forEach(([no,name], index) => { const total = chapterCounts[index]; document.getElementById('chapterChart').insertAdjacentHTML('beforeend', `<div class="chapter-row"><div class="chapter-no">${no.padStart(2,'0')}</div><div><b>${name}</b><small>${total} menu unik</small><div class="bar"><i style="width:${Math.max(12, total / maxCount * 100)}%"></i></div></div><div class="bar-label">${total} menu</div></div>`); });
       document.querySelectorAll('[data-filter]').forEach(button => button.onclick = () => { activeChapter = Number(button.dataset.filter); document.querySelectorAll('[data-filter]').forEach(item => item.classList.toggle('selected', item === button)); render(); });
       document.querySelectorAll('[data-chapter]').forEach(button => button.onclick = () => { activeChapter = Number(button.dataset.chapter); document.querySelectorAll('[data-filter]').forEach(item => item.classList.toggle('selected', Number(item.dataset.filter) === activeChapter)); renderNavigation(); document.getElementById('recipes').scrollIntoView(); render(); });
+      document.querySelectorAll('[data-section]').forEach(button => button.onclick = () => { librarySection = button.dataset.section; collectionMode = librarySection === 'business' ? 'business' : 'core'; activeChapter = 0; query = ''; document.getElementById('searchInput').value = ''; updateCollectionCopy(); renderNavigation(); render(); });
     }
     function setCollectionMode(mode) {
       collectionMode = mode;
+      librarySection = mode === 'business' ? 'business' : 'cita';
       activeChapter = 0;
       query = '';
       document.getElementById('searchInput').value = '';
@@ -378,6 +408,7 @@
       render();
     }
     document.querySelectorAll('[data-mode]').forEach(button => button.onclick = () => setCollectionMode(button.dataset.mode));
+    document.querySelectorAll('[data-root]').forEach(button => button.onclick = () => { librarySection = 'root'; collectionMode = 'core'; activeChapter = 0; query = ''; document.getElementById('searchInput').value = ''; updateCollectionCopy(); renderNavigation(); render(); });
     function render() {
       const filtered = currentRecipes().filter(r => (!activeChapter || r.chapter === activeChapter) && (!query || `${r.title} ${r.desc} ${r.cat} ${r.menuType || ''} ${r.ingredients || ''} ${r.spices || ''} ${r.sauce || ''} ${r.authenticFlavor || ''}`.toLowerCase().includes(query)));
       list.innerHTML = filtered.length ? filtered.map(r => `<article class="recipe"><div class="recipe-top"><span>No. ${String(r.no).padStart(4,'0')}</span><span>${escapeHtml(collectionMode === 'business' ? r.cat : chapterLabel(r.chapter))}</span></div><h3>${formatRichText(r.title)}</h3><p>${formatRichText(r.desc)}</p><div class="recipe-foot"><span>◷ ${escapeHtml(r.time)} &nbsp; · &nbsp; ${escapeHtml(r.serve)}</span><button class="detail-btn" data-recipe="${r.no}">Buka resep →</button></div></article>`).join('') : '<div class="empty">Tidak ada resep yang cocok. Coba kata kunci lain.</div>';
