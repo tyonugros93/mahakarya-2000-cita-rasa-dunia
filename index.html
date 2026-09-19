@@ -31,13 +31,13 @@
     .business-nav { display: none; }
     .business-nav.visible { display: block; margin: 0; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; }
     .business-nav .side-label { margin: 2px 4px 8px; color: #f0b75f; }
-    .business-nav nav { display: flex; gap: 7px; overflow-x: auto; padding: 0 0 6px; scrollbar-color: #8da0a4 rgba(255,255,255,.12); }
-    .business-nav .nav-item { min-width: 205px; flex: 0 0 205px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
+    .business-nav nav { display: flex; gap: 8px; min-width: 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 4px 4px 9px; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: rgba(240,183,95,.72) rgba(255,255,255,.08); }
+    .business-nav .nav-item { min-width: 205px; flex: 0 0 205px; scroll-snap-align: start; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
     .business-nav .nav-item:hover, .business-nav .nav-item.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); box-shadow: none; }
     #chapterNav { display: block; margin: 0; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; }
-    .library-subcategories, .nested-nav { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 6px; scrollbar-color: #8da0a4 rgba(255,255,255,.12); }
+    .library-subcategories, .nested-nav { display: flex; gap: 8px; min-width: 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 4px 4px 9px; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: rgba(240,183,95,.72) rgba(255,255,255,.08); }
     .nested-nav { margin-top: 3px; padding-top: 7px; border-top: 1px solid rgba(240,183,95,.2); }
-    .library-subcategories .nav-item, .nested-nav .nav-item { min-width: 205px; flex: 0 0 205px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
+    .library-subcategories .nav-item, .nested-nav .nav-item { min-width: 205px; flex: 0 0 205px; scroll-snap-align: start; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
     .library-subcategories .nav-item:hover, .library-subcategories .nav-item.active, .nested-nav .nav-item:hover, .nested-nav .nav-item.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); box-shadow: none; }
     .nested-nav .nav-item { background: rgba(255,255,255,.035); border-color: rgba(255,255,255,.08); }
     .nav-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 10px 11px; border: 0; background: transparent; color: #b9cbd0; text-align: left; border-radius: 9px; font-size: 13px; }
@@ -49,12 +49,13 @@
     .side-note strong { color: #fff; display: block; margin-bottom: 5px; }
     .main { min-width: 0; }
     .topbar { height: 72px; padding: 0 46px; background: rgba(255,255,255,.9); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 20px; position: sticky; top: 0; z-index: 5; backdrop-filter: blur(12px); }
-    .collection-dock { width: min(1080px, calc(100% - 48px)); margin: 18px auto 0; padding: 12px; display: grid; gap: 9px; background: var(--navy); border: 1px solid rgba(240,183,95,.38); border-radius: 14px; box-shadow: var(--shadow); }
+    .collection-dock { width: min(1080px, calc(100% - 48px)); min-width: 0; margin: 18px auto 0; padding: 14px; display: grid; gap: 10px; overflow: hidden; background: linear-gradient(135deg, #112d3b 0%, #173f4c 100%); border: 1px solid rgba(240,183,95,.42); border-radius: 16px; box-shadow: 0 18px 38px rgba(17,45,59,.14); }
     .collection-dock .side-label { margin: 0 4px; color: #f0b75f; }
     .collection-dock .collection-switch { grid-template-columns: minmax(230px, 280px); }
     .collection-dock .collection-btn { background: rgba(255,255,255,.08); color: #dce7e8; }
     .collection-dock .collection-btn:hover, .collection-dock .collection-btn.active { background: #f0b75f; color: var(--navy); }
-    .collection-dock #chapterNav, .collection-dock .business-nav { background: rgba(240,183,95,.08); }
+    .collection-dock #chapterNav, .collection-dock .business-nav { width: 100%; min-width: 0; max-width: 100%; background: rgba(240,183,95,.08); border-color: rgba(240,183,95,.42); }
+    .collection-dock #chapterNav, .collection-dock .business-nav { overflow: hidden; }
     .crumb { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
     .crumb strong { color: var(--ink); }
     .actions { display: flex; align-items: center; gap: 10px; }
@@ -133,6 +134,8 @@
     .nutrition-item b { display: block; font-size: 14px; color: var(--navy); }
     .nutrition-item span { color: var(--muted); font-size: 10px; }
     @media (max-width: 1050px) { .app { grid-template-columns: 224px minmax(0,1fr); } .content, .topbar { padding-left: 27px; padding-right: 27px; } .dashboard-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { .collection-dock { width: calc(100% - 34px); max-width: calc(100% - 34px); } .collection-dock .library-subcategories .nav-item, .collection-dock .nested-nav .nav-item, .collection-dock .business-nav .nav-item { min-width: min(205px, calc(100vw - 78px)); flex-basis: min(205px, calc(100vw - 78px)); } }
+    @media (prefers-reduced-motion: no-preference) { .collection-dock #chapterNav, .collection-dock .business-nav { transition: box-shadow .2s ease, border-color .2s ease; } .collection-dock #chapterNav:focus-within, .collection-dock .business-nav:focus-within { border-color: rgba(240,183,95,.72); box-shadow: inset 0 0 0 1px rgba(240,183,95,.18); } }
     @media (max-width: 720px) { .app { display: block; } .sidebar { position: static; height: auto; padding: 17px; } .brand { margin-bottom: 16px; } .sidebar > .side-label, .sidebar > .collection-switch, .sidebar > #chapterNav, .sidebar > .business-nav, .side-note { display: none; } .sidebar nav { display: flex; overflow-x: auto; gap: 5px; } .nav-item { min-width: max-content; } .collection-dock { width: calc(100% - 34px); margin-top: 12px; padding: 10px; } .collection-dock .collection-switch { grid-template-columns: 1fr; } .collection-dock .side-label { display: block; } .topbar { height: auto; padding: 13px 17px; align-items: stretch; flex-direction: column; gap: 10px; } .search { width: 100%; } .content { padding: 22px 17px 50px; } .hero { padding: 30px 24px; min-height: 0; } .hero-meta { gap: 13px; } .stats { grid-template-columns: repeat(2, 1fr); } .recipe-list { grid-template-columns: 1fr; } .section-head { align-items: start; flex-direction: column; gap: 7px; } }
   </style>
 </head>
