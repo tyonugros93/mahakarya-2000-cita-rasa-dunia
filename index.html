@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#112d3b" />
+  <title>Mahakarya 2.962 Cita Rasa Dunia</title>
+  <style>
+    :root {
+      --ink: #17242a; --muted: #6d7c82; --line: #dfe7e9; --paper: #fff;
+      --canvas: #f5f8f8; --navy: #112d3b; --teal: #0f766e; --gold: #d88b28;
+      --soft-teal: #e5f3f0; --soft-gold: #fff4df; --shadow: 0 18px 50px rgba(17,45,59,.08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); font: 15px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 280px minmax(0,1fr); }
+    .sidebar { background: var(--navy); color: #dce7e8; padding: 27px 20px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+    .brand { display: flex; gap: 11px; align-items: center; margin-bottom: 38px; }
+    .brand-mark { width: 39px; height: 39px; border: 1px solid rgba(255,255,255,.35); border-radius: 12px; display: grid; place-items: center; color: #f2bd67; font-size: 20px; }
+    .brand b { display: block; letter-spacing: .05em; font-size: 14px; color: #fff; }
+    .brand span { display: block; color: #9eb1b5; font-size: 11px; margin-top: 1px; }
+    .side-label { color: #79939a; text-transform: uppercase; font-size: 10px; letter-spacing: .16em; font-weight: 800; margin: 24px 11px 9px; }
+    .collection-switch { display: grid; gap: 7px; margin: 0 0 22px; }
+    .collection-btn { display: flex; align-items: center; gap: 9px; width: 100%; padding: 11px 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.05); color: #b9cbd0; text-align: left; border-radius: 9px; font-size: 12px; }
+    .collection-btn:hover, .collection-btn.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); }
+    .collection-btn strong { display: block; font-size: 12px; }
+    .collection-btn small { display: block; opacity: .75; font-size: 10px; }
+    .business-nav { display: none; }
+    .business-nav.visible { display: block; margin: 0 -8px 20px; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; }
+    .business-nav .side-label { margin: 2px 4px 8px; color: #f0b75f; }
+    .business-nav nav { display: flex; gap: 7px; overflow-x: auto; padding: 0 0 6px; scrollbar-color: #8da0a4 rgba(255,255,255,.12); }
+    .business-nav .nav-item { min-width: 205px; flex: 0 0 205px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
+    .business-nav .nav-item:hover, .business-nav .nav-item.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); box-shadow: none; }
+    #chapterNav { display: flex; gap: 7px; overflow-x: auto; margin: 0 -8px 20px; padding: 10px 8px 7px; background: rgba(240,183,95,.08); border: 1px solid rgba(240,183,95,.35); border-radius: 11px; scrollbar-color: #8da0a4 rgba(255,255,255,.12); }
+    #chapterNav .nav-item { min-width: 205px; flex: 0 0 205px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
+    #chapterNav .nav-item:hover, #chapterNav .nav-item.active { background: #f0b75f; border-color: #f0b75f; color: var(--navy); box-shadow: none; }
+    .nav-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 10px 11px; border: 0; background: transparent; color: #b9cbd0; text-align: left; border-radius: 9px; font-size: 13px; }
+    .nav-item:hover, .nav-item.active { background: rgba(255,255,255,.11); color: #fff; }
+    .nav-item.active { box-shadow: inset 3px 0 var(--gold); }
+    .nav-num { color: #88a2a8; font-size: 11px; min-width: 25px; }
+    .nav-item.active .nav-num { color: #f2bd67; }
+    .side-note { margin-top: 33px; padding: 14px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; font-size: 12px; color: #a9bec2; }
+    .side-note strong { color: #fff; display: block; margin-bottom: 5px; }
+    .main { min-width: 0; }
+    .topbar { height: 72px; padding: 0 46px; background: rgba(255,255,255,.9); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 20px; position: sticky; top: 0; z-index: 5; backdrop-filter: blur(12px); }
+    .crumb { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+    .crumb strong { color: var(--ink); }
+    .actions { display: flex; align-items: center; gap: 10px; }
+    .search { width: min(290px, 30vw); display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 8px 11px; color: var(--muted); }
+    .search input { border: 0; outline: 0; width: 100%; color: var(--ink); background: transparent; font-size: 13px; }
+    .icon-btn { width: 35px; height: 35px; border: 1px solid var(--line); background: #fff; border-radius: 8px; color: var(--navy); font-weight: 800; }
+    .content { max-width: 1440px; margin: 0 auto; padding: 40px 46px 70px; }
+    .hero { background: var(--navy); color: #fff; border-radius: 16px; min-height: 310px; padding: 40px 45px; position: relative; overflow: hidden; display: flex; align-items: center; }
+    .hero:after { content: ""; position: absolute; width: 410px; height: 410px; border: 1px solid rgba(242,189,103,.22); border-radius: 50%; right: -90px; top: -100px; box-shadow: 0 0 0 25px rgba(242,189,103,.04), 0 0 0 58px rgba(242,189,103,.03); }
+    .hero-copy { position: relative; z-index: 1; max-width: 720px; }
+    .eyebrow { color: #e6af57; text-transform: uppercase; letter-spacing: .18em; font-size: 10px; font-weight: 900; }
+    h1 { font-size: clamp(30px, 4vw, 53px); line-height: 1.07; letter-spacing: -.045em; margin: 12px 0 17px; max-width: 700px; }
+    .hero p { color: #bfd0d2; max-width: 640px; margin: 0 0 25px; }
+    .hero-footer { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .primary { border: 0; background: #f0b75f; color: var(--navy); border-radius: 8px; padding: 11px 16px; font-weight: 800; }
+    .hero-meta { display: flex; gap: 18px; color: #abc1c4; font-size: 12px; }
+    .hero-meta b { color: #fff; font-size: 17px; display: block; line-height: 1.1; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin: 37px 0 17px; }
+    .section-head h2 { margin: 0; font-size: 22px; letter-spacing: -.025em; }
+    .section-head p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .kicker { color: var(--teal); font-size: 10px; text-transform: uppercase; font-weight: 900; letter-spacing: .14em; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; }
+    .stat { background: var(--paper); border: 1px solid var(--line); border-radius: 11px; padding: 17px; min-height: 100px; }
+    .stat .label { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .stat strong { display: block; font-size: 25px; letter-spacing: -.04em; margin-top: 3px; }
+    .stat small { color: var(--teal); font-size: 11px; font-weight: 800; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(300px,.8fr); gap: 16px; }
+    .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 21px; }
+    .panel h3 { margin: 0; font-size: 15px; }
+    .panel-sub { color: var(--muted); font-size: 12px; margin: 3px 0 18px; }
+    .chapter-row { display: grid; grid-template-columns: 42px 1fr 110px; gap: 13px; align-items: center; padding: 12px 0; border-top: 1px solid #edf1f2; }
+    .chapter-row:first-of-type { border-top: 0; }
+    .chapter-no { font-size: 13px; color: var(--gold); font-weight: 900; }
+    .chapter-row b { font-size: 13px; }
+    .chapter-row small { color: var(--muted); display: block; font-size: 11px; }
+    .bar { height: 6px; background: #edf2f2; border-radius: 5px; overflow: hidden; }
+    .bar i { display: block; height: 100%; background: var(--teal); border-radius: inherit; }
+    .bar-label { color: var(--muted); text-align: right; font-size: 10px; margin-top: 4px; }
+    .foreword { background: #fdf9f0; border-color: #f1e6cc; }
+    .quote { color: var(--navy); font-family: Georgia, serif; font-size: 16px; line-height: 1.55; margin: 12px 0 13px; }
+    .foreword p { color: #5e625f; font-size: 12px; margin: 0; }
+    .signature { margin-top: 17px; font-size: 11px; color: var(--gold); font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    .recipe-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 13px; margin-bottom: 13px; }
+    .filter { display: flex; gap: 7px; flex-wrap: wrap; }
+    .filter button { border: 1px solid var(--line); color: var(--muted); background: #fff; border-radius: 7px; padding: 7px 10px; font-size: 11px; font-weight: 800; }
+    .filter button.selected { background: var(--soft-teal); color: var(--teal); border-color: #b9ded7; }
+    .business-mode .filter button.selected { background: var(--soft-gold); color: #a86414; border-color: #e9c987; }
+    .recipe-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 13px; }
+    .recipe { background: #fff; border: 1px solid var(--line); border-radius: 11px; padding: 17px; transition: .2s ease; }
+    .recipe:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: #b9ded7; }
+    .recipe-top { display: flex; justify-content: space-between; gap: 10px; color: var(--teal); font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    .recipe h3 { font-size: 16px; line-height: 1.3; margin: 8px 0 7px; }
+    .recipe p { color: var(--muted); font-size: 12px; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .recipe-foot { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #edf1f2; margin-top: 15px; padding-top: 11px; color: var(--muted); font-size: 11px; }
+    .detail-btn { color: var(--teal); border: 0; background: transparent; font-weight: 900; padding: 0; font-size: 11px; }
+    .empty { grid-column: 1/-1; text-align: center; padding: 35px; color: var(--muted); }
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(17,45,59,.5); z-index: 10; padding: 20px; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: #fff; width: min(680px, 100%); max-height: 90vh; overflow-y: auto; border-radius: 15px; padding: 27px; box-shadow: 0 25px 70px rgba(0,0,0,.2); }
+    .modal-head { display: flex; justify-content: space-between; gap: 15px; align-items: start; }
+    .modal h2 { margin: 5px 0 10px; font-size: 26px; line-height: 1.12; letter-spacing: -.035em; }
+    .close { border: 0; background: #f0f4f4; color: var(--muted); width: 32px; height: 32px; border-radius: 8px; font-weight: 900; }
+    .modal p { color: var(--muted); }
+    .modal-section { border-top: 1px solid var(--line); padding-top: 17px; margin-top: 20px; }
+    .modal-section h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--teal); }
+    .modal-section ul { margin: 0; padding-left: 20px; color: #526267; font-size: 13px; }
+    .ingredient-list { display: grid; gap: 7px; padding-left: 0 !important; list-style: none; }
+    .ingredient-list li { position: relative; padding-left: 19px; }
+    .ingredient-list li:before { content: "◆"; position: absolute; left: 0; top: 1px; color: var(--gold); font-size: 8px; }
+    .method-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: method; }
+    .method-list li { display: grid; grid-template-columns: 24px 1fr; gap: 8px; color: #526267; font-size: 13px; }
+    .method-list li:before { counter-increment: method; content: counter(method); width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: var(--soft-teal); color: var(--teal); font-size: 11px; font-weight: 900; }
+    .nutrition-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .nutrition-item { padding: 9px; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfc; }
+    .nutrition-item b { display: block; font-size: 14px; color: var(--navy); }
+    .nutrition-item span { color: var(--muted); font-size: 10px; }
+    @media (max-width: 1050px) { .app { grid-template-columns: 224px minmax(0,1fr); } .content, .topbar { padding-left: 27px; padding-right: 27px; } .dashboard-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { .app { display: block; } .sidebar { position: static; height: auto; padding: 17px; } .brand { margin-bottom: 16px; } .side-label, .side-note { display: none; } .sidebar nav { display: flex; overflow-x: auto; gap: 5px; } .nav-item { min-width: max-content; } .topbar { height: auto; padding: 13px 17px; align-items: stretch; flex-direction: column; gap: 10px; } .search { width: 100%; } .content { padding: 22px 17px 50px; } .hero { padding: 30px 24px; min-height: 0; } .hero-meta { gap: 13px; } .stats { grid-template-columns: repeat(2, 1fr); } .recipe-list { grid-template-columns: 1fr; } .section-head { align-items: start; flex-direction: column; gap: 7px; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">✦</div><div><b>MAHAKARYA</b><span><span id="brandTotal">2.962</span> Cita Rasa Dunia</span></div></div>
+      <div class="side-label">Pilih koleksi</div>
+      <div class="collection-switch" id="collectionSwitch">
+        <button class="collection-btn active" data-mode="core"><span>▦</span><span><strong>2500+ Mahakarya</strong><small>11 kategori kuliner dunia</small></span></button>
+        <button class="collection-btn" data-mode="business"><span>⌂</span><span><strong>Fullset Menu Business F&amp;B</strong><small>1.000 menu siap pakai</small></span></button>
+      </div>
+      <div class="side-label" id="navigationLabel">Navigasi buku</div>
+      <nav id="chapterNav"></nav>
+      <div class="business-nav" id="businessNav">
+        <div class="side-label">Menu bisnis</div>
+        <nav id="businessChapterNav"></nav>
+      </div>
+      <div class="side-label">Referensi</div>
+      <button class="nav-item" data-scroll="foreword"><span><span class="nav-num">✦</span> Kata Pengantar</span></button>
+      <button class="nav-item" data-scroll="glossary"><span><span class="nav-num">Aa</span> Glosarium & Indeks</span></button>
+      <div class="side-note"><strong id="sideNoteTitle">2.000 Menu Dunia</strong><span id="sideNoteText">Koleksi inti untuk eksplorasi kuliner lintas budaya.</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+          <div class="crumb">E-BOOK / <strong id="crumbText">2.000 MAHAKARYA</strong></div>
+        <div class="actions">
+          <label class="search" aria-label="Cari resep"><span>⌕</span><input id="searchInput" type="search" placeholder="Cari nama atau bahan..." /></label>
+          <button class="icon-btn" id="fontDown" aria-label="Perkecil teks">A−</button>
+          <button class="icon-btn" id="fontUp" aria-label="Perbesar teks">A+</button>
+        </div>
+      </header>
+      <div class="content">
+        <section class="hero" id="overview">
+          <div class="hero-copy">
+            <div class="eyebrow">Encyclopedia of culinary arts · Edisi digital</div>
+            <h1>Mahakarya,<br /><span style="color:#f0b75f"><span id="collectionTotalHeading">2.962</span> cita rasa dunia.</span></h1>
+            <p id="heroDescription">Menjelajah resep otentik dari Nusantara hingga kuliner Tiongkok dalam pengalaman membaca yang terstruktur, tenang, dan mudah dipindai.</p>
+            <div class="hero-footer">
+              <button class="primary" data-scroll="recipes">Mulai menjelajah resep →</button>
+              <div class="hero-meta"><div><b id="heroTotal">2.000</b><span id="heroTotalLabel">menu inti</span></div><div><b id="heroChapterCount">11</b><span id="heroChapterLabel">bab pilihan</span></div><div><b>100%</b>terkurasi</div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="stats" aria-label="Ringkasan koleksi" style="margin-top:16px">
+          <div class="stat"><span class="label">Total unik</span><strong id="totalCollection">1.950</strong><small id="totalCollectionNote">judul unik Mahakarya</small></div>
+          <div class="stat"><span class="label">Bab aktif</span><strong id="chapterCount">11</strong><small id="chapterCountNote">lintas budaya dunia</small></div>
+          <div class="stat"><span class="label">Menu terbuka</span><strong id="visibleCount">1.950</strong><small>ditampilkan di halaman ini</small></div>
+          <div class="stat"><span class="label">Fokus editorial</span><strong>Otentik</strong><small>presisi · terkurasi</small></div>
+        </section>
+
+        <section id="foreword">
+          <div class="section-head"><div><div class="kicker">01 · Orientasi</div><h2>Mahakarya</h2><p>Catatan pembuka untuk perjalanan rasa Anda.</p></div></div>
+          <div class="panel foreword">
+            <div class="quote">“Makanan adalah bahasa universal yang menyatukan berbagai budaya.”</div>
+            <p>Buku ini lahir dari sebuah visi besar: mendobrak batasan tanpa mengorbankan keaslian rasa. <b>The Ultimate 2500+ Recipes</b> bukan sekadar kumpulan resep, melainkan ensiklopedia kuliner komprehensif yang dikurasi, diuji, dan diadaptasi secara cermat. Setiap mahakarya dirancang dengan substitusi cerdas untuk mempertahankan wok hei, umami, dan kekayaan rempah Nusantara.</p>
+            <div class="signature">— Setyo Nugroho · Penulis</div>
+          </div>
+        </section>
+
+        <section id="chapters">
+          <div class="section-head"><div><div class="kicker">02 · Arsitektur koleksi</div><h2>Peta perjalanan kuliner</h2><p>Struktur bab dirancang untuk scanning cepat dan navigasi yang jelas.</p></div></div>
+          <div class="dashboard-grid">
+            <div class="panel" id="chapterChart"><h3 id="chapterChartTitle">Distribusi 2.000 menu inti</h3><div class="panel-sub">Proporsi koleksi berdasarkan klasifikasi utama.</div></div>
+            <div class="panel" id="glossary"><h3>Prinsip membaca resep</h3><div class="panel-sub">Tiga lapisan informasi di setiap halaman.</div><div style="display:grid;gap:13px"><div><b style="font-size:13px">01 · Persiapan</b><small style="display:block;color:var(--muted)">Bahan, takaran, porsi, dan estimasi waktu.</small></div><div><b style="font-size:13px">02 · Teknik</b><small style="display:block;color:var(--muted)">Langkah presisi untuk menjaga profil rasa.</small></div><div><b style="font-size:13px">03 · Nutrisi</b><small style="display:block;color:var(--muted)">Ringkasan informasi per porsi.</small></div></div></div>
+          </div>
+        </section>
+
+        <section id="recipes">
+          <div class="section-head"><div><div class="kicker">03 · Daftar resep</div><h2 id="recipeHeading">2.000 menu inti menurut urutan</h2><p id="recipeSubheading">Pilih bab atau gunakan pencarian untuk menemukan hidangan dengan cepat.</p></div></div>
+          <div class="recipe-toolbar"><div class="filter" id="filters"></div><span style="font-size:11px;color:var(--muted)" id="resultLabel">2.000 hasil</span></div>
+          <div class="recipe-list" id="recipeList"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="modal-backdrop" id="modalBackdrop"><article class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><div class="kicker" id="modalChapter"></div><h2 id="modalTitle"></h2></div><button class="close" id="closeModal" aria-label="Tutup">×</button></div><p id="modalDesc"></p><div class="modal-section"><h4>Ringkasan resep</h4><div id="modalMeta" style="display:flex;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:12px"></div></div><div class="modal-section" id="modalFlavorSection" hidden><h4>Profil rasa otentik</h4><p id="modalFlavor" style="font-size:13px"></p></div><div class="modal-section"><h4>Bahan utama</h4><ul class="ingredient-list" id="modalIngredients"></ul></div><div class="modal-section"><h4>Bumbu halus / pasta rempah</h4><ul class="ingredient-list" id="modalSpices"></ul></div><div class="modal-section" id="modalSauceSection" hidden><h4>Saus atau pelengkap</h4><ul class="ingredient-list" id="modalSauce"></ul></div><div class="modal-section"><h4>Cara memasak</h4><ol class="method-list" id="modalSteps"></ol></div><div class="modal-section" id="modalPresentationSection" hidden><h4>Penyajian & garnish</h4><p id="modalPresentation" style="font-size:13px"></p><p id="modalGarnish" style="font-size:13px"></p></div><div class="modal-section"><h4>Estimasi kandungan nutrisi per porsi</h4><div class="nutrition-grid" id="modalNutrition"></div><p style="font-size:11px;margin:9px 0 0">Nilai merupakan estimasi dan dapat berubah sesuai merek bahan, ukuran porsi, serta metode memasak.</p></div><div class="modal-section"><h4>Catatan teknik</h4><p id="modalNote" style="font-size:13px"></p></div></article></div>
+  <script src="recipes-data.js"></script>
+  <script src="recipe-servings.js"></script>
+  <script src="business-menu-data.js"></script>
+  <script>
+    const chapters = [
+      ['1','Eksotika Nusantara','700 resep','700'], ['2','MPASI Nusantara Sehat & Bergizi','200 resep','200'], ['3','Keajaiban Rempah India','100 resep','100'],
+      ['4','Pesona Timur Tengah','100 resep','100'], ['5','Klasik Amerika','100 resep','100'], ['6','Keanggunan Kontinental','100 resep','100'],
+      ['7','Romansa Rasa Italia','100 resep','100'], ['8','Seni Pastry & Bakery','100 resep','100'], ['9','Mahakarya Prancis','100 resep','100'],
+      ['10','Kuliner Jepang','200 resep','200'], ['11','Kuliner Tiongkok','200 resep','200'],
+      ['12','Fine Dining','250 resep','250'], ['13','Fine Dining Chinese Restaurant','250 resep','250'],
+      ['14','Coffee Shop','250 resep','250'], ['15','Pastry & Bakery Shop','250 resep','250']
+    ];
+    let recipes = [
+      {no:1, chapter:1, cat:'Sate & Bakar', title:'Sate Padang Pariaman', desc:'Sate sapi dengan siraman kuah kuning kental yang kaya rempah pedas dan gurih, disajikan dengan ketupat.', time:'120 mnt', serve:'8 pax', ingredients:['1,5 kg daging sapi','Daun kunyit, daun jeruk, serai','Cabai, bawang, jahe, lengkuas, kunyit','Tepung beras untuk pengental kuah'], note:'Kaldu sapi dan kaldu jamur digunakan sebagai fondasi rasa. Pastikan semua bumbu kemasan memiliki kualitas baik.'},
+      {no:2, chapter:1, cat:'Sate & Bakar', title:'Sate Maranggi Khas Sunda', desc:'Sate sapi tanpa siraman bumbu kacang, dimarinasi ketumbar dan gula merah yang terkaramelisasi.', time:'80 mnt', serve:'8 pax', ingredients:['1,5 kg daging sapi has dalam','300 g lemak sapi','Ketumbar sangrai dan lengkuas','Kecap manis dan gula merah'], note:'Marinasi dalam daun pepaya agar daging tetap empuk.'},
+      {no:3, chapter:1, cat:'Soto & Sup', title:'Soto Betawi Susu', desc:'Kuah gurih creamy dengan aroma rempah hangat, potongan daging sapi, tomat, dan emping.', time:'90 mnt', serve:'6 pax', ingredients:['800 g daging sapi','Susu evaporasi','Kapulaga, cengkih, kayu manis','Tomat, kentang, dan emping'], note:'Susu evaporasi memberi body pada kuah tanpa santan berlebih.'},
+      {no:4, chapter:1, cat:'Nasi & Lauk', title:'Nasi Kapau Gulai Tunjang', desc:'Nasi hangat dengan gulai kikil yang lembut, kuah santan berbumbu, dan aroma daun kunyit.', time:'105 mnt', serve:'6 pax', ingredients:['1 kg kikil sapi','Santan segar','Cabai merah, kunyit, serai','Daun kunyit dan asam kandis'], note:'Rebus kikil hingga empuk sebelum masuk ke kuah agar bumbu meresap dan teksturnya bersih.'},
+      {no:5, chapter:1, cat:'Hasil Laut', title:'Ikan Bakar Jimbaran', desc:'Ikan laut bakar dengan olesan bumbu merah yang wangi, sedikit manis, dan berkarakter smoky.', time:'45 mnt', serve:'4 pax', ingredients:['1 ekor ikan kakap','Bawang merah dan bawang putih','Cabai merah dan kemiri','Jeruk limau dan kecap manis'], note:'Pisahkan alat marinasi seafood dari bahan mentah lain untuk menjaga kebersihan dapur.'},
+      {no:6, chapter:1, cat:'Nasi & Lauk', title:'Nasi Goreng Kambing Kebon Sirih', desc:'Nasi goreng berbumbu rempah dengan potongan kambing empuk, acar, dan taburan bawang goreng.', time:'35 mnt', serve:'3 pax', ingredients:['600 g nasi dingin','250 g daging kambing','Jintan, kapulaga, dan kayu manis','Kecap manis dan acar'], note:'Tumis rempah sampai matang sebelum memasukkan nasi untuk mendapatkan aroma yang lebih dalam.'},
+      {no:7, chapter:1, cat:'Jajanan Gurih', title:'Martabak Telur Palembang', desc:'Kulit tipis renyah berisi telur, daging cincang, daun bawang, dan bumbu kari hangat.', time:'50 mnt', serve:'4 pax', ingredients:['Kulit martabak','Telur ayam','Daging sapi cincang','Daun bawang dan bubuk kari'], note:'Gunakan minyak baru atau minyak yang tersaring baik agar rasa tetap bersih.'},
+      {no:8, chapter:1, cat:'Kue Tradisional', title:'Klepon Gula Aren', desc:'Bola ketan hijau kenyal dengan lelehan gula aren di tengah dan balutan kelapa parut.', time:'45 mnt', serve:'5 pax', ingredients:['Tepung ketan','Gula aren','Kelapa parut','Pasta pandan alami'], note:'Kukus kelapa dengan sedikit garam agar lebih awet dan memiliki rasa yang seimbang.'},
+      {no:9, chapter:1, cat:'Minuman', title:'Es Cendol Dawet', desc:'Minuman santan, gula aren, dan cendol hijau yang menyegarkan dengan tekstur lembut.', time:'30 mnt', serve:'4 pax', ingredients:['Tepung beras dan tapioka','Santan','Gula aren','Daun pandan'], note:'Sajikan santan dalam keadaan dingin dan simpan terpisah dari sirup gula.'},
+      {no:10, chapter:9, cat:'Japanese Food', title:'Chicken Teriyaki', desc:'Ayam panggang mengilap dengan saus manis gurih berbasis kecap dan jahe.', time:'35 mnt', serve:'4 pax', ingredients:['Paha ayam tanpa tulang','Kecap asin','Madu, jahe, dan bawang putih','Minyak wijen'], note:'Mirin diganti dengan campuran jus apel dan sedikit cuka beras untuk menjaga keseimbangan manis-asam.'},
+      {no:11, chapter:9, cat:'Japanese Food', title:'Salmon Aburi Mentai', desc:'Salmon torch-seared dengan saus mentai creamy, nasi hangat, dan nori.', time:'30 mnt', serve:'2 pax', ingredients:['Fillet salmon','Mayones','Tobiko dan nori','Nasi Jepang'], note:'Pastikan tobiko dan mayones berasal dari produsen dengan mutu yang konsisten.'},
+      {no:12, chapter:10, cat:'Chinese Food', title:'Dim Sum Har Gow', desc:'Pangsit kulit transparan berisi udang, rebung, dan minyak wijen yang dikukus lembut.', time:'55 mnt', serve:'4 pax', ingredients:['Udang kupas','Tepung tang mien','Rebung dan daun bawang','Minyak wijen'], note:'Gunakan kaldu seafood dan kukus hingga kulit transparan sempurna.'}
+    ];
+    const chapterCategories = {1:'Nusantara',2:'MPASI Nusantara',3:'Indian Food',4:'Middle Eastern Food',5:'American Food',6:'Continental Food',7:'Italian Food',8:'Pastry & Bakery',9:'French Food',10:'Japanese Food',11:'Chinese Food'};
+    function estimateNutrition(recipe) {
+      const text = `${recipe.title} ${recipe.cat} ${recipe.ingredients}`.toLowerCase();
+      let values = [380, 20, 16, 42];
+      if (/minum|es |jus|teh|kopi|syrup|mocktail/.test(text)) values = [150, 2, 3, 28];
+      else if (/kue|roti|pastry|klepon|dessert|puding|cake|tart|pie|biskuit|cookie|mochi/.test(text)) values = [290, 6, 12, 44];
+      else if (/sup|soto|sop|kaldu|broth|consomme/.test(text)) values = [220, 15, 9, 20];
+      else if (/mpasi|bayi|bubur saring|nasi tim/.test(text)) values = [165, 8, 6, 24];
+      else if (/sayur|salad|tahu|tofu|tempe|kangkung|brokoli|terong/.test(text)) values = [190, 9, 10, 24];
+      else if (/ikan|salmon|udang|seafood|kerang|kepiting|cumi/.test(text)) values = [315, 27, 14, 18];
+      else if (/sate|ayam|daging|kambing|sapi|bebek|steak|iga/.test(text)) values = [440, 30, 24, 24];
+      if (/nasi|mi|mie|pasta|bihun|kwetiau/.test(text)) { values[0] += 55; values[3] += 22; }
+      return [`~${values[0]} kkal`, `~${values[1]} g protein`, `~${values[2]} g lemak`, `~${values[3]} g karbohidrat`];
+    }
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+    }
+    function formatRichText(value) {
+      return escapeHtml(value).replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
+    }
+    function normalizeRecipe(recipe) {
+      const ingredientText = String(recipe.ingredients || '').replace(/\s+/g, ' ').replace(/\s*&\s*/g, ' dan ').trim();
+      const spiceMarker = ingredientText.search(/\bBumbu(?: Halus)?\s*:/i);
+      recipe.mainIngredients = spiceMarker >= 0 ? ingredientText.slice(0, spiceMarker).trim() : ingredientText;
+      recipe.spices = spiceMarker >= 0 ? ingredientText.slice(spiceMarker).replace(/^\bBumbu(?: Halus)?\s*:\s*/i, '').trim() : '';
+      recipe.steps = String(recipe.steps || '').replace(/\s+/g, ' ').trim();
+      recipe.nutrition = Array.isArray(recipe.nutrition) && recipe.nutrition.length ? recipe.nutrition : estimateNutrition(recipe);
+      return recipe;
+    }
+    recipes = expandedRecipeDetails.map(r => normalizeRecipe({...r, cat: r.cat || chapterCategories[r.chapter], desc: r.description || 'Deskripsi belum tersedia.', time: r.time || 'Waktu belum tercantum', serve: r.serve || 'Porsi belum tercantum', note: 'Sesuaikan tingkat kematangan, bumbu, dan tekstur dengan karakter bahan yang digunakan.'}));
+    const servingByNo = new Map(recipeServings.map(item => [Number(item.no), item.serve]));
+    recipes.forEach(recipe => { if (recipe.chapter !== 2 && servingByNo.has(recipe.no)) recipe.serve = servingByNo.get(recipe.no); });
+    const verifiedMeta = { 1: { serve: '8 Pax', time: 'Persiapan 30 Menit · Memasak 90 Menit' }, 1099: { serve: '2 Cangkir Besar' } };
+    const verifiedTitles = { 91: 'Tumis Jamur Tiram Pedas Manis', 92: 'Tumis Genjer Oncom Khas Sunda', 93: 'Tumis Tempe Leunca Khas Sunda', 94: 'Tumis Labu Siam Telur Orat-Arik', 95: 'Tumis Jagung Manis Wortel Udang (Oseng Jagung)', 96: 'Daging Batokok Lado Merah (Padang)', 97: 'Sapi Lada Hitam Gaya Nusantara', 98: 'Empal Gentong Asli Cirebon (Versi Kuah Santan Sapi)', 99: 'Daging Masak Hitam (Semur Kental Manis)', 100: 'Basbousa Bil Ashta (Kue Semolina Lembut Berisi Lapis Krim Susu Ashta)', 147: 'Babat Iso Goreng Bumbu Babat (Semarang Style)', 373: 'Babat Iso Masak Kecap Pedas' };
+    recipes.forEach(recipe => { if (verifiedTitles[recipe.no]) recipe.title = verifiedTitles[recipe.no]; });
+    recipes.forEach(recipe => { if (verifiedMeta[recipe.no]) Object.assign(recipe, verifiedMeta[recipe.no]); });
+    const recipeMethods = {
+      1:['Rebus daging bersama daun aromatik dan bumbu halus sampai empuk.','Potong daging, tusuk, lalu bakar sebentar sampai harum.','Saring kaldu, kentalkan dengan larutan tepung beras sambil diaduk.','Siram sate dengan kuah panas dan sajikan bersama ketupat.'],
+      2:['Potong daging, campur bumbu marinasi, lalu diamkan minimal 60 menit.','Tusuk daging dengan sedikit lemak di antaranya.','Bakar di atas bara sambil dibolak-balik hingga matang dan terkaramelisasi.','Istirahatkan 3 menit lalu sajikan dengan sambal dan acar.'],
+      3:['Rebus daging sampai empuk, lalu potong sesuai selera.','Tumis bumbu dan rempah sampai matang serta harum.','Masukkan kaldu, daging, susu evaporasi, dan pelengkap.','Didihkan perlahan tanpa memecah kuah, lalu sajikan.'],
+      4:['Rebus kikil sampai empuk dan bersihkan kembali.','Tumis bumbu halus bersama daun kunyit dan serai.','Tuang santan, masukkan kikil, lalu masak dengan api kecil.','Bumbui, koreksi rasa, dan sajikan bersama nasi hangat.'],
+      5:['Bersihkan ikan, buat sayatan, lalu lumuri jeruk dan garam.','Haluskan bumbu, tumis sampai matang, lalu dinginkan.','Oleskan bumbu pada ikan dan diamkan 15 menit.','Bakar sambil dioles ulang hingga matang dan sedikit charred.'],
+      6:['Tumis potongan kambing dengan rempah sampai empuk dan harum.','Masukkan nasi dingin, aduk hingga butiran terlapisi bumbu.','Tambahkan kecap, garam, dan lada; masak dengan api besar.','Sajikan dengan acar, tomat, dan bawang goreng.'],
+      7:['Campur isian telur, daging, daun bawang, dan bumbu.','Letakkan isian di atas kulit martabak yang sudah dilebarkan.','Lipat menjadi persegi dan goreng dalam minyak panas.','Tiriskan, potong, lalu sajikan dengan acar.'],
+      8:['Campur tepung ketan dengan air pandan sampai adonan bisa dipulung.','Isi dengan gula aren, rapatkan, lalu bentuk bola.','Rebus sampai klepon mengapung dan angkat.','Gulingkan pada kelapa parut kukus.'],
+      9:['Masak adonan cendol sampai kental lalu cetak ke air es.','Rebus gula aren dengan pandan, saring, dan dinginkan.','Siapkan santan yang sudah dimasak dan didinginkan.','Susun cendol, es, santan, lalu sirup gula aren.'],
+      10:['Marinasi ayam dengan kecap, jahe, bawang putih, dan jus apel.','Panggang sisi kulit terlebih dahulu sampai kecokelatan.','Tuang sisa saus, masak sampai mengilap dan ayam matang.','Iris dan sajikan dengan nasi serta wijen.'],
+      11:['Bumbui salmon lalu panggang atau torch sampai permukaan matang.','Campur mayones, tobiko, dan sedikit perasan jeruk.','Susun salmon di atas nasi Jepang dan nori.','Semprotkan saus mentai lalu torch sebentar sampai keemasan.'],
+      12:['Campur udang, rebung, daun bawang, dan minyak wijen.','Buat adonan kulit, tipiskan, lalu isi secukupnya.','Lipat membentuk har gow dan rapatkan tepinya.','Kukus 7–9 menit sampai kulit transparan dan matang.']
+    };
+    const nutrition = {
+      1:['420 kkal','31 g protein','18 g lemak','34 g karbo'], 2:['385 kkal','29 g protein','20 g lemak','21 g karbo'],
+      3:['330 kkal','25 g protein','17 g lemak','19 g karbo'], 4:['510 kkal','22 g protein','35 g lemak','24 g karbo'],
+      5:['280 kkal','34 g protein','12 g lemak','9 g karbo'], 6:['475 kkal','23 g protein','18 g lemak','52 g karbo'],
+      7:['390 kkal','19 g protein','21 g lemak','32 g karbo'], 8:['245 kkal','4 g protein','6 g lemak','46 g karbo'],
+      9:['290 kkal','4 g protein','11 g lemak','45 g karbo'], 10:['440 kkal','32 g protein','14 g lemak','42 g karbo'],
+      11:['520 kkal','28 g protein','24 g lemak','45 g karbo'], 12:['260 kkal','18 g protein','8 g lemak','27 g karbo']
+    };
+    function normalizeNutrition(recipe) {
+      if (recipe.no <= 700) return;
+      const text = recipe.steps || '';
+      const marker = text.search(/Estimasi Kandungan Nutrisi\s*\(/i);
+      if (marker < 0) return;
+      const nutritionText = text.slice(marker);
+      const fields = [
+        ['Energi', /Energi:\s*([^|]+)/i],
+        ['Karbohidrat', /Karbohidrat:\s*([^|]+)/i],
+        ['Protein', /Protein:\s*([^|]+)/i],
+        ['Lemak', /Lemak:\s*([^|]+)/i],
+        ['Kalsium', /Kalsium:\s*([^|]+)/i],
+        ['Zat Besi', /Zat Besi:\s*([^|]+)/i],
+        ['DHA & Omega-3', /DHA\s*&\s*Omega-3:\s*([^|]+)/i]
+      ];
+      recipe.nutrition = fields.map(([label, pattern]) => {
+        const match = nutritionText.match(pattern);
+        return match ? `${match[1].trim()} ${label}` : `- ${label}`;
+      });
+      recipe.steps = text.slice(0, marker).trim();
+    }
+    recipes.forEach(r => { if (!r.steps) r.steps = recipeMethods[r.no] || ''; normalizeNutrition(r); });
+    function recipeKey(recipe) {
+      return String(recipe.title || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
+    }
+    function uniqueRecipes(recipeList) {
+      const seen = new Set();
+      return recipeList.filter(recipe => { const key = recipeKey(recipe); if (seen.has(key)) return false; seen.add(key); return true; });
+    }
+    const coreRecipes = uniqueRecipes(recipes);
+    const businessRecipes = uniqueRecipes(businessMenuSets);
+    const uniqueCollectionTotal = coreRecipes.length + businessRecipes.length;
+    const coreChapters = chapters.slice(0, 11);
+    const businessChapters = chapters.slice(11);
+    const nav = document.getElementById('chapterNav'), businessPanel = document.getElementById('businessNav'), filters = document.getElementById('filters'), list = document.getElementById('recipeList');
+    let collectionMode = 'core', activeChapter = 0, query = '';
+
+    function currentChapters() { return collectionMode === 'business' ? businessChapters : coreChapters; }
+    function currentRecipes() { return collectionMode === 'business' ? businessRecipes : coreRecipes; }
+    function chapterLabel(chapter) {
+      const chapterEntry = chapters.find(([no]) => Number(no) === Number(chapter));
+      return chapterEntry ? chapterEntry[1] : `Bab ${chapter}`;
+    }
+    function updateCollectionCopy() {
+      const business = collectionMode === 'business';
+      const setText = (id, value) => { const element = document.getElementById(id); if (element) element.textContent = value; };
+      const totalLabel = uniqueCollectionTotal.toLocaleString('id-ID');
+      document.title = `Mahakarya ${totalLabel} Cita Rasa Dunia`;
+      setText('brandTotal', totalLabel);
+      setText('collectionTotalHeading', totalLabel);
+      document.body.classList.toggle('business-mode', business);
+      document.querySelectorAll('[data-mode]').forEach(button => button.classList.toggle('active', button.dataset.mode === collectionMode));
+      document.getElementById('businessNav').classList.toggle('visible', business);
+      setText('navigationLabel', business ? 'Navigasi Fullset Business F&B' : 'Navigasi Mahakarya');
+      setText('sideNoteTitle', business ? 'Fullset Menu Business F&B' : '2500+ Mahakarya');
+      setText('sideNoteText', business ? 'Empat koleksi siap pakai untuk restoran, cafe, coffee shop, dan pastry shop.' : 'Koleksi inti untuk eksplorasi kuliner lintas budaya.');
+      setText('crumbText', business ? 'FULLSET MENU BUSINESS F&B · 1.000 MENU' : '2500+ MAHAKARYA');
+      setText('heroDescription', business ? 'Koleksi menu khusus untuk kebutuhan operasional restoran, fine dining, Chinese restaurant, coffee shop, dan pastry & bakery shop.' : 'Menjelajah resep otentik dari Nusantara hingga kuliner Tiongkok dalam pengalaman membaca yang terstruktur, tenang, dan mudah dipindai.');
+      setText('heroTotal', business ? '1.000' : '1.962');
+      setText('heroTotalLabel', business ? 'menu unik bisnis' : 'judul unik');
+      setText('heroChapterCount', business ? '4' : '11');
+      setText('heroChapterLabel', business ? 'kategori bisnis' : 'bab pilihan');
+      setText('totalCollection', business ? '1.000' : '1.962');
+      setText('totalCollectionNote', business ? 'khusus operasional F&B' : 'dari 2500+ Mahakarya');
+      setText('chapterCount', business ? '4' : '11');
+      setText('chapterCountNote', business ? 'kategori bisnis khusus' : 'lintas budaya dunia');
+      setText('chapterChartTitle', business ? 'Distribusi 1.000 menu bisnis' : 'Distribusi judul unik Mahakarya');
+      setText('recipeHeading', business ? 'Fullset Menu Business F&B menurut kategori' : 'Mahakarya unik menurut urutan');
+      setText('recipeSubheading', business ? 'Pilih tipe usaha atau cari menu berdasarkan nama, bahan, dan teknik.' : 'Pilih kategori atau gunakan pencarian untuk menemukan hidangan dengan cepat.');
+    }
+    function renderNavigation() {
+      const chaptersForMode = currentChapters();
+      const countForChapter = no => currentRecipes().filter(recipe => recipe.chapter === Number(no)).length;
+      nav.innerHTML = collectionMode === 'core' ? chaptersForMode.map(([no, name]) => { const count = countForChapter(no); return `<button class="nav-item${activeChapter === Number(no) ? ' active' : ''}" data-chapter="${no}"><span><span class="nav-num">${no.padStart(2,'0')}</span> ${name}</span><small>${count} unik</small></button>`; }).join('') : '';
+      businessPanel.innerHTML = collectionMode === 'business' ? `<div class="side-label">Kategori Fullset Menu</div><nav id="businessChapterNav">${chaptersForMode.map(([no, name]) => { const count = countForChapter(no); return `<button class="nav-item${activeChapter === Number(no) ? ' active' : ''}" data-chapter="${no}"><span><span class="nav-num">${no.padStart(2,'0')}</span> ${name}</span><small>${count} menu</small></button>`; }).join('')}</nav>` : '';
+      filters.innerHTML = `<button class="${activeChapter ? '' : 'selected'}" data-filter="0">Semua ${collectionMode === 'business' ? 'kategori' : 'Mahakarya'}</button>` + chaptersForMode.map(([no,name]) => `<button class="${activeChapter === Number(no) ? 'selected' : ''}" data-filter="${no}">${name}</button>`).join('');
+      document.getElementById('chapterChart').innerHTML = `<h3>${collectionMode === 'business' ? 'Distribusi 1.000 menu bisnis' : 'Distribusi judul unik Mahakarya'}</h3><div class="panel-sub">Proporsi koleksi berdasarkan klasifikasi utama.</div>`;
+      const chapterCounts = chaptersForMode.map(([no]) => countForChapter(no));
+      const maxCount = Math.max(...chapterCounts, 1);
+      chaptersForMode.forEach(([no,name], index) => { const total = chapterCounts[index]; document.getElementById('chapterChart').insertAdjacentHTML('beforeend', `<div class="chapter-row"><div class="chapter-no">${no.padStart(2,'0')}</div><div><b>${name}</b><small>${total} menu unik</small><div class="bar"><i style="width:${Math.max(12, total / maxCount * 100)}%"></i></div></div><div class="bar-label">${total} menu</div></div>`); });
+      document.querySelectorAll('[data-filter]').forEach(button => button.onclick = () => { activeChapter = Number(button.dataset.filter); document.querySelectorAll('[data-filter]').forEach(item => item.classList.toggle('selected', item === button)); render(); });
+      document.querySelectorAll('[data-chapter]').forEach(button => button.onclick = () => { activeChapter = Number(button.dataset.chapter); document.querySelectorAll('[data-filter]').forEach(item => item.classList.toggle('selected', Number(item.dataset.filter) === activeChapter)); renderNavigation(); document.getElementById('recipes').scrollIntoView(); render(); });
+    }
+    function setCollectionMode(mode) {
+      collectionMode = mode;
+      activeChapter = 0;
+      query = '';
+      document.getElementById('searchInput').value = '';
+      updateCollectionCopy();
+      renderNavigation();
+      render();
+    }
+    document.querySelectorAll('[data-mode]').forEach(button => button.onclick = () => setCollectionMode(button.dataset.mode));
+    function render() {
+      const filtered = currentRecipes().filter(r => (!activeChapter || r.chapter === activeChapter) && (!query || `${r.title} ${r.desc} ${r.cat} ${r.menuType || ''} ${r.ingredients || ''} ${r.spices || ''} ${r.sauce || ''} ${r.authenticFlavor || ''}`.toLowerCase().includes(query)));
+      list.innerHTML = filtered.length ? filtered.map(r => `<article class="recipe"><div class="recipe-top"><span>No. ${String(r.no).padStart(4,'0')}</span><span>${escapeHtml(collectionMode === 'business' ? r.cat : chapterLabel(r.chapter))}</span></div><h3>${formatRichText(r.title)}</h3><p>${formatRichText(r.desc)}</p><div class="recipe-foot"><span>◷ ${escapeHtml(r.time)} &nbsp; · &nbsp; ${escapeHtml(r.serve)}</span><button class="detail-btn" data-recipe="${r.no}">Buka resep →</button></div></article>`).join('') : '<div class="empty">Tidak ada resep yang cocok. Coba kata kunci lain.</div>';
+      document.getElementById('visibleCount').textContent = filtered.length; document.getElementById('resultLabel').textContent = `${filtered.length} hasil`;
+      document.querySelectorAll('[data-recipe]').forEach(b => b.addEventListener('click', () => openRecipe(Number(b.dataset.recipe))));
+    }
+    function splitEntries(value, kind) {
+      if (!value) return [];
+      if (Array.isArray(value)) return value.filter(Boolean);
+      const text = value.replace(/\s+/g, ' ').trim();
+      const pattern = kind === 'steps'
+        ? /(?=\d+\.\s+)/g
+        : /(?=(?<![\d.,/])\d+(?:[.,]\d+)?\s*(?:kg|gram|g|ml|liter|butir|siung|buah|lembar|batang|ruas|sdt|sdm|cm|ekor|porsi)\b|(?:Bahan|Bumbu)\b[^:]{0,45}:\s|Tusuk\s+sate\b)/gi;
+      const entries = kind === 'steps'
+        ? text.split(pattern).map(item => item.replace(/^\s*\d+\.\s+/, '').trim())
+        : text.split(pattern).map(item => item.trim());
+      if (kind === 'steps' && entries.length === 1) {
+        return text.split(/(?<=[.!?])\s+(?=[A-ZÀ-Ý])/).map(item => item.trim()).filter(item => item.length > 1);
+      }
+      if (kind === 'ingredients') {
+        return entries.filter(item => item.length > 1).reduce((result, item) => {
+          if (result.length && /\bdan$/.test(result[result.length - 1])) result[result.length - 1] += ` ${item}`;
+          else result.push(item);
+          return result;
+        }, []);
+      }
+      return entries.filter(item => item.length > 1);
+    }
+    function openRecipe(no) {
+      const r = currentRecipes().find(x => x.no === no);
+      const ingredients = splitEntries(r.mainIngredients || r.ingredients, 'ingredients');
+      const spices = splitEntries(r.spices, 'ingredients');
+      const sauce = splitEntries(r.sauce, 'ingredients');
+      const steps = splitEntries(r.steps, 'steps');
+      const values = r.nutrition || [];
+      const nutritionLabels = ['DHA & Omega-3', 'Karbohidrat', 'Protein', 'Kalsium', 'Zat Besi', 'Lemak', 'Energi'];
+
+      document.getElementById('modalChapter').textContent = collectionMode === 'business' ? `Fullset Menu Business F&B · ${r.cat} · Menu ${String(r.no).padStart(4, '0')}` : `Mahakarya · Bab ${r.chapter} · ${r.cat} · Menu ${String(r.no).padStart(4, '0')}`;
+      document.getElementById('modalTitle').textContent = r.title;
+      document.getElementById('modalDesc').innerHTML = formatRichText(r.desc);
+      document.getElementById('modalMeta').innerHTML = `<span>◷ <b>${r.time}</b></span><span>♧ <b>${r.serve}</b></span>`;
+      document.getElementById('modalIngredients').innerHTML = ingredients.map(i => `<li>${formatRichText(i)}</li>`).join('') || '<li>Data bahan utama belum tersedia.</li>';
+      document.getElementById('modalSpices').innerHTML = spices.map(i => `<li>${formatRichText(i)}</li>`).join('') || '<li>Bumbu halus tercampur pada bahan atau belum tersedia.</li>';
+      document.getElementById('modalSteps').innerHTML = steps.map(s => `<li>${formatRichText(s)}</li>`).join('') || '<li>Data langkah memasak belum tersedia.</li>';
+      document.getElementById('modalNutrition').innerHTML = values.map(n => {
+        const label = nutritionLabels.find(item => n.endsWith(` ${item}`)) || '';
+        const amount = label ? n.slice(0, -label.length - 1).trim() : n;
+        return `<div class="nutrition-item"><b>${amount}</b><span>${label}</span></div>`;
+      }).join('');
+
+      const sauceSection = document.getElementById('modalSauceSection');
+      sauceSection.hidden = !sauce.length;
+      document.getElementById('modalSauce').innerHTML = sauce.map(item => `<li>${item}</li>`).join('');
+
+      const flavorSection = document.getElementById('modalFlavorSection');
+      flavorSection.hidden = !r.authenticFlavor;
+      document.getElementById('modalFlavor').innerHTML = formatRichText(r.authenticFlavor || '');
+
+      const presentationSection = document.getElementById('modalPresentationSection');
+      presentationSection.hidden = !r.presentation && !r.garnish;
+      document.getElementById('modalPresentation').innerHTML = r.presentation ? formatRichText(`Penyajian: ${r.presentation}`) : '';
+      document.getElementById('modalGarnish').innerHTML = r.garnish ? formatRichText(`Garnish: ${r.garnish}`) : '';
+
+      document.getElementById('modalNote').innerHTML = formatRichText(r.note || 'Sesuaikan teknik dan bumbu dengan karakter bahan yang digunakan.');
+      document.getElementById('modalBackdrop').classList.add('open');
+    }
+    document.getElementById('closeModal').onclick=()=>document.getElementById('modalBackdrop').classList.remove('open');
+    document.getElementById('modalBackdrop').onclick=e=>{if(e.target.id==='modalBackdrop')e.currentTarget.classList.remove('open')};
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modalBackdrop').classList.remove('open')});
+    document.querySelectorAll('[data-scroll]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.scroll).scrollIntoView());
+    document.getElementById('searchInput').oninput=e=>{query=e.target.value.toLowerCase().trim(); render();};
+    document.getElementById('fontUp').onclick=()=>document.body.style.fontSize='16px';
+    document.getElementById('fontDown').onclick=()=>document.body.style.fontSize='14px';
+    updateCollectionCopy();
+    renderNavigation();
+    render();
+  </script>
+</body>
+</html>
