@@ -1198,14 +1198,12 @@
 
       function openMenu() {
         buildMenu();
-        dropdown.style.display = 'flex';
         dropdown.classList.add('open');
         pillBtn.classList.add('open');
         pillBtn.setAttribute('aria-expanded', 'true');
       }
 
       function closeMenu() {
-        dropdown.style.display = 'none';
         dropdown.classList.remove('open');
         pillBtn.classList.remove('open');
         pillBtn.setAttribute('aria-expanded', 'false');
@@ -1213,7 +1211,7 @@
 
       pillBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isOpen = dropdown.style.display === 'flex' || dropdown.classList.contains('open');
+        const isOpen = dropdown.classList.contains('open');
         isOpen ? closeMenu() : openMenu();
       });
 
