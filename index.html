@@ -58,6 +58,25 @@
     .collection-dock #chapterNav, .collection-dock .business-nav { width: 100%; min-width: 0; max-width: 100%; background: rgba(240,183,95,.08); border-color: rgba(240,183,95,.42); }
     .collection-dock #chapterNav, .collection-dock .business-nav { overflow: hidden; }
     .crumb { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+    
+    /* ── GOOGLE TRANSLATE CUSTOM STYLE ── */
+    .goog-te-banner-frame.skiptranslate { display: none !important; }
+    body { top: 0px !important; }
+    #google_translate_element select {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px 10px;
+      width: 100%;
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+    }
+    #google_translate_element select option { color: #000; }
+    .goog-logo-link { display: none !important; }
+    .goog-te-gadget { color: transparent !important; font-size: 0px; }
+
     .crumb strong { color: var(--ink); }
     .actions { display: flex; align-items: center; gap: 10px; }
     .search { width: min(290px, 30vw); display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 8px 11px; color: var(--muted); }
@@ -574,6 +593,10 @@
       <div class="side-label">Referensi</div>
       <button class="nav-item" data-scroll="foreword"><span><span class="nav-num">✦</span> Kata Pengantar</span></button>
       <button class="nav-item" data-scroll="glossary"><span><span class="nav-num">Aa</span> Glosarium & Indeks</span></button>
+      
+      <div class="side-label" style="margin-top: 25px;">🌐 Bahasa / Language</div>
+      <div id="google_translate_element" style="padding: 0 11px; margin-bottom: 20px; overflow: hidden; max-width: 100%;"></div>
+
       <div class="side-note"><strong id="sideNoteTitle">2.962 Menu Dunia</strong><span id="sideNoteText">Koleksi inti untuk eksplorasi kuliner lintas budaya.</span></div>
     </aside>
     <main class="main">
@@ -1226,5 +1249,18 @@
     // ── END MEGA MENU ─────────────────────────────────────────────────────────
 
   </script>
+
+  <!-- Google Translate Script -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'id',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
