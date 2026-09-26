@@ -725,6 +725,60 @@
         padding: 6px 10px !important;
         font-size: 11px !important;
       }
+      
+      /* MOCKUP BUKU MENU & RECIPE PICKER MOBILE OPTIMIZATION */
+      #menuBookModal {
+        padding: 12px !important;
+      }
+      #menuBookModal > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 8px !important;
+      }
+      #menuBookModal h1 {
+        font-size: 20px !important;
+      }
+      #menuBookModal div[contenteditable] {
+        font-size: 10px !important;
+        letter-spacing: 0.1em !important;
+      }
+      #menuBookContent {
+        grid-template-columns: 1fr !important;
+        gap: 18px !important;
+        padding: 16px 14px !important;
+      }
+      #menuBookContent h2 {
+        font-size: 13px !important;
+        margin-bottom: 10px !important;
+        padding-bottom: 4px !important;
+      }
+      #menuBookContent .menu-item-row {
+        margin-bottom: 10px !important;
+      }
+      #menuBookContent .menu-item-row h3 {
+        font-size: 11.5px !important;
+      }
+      #menuBookContent .menu-item-row span {
+        font-size: 10.5px !important;
+      }
+      #menuBookContent .menu-item-row p {
+        font-size: 9.5px !important;
+        line-height: 1.35 !important;
+      }
+      #recipePickerModal {
+        padding: 10px !important;
+      }
+      #recipePickerModal > div {
+        max-height: 90vh !important;
+        border-radius: 12px !important;
+      }
+      #recipePickerModal h3 {
+        font-size: 14px !important;
+      }
+      #recipePickerModal input, #recipePickerModal select {
+        font-size: 11px !important;
+        padding: 7px 9px !important;
+      }
     }
     /* ── FLOATING CHEF ASSISTANT & ADVANCED FEATURES CSS ── */
     .floating-assistant-btn {
@@ -1859,18 +1913,18 @@
       </div>
       
       <!-- Menu Book Cover / Header -->
-      <div style="text-align: center; padding: 35px 60px 20px; border-bottom: 2px solid #e9c987;">
-        <h1 contenteditable="true" style="font-family: 'Playfair Display', serif; color: #112d3b; font-size: 42px; margin: 0; letter-spacing: 0.05em; text-transform: uppercase; outline: none;">The Mahakarya</h1>
-        <div contenteditable="true" style="font-family: 'Inter', sans-serif; color: #666; font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 8px; outline: none;">Encyclopedia of Culinary Arts · Katalog Restoran & Kafe</div>
-        <div style="margin: 15px auto 0; width: 60px; border-top: 1px solid #c9a96e;"></div>
+      <div style="text-align: center; padding: 24px 30px 16px; border-bottom: 2px solid #e9c987;">
+        <h1 contenteditable="true" style="font-family: 'Playfair Display', serif; color: #112d3b; font-size: 26px; margin: 0; letter-spacing: 0.05em; text-transform: uppercase; outline: none;">The Mahakarya</h1>
+        <div contenteditable="true" style="font-family: 'Inter', sans-serif; color: #666; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; outline: none;">Encyclopedia of Culinary Arts · Katalog Restoran & Kafe</div>
+        <div style="margin: 10px auto 0; width: 45px; border-top: 1px solid #c9a96e;"></div>
       </div>
       
       <!-- Menu Book Content (Categorized Grid) -->
-      <div id="menuBookContent" style="padding: 35px 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 45px; font-family: 'Playfair Display', serif; color: #222;">
+      <div id="menuBookContent" style="padding: 24px 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; font-family: 'Playfair Display', serif; color: #222;">
         <!-- Dynamic categorized content will be injected here -->
       </div>
 
-      <div style="text-align: center; padding: 15px; font-family: 'Inter', sans-serif; font-size: 11px; color: #888; border-top: 1px solid #eee;">
+      <div style="text-align: center; padding: 12px; font-family: 'Inter', sans-serif; font-size: 10.5px; color: #888; border-top: 1px solid #eee;">
         💡 <b>Tips:</b> Klik nama menu atau nominal harga untuk mengedit teks secara langsung. Klik ikon 🗑️ untuk menghapus menu dari katalog.
       </div>
       
@@ -1879,27 +1933,27 @@
 
   <!-- ADD RECIPE PICKER MODAL -->
   <div id="recipePickerModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100005; backdrop-filter: blur(5px); padding: 20px;">
-    <div style="max-width: 780px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; max-height: 85vh;">
-      <div style="background: #112d3b; color: #fff; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;">
+    <div style="max-width: 780px; margin: 20px auto; background: #fff; border-radius: 14px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; max-height: 85vh;">
+      <div style="background: #112d3b; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 20px;">📖</span>
+          <span style="font-size: 18px;">📖</span>
           <div>
-            <h3 style="margin:0; font-size: 17px; color: #f0b75f;">Pilih Resep dari Database Mahakarya</h3>
-            <span style="font-size: 11px; color: #a0b0b8;">Filter berdasarkan 11 Bab Cita Rasa Dunia &amp; Fullset Business F&amp;B</span>
+            <h3 style="margin:0; font-size: 15px; color: #f0b75f;">Pilih Resep dari Database Mahakarya</h3>
+            <span style="font-size: 10.5px; color: #a0b0b8;">Filter berdasarkan 11 Bab Cita Rasa Dunia &amp; Fullset Business F&amp;B</span>
           </div>
         </div>
-        <button onclick="document.getElementById('recipePickerModal').style.display='none'" style="background: transparent; border: none; color: #fff; font-size: 24px; cursor: pointer;">×</button>
+        <button onclick="document.getElementById('recipePickerModal').style.display='none'" style="background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer;">×</button>
       </div>
-      <div style="padding: 20px 24px; overflow-y: auto; flex: 1;">
+      <div style="padding: 16px 20px; overflow-y: auto; flex: 1;">
         <!-- Search & Filter Controls -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
           <div>
-            <label style="font-size: 11px; font-weight: 700; color: #555; display: block; margin-bottom: 4px;">🔍 Cari Nama Resep:</label>
-            <input type="text" id="recipePickerSearch" placeholder="Cari resep (misal: Sate, Steak, V60, Latte)..." style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #ccc; font-size: 13px; outline: none;" oninput="renderRecipePickerList()">
+            <label style="font-size: 10.5px; font-weight: 700; color: #555; display: block; margin-bottom: 3px;">🔍 Cari Nama Resep:</label>
+            <input type="text" id="recipePickerSearch" placeholder="Cari resep (misal: Sate, Steak, V60, Latte)..." style="width: 100%; padding: 8px 11px; border-radius: 7px; border: 1px solid #ccc; font-size: 11.5px; outline: none;" oninput="renderRecipePickerList()">
           </div>
           <div>
-            <label style="font-size: 11px; font-weight: 700; color: #555; display: block; margin-bottom: 4px;">📚 Filter Bab Database:</label>
-            <select id="recipePickerSourceChapterSelect" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 13px; font-weight: 700; color: #112d3b;" onchange="renderRecipePickerList()">
+            <label style="font-size: 10.5px; font-weight: 700; color: #555; display: block; margin-bottom: 3px;">📚 Filter Bab Database:</label>
+            <select id="recipePickerSourceChapterSelect" style="width: 100%; padding: 8px 10px; border-radius: 7px; border: 1px solid #ccc; font-size: 11.5px; font-weight: 700; color: #112d3b;" onchange="renderRecipePickerList()">
               <option value="all">🌐 Semua 2.962 Resep Mahakarya</option>
               <option value="ch1">🇮🇩 Bab 01 - Eksotika Nusantara (700 Resep)</option>
               <option value="ch2">👶 Bab 02 - MPASI Nusantara Sehat &amp; Bergizi (200 Resep)</option>
@@ -1921,10 +1975,10 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
           <div>
-            <label style="font-size: 11px; font-weight: 700; color: #555; display: block; margin-bottom: 4px;">🏷️ Filter Tipe Resep / Kategori:</label>
-            <select id="recipePickerTypeFilterSelect" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 13px; font-weight: 700; color: #112d3b;" onchange="renderRecipePickerList()">
+            <label style="font-size: 10.5px; font-weight: 700; color: #555; display: block; margin-bottom: 3px;">🏷️ Filter Tipe Resep / Kategori:</label>
+            <select id="recipePickerTypeFilterSelect" style="width: 100%; padding: 8px 10px; border-radius: 7px; border: 1px solid #ccc; font-size: 11.5px; font-weight: 700; color: #112d3b;" onchange="renderRecipePickerList()">
               <option value="all">🌐 Semua Tipe Resep</option>
               <option value="coffee">☕ Coffee &amp; Barista (Kopi, Espresso, V60, Latte, Cappuccino)</option>
               <option value="beverage">🍹 Craft Mocktail, Tea &amp; Beverage (Teh, Juice, Smoothies)</option>
@@ -1935,8 +1989,8 @@
             </select>
           </div>
           <div>
-            <label style="font-size: 11px; font-weight: 700; color: #555; display: block; margin-bottom: 4px;">🎯 Masukkan ke Part Kategori Buku Menu:</label>
-            <select id="recipePickerCategorySelect" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f0b75f; background: #fffdf9; font-size: 13px; font-weight: 700; color: #112d3b;" onchange="renderRecipePickerList()">
+            <label style="font-size: 10.5px; font-weight: 700; color: #555; display: block; margin-bottom: 3px;">🎯 Masukkan ke Part Kategori Buku Menu:</label>
+            <select id="recipePickerCategorySelect" style="width: 100%; padding: 8px 10px; border-radius: 7px; border: 1px solid #f0b75f; background: #fffdf9; font-size: 11.5px; font-weight: 700; color: #112d3b;" onchange="renderRecipePickerList()">
               <option value="Appetizer & Starter">Appetizer &amp; Starter (Cemilan &amp; Pembuka)</option>
               <option value="Soup & Salad">Soup &amp; Salad (Sup &amp; Salad)</option>
               <option value="Main Course" selected>Main Course (Hidangan Utama)</option>
@@ -2128,26 +2182,26 @@
       categories.forEach((catName, index) => {
         const items = menuBookData[catName] || [];
         let sectionHtml = `
-          <div style="margin-bottom: 30px;">
-            <h2 contenteditable="true" style="font-size: 18px; color: #c9a96e; text-transform: uppercase; letter-spacing: 0.12em; border-bottom: 1.5px dashed #e9c987; padding-bottom: 6px; margin-bottom: 16px; outline: none;">
+          <div style="margin-bottom: 22px;">
+            <h2 contenteditable="true" style="font-size: 14px; color: #c9a96e; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1.5px dashed #e9c987; padding-bottom: 5px; margin-bottom: 12px; outline: none;">
               ${catName}
             </h2>
         `;
 
         if (items.length === 0) {
-          sectionHtml += `<div style="font-size:12px; color:#aaa; font-style:italic; margin-bottom:15px;">Belum ada menu di kategori ini.</div>`;
+          sectionHtml += `<div style="font-size:11px; color:#aaa; font-style:italic; margin-bottom:12px;">Belum ada menu di kategori ini.</div>`;
         } else {
           items.forEach((item, i) => {
             const priceFormatted = new Intl.NumberFormat('id-ID').format(item.price);
             sectionHtml += `
-              <div style="margin-bottom: 18px; position: relative;" class="menu-item-row">
+              <div style="margin-bottom: 12px; position: relative;" class="menu-item-row">
                 <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                  <h3 contenteditable="true" style="margin: 0; font-size: 15px; font-weight: 700; color: #112d3b; outline: none; flex:1;">${item.title}</h3>
+                  <h3 contenteditable="true" style="margin: 0; font-size: 12px; font-weight: 700; color: #112d3b; outline: none; flex:1;">${item.title}</h3>
                   <div style="flex-grow: 1; border-bottom: 1px dotted #ccc; margin: 0 8px;"></div>
-                  <span contenteditable="true" style="font-family: 'Inter', sans-serif; font-size: 13px; color: #c9a96e; font-weight: 700; outline: none;">Rp ${priceFormatted}</span>
-                  <button class="delete-menu-item-btn" onclick="deleteMenuBookItem('${catName.replace(/'/g, "\\'")}', ${i})" style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 14px; margin-left: 6px; padding: 0;" title="Hapus menu ini">🗑️</button>
+                  <span contenteditable="true" style="font-family: 'Inter', sans-serif; font-size: 11px; color: #c9a96e; font-weight: 700; outline: none;">Rp ${priceFormatted}</span>
+                  <button class="delete-menu-item-btn" onclick="deleteMenuBookItem('${catName.replace(/'/g, "\\'")}', ${i})" style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 13px; margin-left: 6px; padding: 0;" title="Hapus menu ini">🗑️</button>
                 </div>
-                <p contenteditable="true" style="margin: 4px 0 0; font-family: 'Inter', sans-serif; font-size: 11px; color: #666; line-height: 1.4; font-style: italic; outline: none;">
+                <p contenteditable="true" style="margin: 3px 0 0; font-family: 'Inter', sans-serif; font-size: 10px; color: #666; line-height: 1.35; font-style: italic; outline: none;">
                   ${item.desc}
                 </p>
               </div>
@@ -2247,21 +2301,21 @@
       currentPickerDisplayedRecipes = filtered.slice(0, 50);
       
       if (currentPickerDisplayedRecipes.length === 0) {
-        listDiv.innerHTML = '<div style="text-align:center; color:#888; padding:30px;">Tidak ada resep yang cocok dengan kriteria filter/pencarian ini.</div>';
+        listDiv.innerHTML = '<div style="text-align:center; color:#888; padding:20px; font-size:11.5px;">Tidak ada resep yang cocok dengan kriteria filter/pencarian ini.</div>';
         return;
       }
       
-      let html = `<div style="font-size:12px; font-weight:700; color:#666; margin-bottom:10px;">Menampilkan ${currentPickerDisplayedRecipes.length} dari ${totalMatches.toLocaleString('id-ID')} resep yang ditemukan:</div>`;
-      html += `<div style="display:flex; flex-direction:column; gap:8px;">`;
+      let html = `<div style="font-size:11px; font-weight:700; color:#666; margin-bottom:8px;">Menampilkan ${currentPickerDisplayedRecipes.length} dari ${totalMatches.toLocaleString('id-ID')} resep yang ditemukan:</div>`;
+      html += `<div style="display:flex; flex-direction:column; gap:6px;">`;
       currentPickerDisplayedRecipes.forEach((r, idx) => {
         const chapterName = typeof chapterLabel === 'function' ? chapterLabel(r.chapter) : ('Bab ' + r.chapter);
         html += `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:#f9fbfb; border:1px solid #e0e8e8; padding:10px 14px; border-radius:8px; gap:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#f9fbfb; border:1px solid #e0e8e8; padding:8px 12px; border-radius:7px; gap:10px;">
             <div style="flex:1;">
-              <h4 style="margin:0; font-size:14px; color:#112d3b; font-weight:700;">${escapeHtml(r.title)}</h4>
-              <span style="font-size:11px; color:#888;">Bab ${r.chapter || '1'} (${escapeHtml(chapterName)}) · ${escapeHtml(r.cat || 'Menu')}</span>
+              <h4 style="margin:0; font-size:12.5px; color:#112d3b; font-weight:700;">${escapeHtml(r.title)}</h4>
+              <span style="font-size:10px; color:#888;">Bab ${r.chapter || '1'} (${escapeHtml(chapterName)}) · ${escapeHtml(r.cat || 'Menu')}</span>
             </div>
-            <button onclick="selectRecipeForMenuBookAtIndex(${idx})" style="background:#f0b75f; color:#112d3b; border:none; padding:8px 14px; border-radius:6px; font-weight:800; font-size:11px; cursor:pointer; white-space:nowrap;">➕ Tambah ke ${escapeHtml(targetCat.split(' ')[0])}</button>
+            <button onclick="selectRecipeForMenuBookAtIndex(${idx})" style="background:#f0b75f; color:#112d3b; border:none; padding:6px 11px; border-radius:5px; font-weight:800; font-size:10px; cursor:pointer; white-space:nowrap;">➕ Tambah ke ${escapeHtml(targetCat.split(' ')[0])}</button>
           </div>
         `;
       });
