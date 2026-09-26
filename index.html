@@ -2357,44 +2357,74 @@
         triggerBtn.disabled = true;
       }
 
-      function restoreBtn() {
+      // Hide non-printable elements in the live DOM during PDF capture
+      const nonPrintElements = [];
+      const selectorsToHide = [
+        'div[style*="sticky"]',
+        'div[style*="position: sticky"]',
+        '.delete-menu-item-btn',
+        'div[style*="Tips:"]'
+      ];
+
+      selectorsToHide.forEach(sel => {
+        modalBox.querySelectorAll(sel).forEach(el => {
+          nonPrintElements.push({ el: el, display: el.style.display });
+          el.style.display = 'none';
+        });
+      });
+
+      const origShadow = modalBox.style.boxShadow;
+      modalBox.style.boxShadow = 'none';
+
+      function restoreUI() {
         if (triggerBtn) {
           triggerBtn.innerHTML = originalText;
           triggerBtn.disabled = false;
         }
+        nonPrintElements.forEach(item => {
+          if (item.el) item.el.style.display = item.display;
+        });
+        modalBox.style.boxShadow = origShadow;
       }
 
       if (typeof html2pdf !== 'undefined') {
-        // Clone element so UI is completely untouched
-        const element = modalBox.cloneNode(true);
-        const toolbar = element.querySelector('div[style*="sticky"]');
-        if (toolbar) toolbar.remove();
-        element.querySelectorAll('.delete-menu-item-btn').forEach(b => b.remove());
-        
-        // Clean up styles for PDF export
-        element.style.background = '#fff';
-        element.style.boxShadow = 'none';
-        element.style.margin = '0 auto';
-        element.style.width = '100%';
-        element.style.maxWidth = '800px';
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         const opt = {
-          margin:       [10, 10, 10, 10],
+          margin:       [8, 8, 8, 8],
           filename:     'Buku-Menu-Mahakarya.pdf',
           image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, useCORS: true, logging: false },
-          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          html2canvas:  { scale: isMobile ? 1.5 : 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 800 },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
-        html2pdf().set(opt).from(element).save().then(() => {
-          restoreBtn();
+        const worker = html2pdf().set(opt).from(modalBox);
+
+        worker.save().then(() => {
+          restoreUI();
         }).catch(err => {
-          console.error('html2pdf download error:', err);
-          restoreBtn();
-          fallbackPrintWindow();
+          console.warn('html2pdf save failed, attempting Blob download:', err);
+          worker.output('blob').then(blob => {
+            restoreUI();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Buku-Menu-Mahakarya.pdf';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }, 1000);
+          }).catch(e => {
+            console.error('PDF blob failed:', e);
+            restoreUI();
+            fallbackPrintWindow();
+          });
         });
       } else {
-        restoreBtn();
+        restoreUI();
         fallbackPrintWindow();
       }
     }
