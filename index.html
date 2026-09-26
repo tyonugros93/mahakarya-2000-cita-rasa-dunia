@@ -387,7 +387,6 @@
         font-size: 10.5px !important;
       }
       .mega-dropdown {
-        display: none !important;
         position: fixed !important;
         top: 135px !important;
         left: 16px !important;
@@ -399,9 +398,6 @@
         gap: 16px !important;
         padding: 18px !important;
         z-index: 99999 !important;
-      }
-      .mega-dropdown.open {
-        display: flex !important;
       }
       .mega-divider {
         width: 100% !important;
@@ -1198,12 +1194,14 @@
 
       function openMenu() {
         buildMenu();
+        dropdown.style.display = 'flex';
         dropdown.classList.add('open');
         pillBtn.classList.add('open');
         pillBtn.setAttribute('aria-expanded', 'true');
       }
 
       function closeMenu() {
+        dropdown.style.display = 'none';
         dropdown.classList.remove('open');
         pillBtn.classList.remove('open');
         pillBtn.setAttribute('aria-expanded', 'false');
@@ -1211,7 +1209,7 @@
 
       pillBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isOpen = dropdown.classList.contains('open');
+        const isOpen = dropdown.style.display === 'flex' || dropdown.classList.contains('open');
         isOpen ? closeMenu() : openMenu();
       });
 
