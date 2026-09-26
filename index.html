@@ -69,13 +69,13 @@
       width: 0 !important;
     }
     body { top: 0 !important; margin-top: 0 !important; position: static !important; }
-    .custom-lang-selector { position: relative; width: 100%; margin-bottom: 25px; font-family: inherit; z-index: 99; }
-    .lang-selector-btn { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.06); border: 1px solid rgba(240,183,95,0.3); padding: 10px 14px; border-radius: 9px; cursor: pointer; color: #fff; font-size: 12px; transition: 0.2s ease; }
+    .custom-lang-selector { position: relative; width: 100%; font-family: inherit; z-index: 99; }
+    .lang-selector-btn { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.06); border: 1px solid rgba(240,183,95,0.3); padding: 8px 12px; border-radius: 9px; cursor: pointer; color: #fff; font-size: 12px; transition: 0.2s ease; }
     .lang-selector-btn:hover { background: rgba(255,255,255,0.1); border-color: #f0b75f; }
     .lang-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; flex: 1; margin-right: 10px; }
     .lang-arrow { display: flex; align-items: center; color: #f0b75f; transition: 0.2s; }
     .custom-lang-selector.open .lang-arrow { transform: rotate(180deg); }
-    .lang-dropdown { position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background: #0f1c24; border: 1px solid rgba(240,183,95,0.4); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; max-height: 280px; z-index: 99999; overflow: hidden; }
+    .lang-dropdown { position: absolute; top: calc(100% + 6px); left: 0; width: 100%; min-width: 180px; background: #0f1c24; border: 1px solid rgba(240,183,95,0.4); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; max-height: 280px; z-index: 99999; overflow: hidden; }
     .custom-lang-selector.open .lang-dropdown { display: flex; }
     .lang-search-box { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.2); }
     .lang-search-box input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 8px 10px; color: #fff; font-size: 12px; outline: none; }
@@ -86,6 +86,12 @@
     .lang-item { padding: 8px 10px; color: #b9cbd0; font-size: 12px; cursor: pointer; border-radius: 6px; transition: 0.15s; margin-bottom: 2px; }
     .lang-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
     .lang-item.selected { background: #f0b75f; color: #112d3b; font-weight: 700; }
+
+    /* Topbar Light Theme Override */
+    .topbar-lang { width: 220px; }
+    .topbar-lang .lang-selector-btn { background: #fff; border-color: var(--line); color: var(--navy); }
+    .topbar-lang .lang-selector-btn:hover { border-color: #f0b75f; background: #fffaf0; }
+    .topbar-center { display: flex; align-items: center; gap: 15px; }
 
 
     .crumb strong { color: var(--ink); }
@@ -242,7 +248,7 @@
     .mega-item-count { font-size: 10px; color: var(--muted); margin-top: 1px; }
 
   
-    .topbar-center { flex: 1; display: flex; justify-content: center; align-items: center; pointer-events: none; }
+    .topbar-center { flex: 1; display: flex; justify-content: center; align-items: center; }
     .topbar-tagline { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .02em; white-space: nowrap; }
     .topbar-tagline strong { color: var(--navy); font-weight: 800; }
 
@@ -371,7 +377,14 @@
         font-size: 11px !important;
       }
       .topbar-center {
+        display: flex !important;
+        width: 100% !important;
+      }
+      .topbar-tagline {
         display: none !important;
+      }
+      .topbar-lang {
+        width: 100% !important;
       }
       .actions {
         display: flex !important;
@@ -605,26 +618,6 @@
       <button class="nav-item" data-scroll="foreword"><span><span class="nav-num">✦</span> Kata Pengantar</span></button>
       <button class="nav-item" data-scroll="glossary"><span><span class="nav-num">Aa</span> Glosarium & Indeks</span></button>
       
-      <div class="side-label" style="margin-top: 25px;">🌐 Bahasa / Language</div>
-      <div id="google_translate_element" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;"></div>
-      
-      <div class="custom-lang-selector" id="customLangSelector">
-        <div class="lang-selector-btn" id="langSelectorBtn">
-          <span class="lang-text" id="langSelectorText">Memuat bahasa...</span>
-          <span class="lang-arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </span>
-        </div>
-        <div class="lang-dropdown" id="langDropdown">
-          <div class="lang-search-box">
-            <input type="text" id="langSearchInput" placeholder="Cari bahasa (contoh: English)..." autocomplete="off" />
-          </div>
-          <div class="lang-list" id="langList">
-            <div class="lang-item" style="opacity:0.5;">Sedang memuat daftar bahasa...</div>
-          </div>
-        </div>
-      </div>
-
       <div class="side-note"><strong id="sideNoteTitle">2.962 Menu Dunia</strong><span id="sideNoteText">Koleksi inti untuk eksplorasi kuliner lintas budaya.</span></div>
     </aside>
     <main class="main">
@@ -632,6 +625,25 @@
           <div class="crumb">E-BOOK / <strong id="crumbText">2.962 MAHAKARYA</strong></div>
         <div class="topbar-center">
           <span class="topbar-tagline">Encyclopedia of Culinary Arts · <strong id="topbarCount">2.962</strong> Resep</span>
+          
+          <div id="google_translate_element" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;"></div>
+          <div class="custom-lang-selector topbar-lang" id="customLangSelector" style="margin-bottom:0;">
+            <div class="lang-selector-btn" id="langSelectorBtn">
+              <span class="lang-text" id="langSelectorText">Memuat bahasa...</span>
+              <span class="lang-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </div>
+            <div class="lang-dropdown" id="langDropdown">
+              <div class="lang-search-box">
+                <input type="text" id="langSearchInput" placeholder="Cari bahasa (contoh: English)..." autocomplete="off" />
+              </div>
+              <div class="lang-list" id="langList">
+                <div class="lang-item" style="opacity:0.5;">Sedang memuat daftar bahasa...</div>
+              </div>
+            </div>
+          </div>
+
         </div>
         <div class="actions">
           <label class="search" aria-label="Cari resep"><span>⌕</span><input id="searchInput" type="search" placeholder="Cari nama atau bahan..." /></label>
