@@ -1276,7 +1276,6 @@
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'id',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
         autoDisplay: false
       }, 'google_translate_element');
     }
@@ -1294,86 +1293,82 @@
       const btnText = document.getElementById('langSelectorText');
       const dropdown = document.getElementById('langDropdown');
 
+      // Make dropdown clickable IMMEDIATELY to prevent "unclickable" feeling
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        customSelector.classList.toggle('open');
+        if (customSelector.classList.contains('open')) {
+          searchInput.value = '';
+          const items = langList.querySelectorAll('.lang-item');
+          items.forEach(i => i.style.display = 'block');
+          searchInput.focus();
+        }
+      };
+
+      document.addEventListener('click', (e) => {
+        if (!customSelector.contains(e.target)) {
+          customSelector.classList.remove('open');
+        }
+      });
+
+      searchInput.oninput = (e) => {
+        const q = e.target.value.toLowerCase();
+        const items = langList.querySelectorAll('.lang-item');
+        items.forEach(i => {
+          if (i.textContent.toLowerCase().includes(q)) {
+            i.style.display = 'block';
+          } else {
+            i.style.display = 'none';
+          }
+        });
+      };
+
+      langList.onclick = (e) => {
+        const item = e.target.closest('.lang-item');
+        if (!item || (!item.dataset.val && item.dataset.val !== '')) return;
+        
+        const items = langList.querySelectorAll('.lang-item');
+        items.forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        btnText.textContent = item.textContent;
+        
+        const currentSelect = document.querySelector('.goog-te-combo');
+        if (currentSelect) {
+          currentSelect.value = item.dataset.val;
+          currentSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        
+        customSelector.classList.remove('open');
+      };
+
       // Wait for Google Translate to load its select element with full options
       const interval = setInterval(() => {
         const selectEl = gtContainer.querySelector('.goog-te-combo');
-        // Google Translate initially creates the select with 1 option, then populates it async.
-        // We wait until it has > 10 options to guarantee it's fully populated.
         if (selectEl && selectEl.options.length > 10) {
           clearInterval(interval);
-          buildCustomDropdown(selectEl);
+          
+          let html = '';
+          const currentVal = selectEl.value;
+          let currentText = 'Pilih Bahasa...';
+
+          Array.from(selectEl.options).forEach((opt, index) => {
+            let val = opt.value;
+            let text = opt.text;
+            
+            if (index === 0 || !val) {
+              val = '';
+              text = '🇮🇩 Asli (Indonesia)';
+            }
+
+            const isSelected = val === currentVal;
+            if (isSelected || (!currentVal && val === '')) currentText = text;
+            html += `<div class="lang-item${(isSelected || (!currentVal && val === '')) ? ' selected' : ''}" data-val="${val}">${text}</div>`;
+          });
+          
+          langList.innerHTML = html;
+          btnText.textContent = currentText;
         }
       }, 500);
-
-      function buildCustomDropdown(selectEl) {
-        let html = '';
-        const currentVal = selectEl.value;
-        let currentText = 'Pilih Bahasa...';
-
-        Array.from(selectEl.options).forEach((opt, index) => {
-          let val = opt.value;
-          let text = opt.text;
-          
-          if (index === 0 || !val) {
-            val = '';
-            text = '🇮🇩 Asli (Indonesia)';
-          }
-
-          const isSelected = val === currentVal;
-          if (isSelected || (!currentVal && val === '')) currentText = text;
-          html += `<div class="lang-item${(isSelected || (!currentVal && val === '')) ? ' selected' : ''}" data-val="${val}">${text}</div>`;
-        });
-        
-        langList.innerHTML = html;
-        btnText.textContent = currentText;
-
-        const items = langList.querySelectorAll('.lang-item');
-        
-        btn.onclick = (e) => {
-          e.stopPropagation();
-          customSelector.classList.toggle('open');
-          if (customSelector.classList.contains('open')) {
-            searchInput.value = '';
-            items.forEach(i => i.style.display = 'block');
-            searchInput.focus();
-          }
-        };
-
-        searchInput.oninput = (e) => {
-          const q = e.target.value.toLowerCase();
-          items.forEach(i => {
-            if (i.textContent.toLowerCase().includes(q)) {
-              i.style.display = 'block';
-            } else {
-              i.style.display = 'none';
-            }
-          });
-        };
-
-        langList.onclick = (e) => {
-          const item = e.target.closest('.lang-item');
-          if (!item) return;
-          
-          items.forEach(i => i.classList.remove('selected'));
-          item.classList.add('selected');
-          btnText.textContent = item.textContent;
-          
-          // Google Translate re-renders the select occasionally, so we MUST fetch it dynamically
-          const currentSelect = document.querySelector('.goog-te-combo');
-          if (currentSelect) {
-            currentSelect.value = item.dataset.val;
-            currentSelect.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-          
-          customSelector.classList.remove('open');
-        };
-
-        document.addEventListener('click', (e) => {
-          if (!customSelector.contains(e.target)) {
-            customSelector.classList.remove('open');
-          }
-        });
-      }
     });
   </script>
 </body>
