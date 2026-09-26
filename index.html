@@ -854,6 +854,7 @@
 
   #fontDown, #fontUp { display: none !important; visibility: hidden !important; }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -2345,9 +2346,67 @@
     }
 
     function printMenuBook() {
+      const modalBox = document.querySelector('#menuBookModal > div');
+      if (!modalBox) return;
+
+      const triggerBtn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button') : null;
+      const originalText = triggerBtn ? triggerBtn.innerHTML : '';
+
+      if (triggerBtn) {
+        triggerBtn.innerHTML = '⏳ Unduh PDF...';
+        triggerBtn.disabled = true;
+      }
+
+      function restoreBtn() {
+        if (triggerBtn) {
+          triggerBtn.innerHTML = originalText;
+          triggerBtn.disabled = false;
+        }
+      }
+
+      if (typeof html2pdf !== 'undefined') {
+        // Clone element so UI is completely untouched
+        const element = modalBox.cloneNode(true);
+        const toolbar = element.querySelector('div[style*="sticky"]');
+        if (toolbar) toolbar.remove();
+        element.querySelectorAll('.delete-menu-item-btn').forEach(b => b.remove());
+        
+        // Clean up styles for PDF export
+        element.style.background = '#fff';
+        element.style.boxShadow = 'none';
+        element.style.margin = '0 auto';
+        element.style.width = '100%';
+        element.style.maxWidth = '800px';
+
+        const opt = {
+          margin:       [10, 10, 10, 10],
+          filename:     'Buku-Menu-Mahakarya.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true, logging: false },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+          restoreBtn();
+        }).catch(err => {
+          console.error('html2pdf download error:', err);
+          restoreBtn();
+          fallbackPrintWindow();
+        });
+      } else {
+        restoreBtn();
+        fallbackPrintWindow();
+      }
+    }
+
+    function fallbackPrintWindow() {
       document.body.classList.add('print-menu-book');
-      window.print();
-      document.body.classList.remove('print-menu-book');
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => {
+          document.body.classList.remove('print-menu-book');
+        }, 2000);
+      }, 500);
     }
   </script>
 </body>
