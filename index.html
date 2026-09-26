@@ -59,11 +59,16 @@
     .collection-dock #chapterNav, .collection-dock .business-nav { overflow: hidden; }
     .crumb { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
     
-    /* ── GOOGLE TRANSLATE CUSTOM UI ── */
-    .goog-te-banner-frame, iframe.goog-te-banner-frame, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
+    /* ── AGGRESSIVE GOOGLE TRANSLATE BANNER NUKE ── */
+    body > *:not(.app):not(script):not(style):not(link):not(#google_translate_element) {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      height: 0 !important;
+      width: 0 !important;
+    }
     body { top: 0 !important; margin-top: 0 !important; position: static !important; }
-    #goog-gt-tt, .goog-tooltip { display: none !important; visibility: hidden !important; }
-    .skiptranslate > iframe.goog-te-banner-frame { display: none !important; }
     .custom-lang-selector { position: relative; width: 100%; margin-bottom: 25px; font-family: inherit; z-index: 99; }
     .lang-selector-btn { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.06); border: 1px solid rgba(240,183,95,0.3); padding: 10px 14px; border-radius: 9px; cursor: pointer; color: #fff; font-size: 12px; transition: 0.2s ease; }
     .lang-selector-btn:hover { background: rgba(255,255,255,0.1); border-color: #f0b75f; }
@@ -1374,17 +1379,16 @@
 
       // Aggressively hide any stray Google Translate banners and fix body shift
       setInterval(() => {
-        const banners = document.querySelectorAll('.goog-te-banner-frame, iframe.goog-te-banner-frame');
-        banners.forEach(b => {
-          b.style.display = 'none';
-          b.style.visibility = 'hidden';
+        // Nuke any element directly in body that isn't our app or scripts
+        Array.from(document.body.children).forEach(el => {
+          if (!el.classList.contains('app') && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE' && el.tagName !== 'LINK' && el.id !== 'google_translate_element') {
+            el.style.display = 'none';
+            el.style.opacity = '0';
+            el.style.visibility = 'hidden';
+          }
         });
-        if (document.body.style.top !== '0px') {
-          document.body.style.top = '0px';
-        }
-        if (document.body.style.marginTop !== '0px') {
-          document.body.style.marginTop = '0px';
-        }
+        if (document.body.style.top !== '0px') document.body.style.top = '0px';
+        if (document.body.style.marginTop !== '0px') document.body.style.marginTop = '0px';
       }, 500);
     });
   </script>
