@@ -854,6 +854,7 @@
 
   #fontDown, #fontUp { display: none !important; visibility: hidden !important; }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
@@ -2350,7 +2351,7 @@
       const originalText = triggerBtn ? triggerBtn.innerHTML : '';
 
       if (triggerBtn) {
-        triggerBtn.innerHTML = '⏳ Unduh PDF...';
+        triggerBtn.innerHTML = '⏳ Generasi PDF...';
         triggerBtn.disabled = true;
       }
 
@@ -2361,121 +2362,146 @@
         }
       }
 
-      // Get user-edited cover title and subtitle from DOM
-      const coverTitleEl = document.querySelector('#menuBookModal h1');
-      const coverSubEl = document.querySelector('#menuBookModal div[contenteditable]');
-      const coverTitle = coverTitleEl ? coverTitleEl.innerText.trim() : 'The Mahakarya';
-      const coverSub = coverSubEl ? coverSubEl.innerText.trim() : 'Encyclopedia of Culinary Arts · Katalog Restoran & Kafe';
-
-      // Build clean categorized content HTML from menuBookData
-      const categories = Object.keys(menuBookData);
-      const half = Math.ceil(categories.length / 2);
-
-      let col1Html = '<div>';
-      let col2Html = '<div>';
-
-      categories.forEach((catName, index) => {
-        const items = menuBookData[catName] || [];
-        let secHtml = `
-          <div style="margin-bottom: 22px;">
-            <h2 style="font-size: 14px; color: #c9a96e; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1.5px dashed #e9c987; padding-bottom: 5px; margin-bottom: 12px; font-family: 'Playfair Display', serif;">
-              ${escapeHtml(catName)}
-            </h2>
-        `;
-        if (items.length === 0) {
-          secHtml += `<div style="font-size:11px; color:#aaa; font-style:italic; margin-bottom:12px;">Belum ada menu di kategori ini.</div>`;
-        } else {
-          items.forEach(item => {
-            const priceFormatted = new Intl.NumberFormat('id-ID').format(item.price);
-            secHtml += `
-              <div style="margin-bottom: 12px; position: relative;">
-                <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                  <h3 style="margin: 0; font-size: 12px; font-weight: 700; color: #112d3b; font-family: 'Playfair Display', serif; flex:1;">${escapeHtml(item.title)}</h3>
-                  <div style="flex-grow: 1; border-bottom: 1px dotted #ccc; margin: 0 8px;"></div>
-                  <span style="font-family: 'Inter', sans-serif; font-size: 11px; color: #c9a96e; font-weight: 700;">Rp ${priceFormatted}</span>
-                </div>
-                <p style="margin: 3px 0 0; font-family: 'Inter', sans-serif; font-size: 10px; color: #666; line-height: 1.35; font-style: italic;">
-                  ${escapeHtml(item.desc)}
-                </p>
-              </div>
-            `;
-          });
-        }
-        secHtml += `</div>`;
-        if (index < half) col1Html += secHtml;
-        else col2Html += secHtml;
-      });
-      col1Html += '</div>';
-      col2Html += '</div>';
-
-      // Create a clean temporary container directly under <body> (outside any position:fixed or backdrop-filter parents)
-      const exportContainer = document.createElement('div');
-      exportContainer.style.position = 'fixed';
-      exportContainer.style.top = '0';
-      exportContainer.style.left = '0';
-      exportContainer.style.width = '794px'; // Standard A4 portrait width at 96dpi
-      exportContainer.style.background = '#fffaf0';
-      exportContainer.style.color = '#112d3b';
-      exportContainer.style.padding = '35px 40px';
-      exportContainer.style.boxSizing = 'border-box';
-      exportContainer.style.zIndex = '99999999';
-      exportContainer.style.fontFamily = "'Playfair Display', serif";
-
-      exportContainer.innerHTML = `
-        <div style="text-align: center; padding-bottom: 18px; border-bottom: 2px solid #e9c987; margin-bottom: 25px;">
-          <h1 style="font-family: 'Playfair Display', serif; color: #112d3b; font-size: 26px; margin: 0; letter-spacing: 0.05em; text-transform: uppercase;">${escapeHtml(coverTitle)}</h1>
-          <div style="font-family: 'Inter', sans-serif; color: #666; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px;">${escapeHtml(coverSub)}</div>
-          <div style="margin: 10px auto 0; width: 45px; border-top: 1px solid #c9a96e;"></div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; color: #222;">
-          ${col1Html}
-          ${col2Html}
-        </div>
-      `;
-
-      document.body.appendChild(exportContainer);
-
-      if (typeof html2pdf !== 'undefined') {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-        const opt = {
-          margin:       [8, 8, 8, 8],
-          filename:     'Buku-Menu-Mahakarya.pdf',
-          image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: isMobile ? 1.5 : 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 800 },
-          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-        };
-
-        const worker = html2pdf().set(opt).from(exportContainer);
-
-        worker.save().then(() => {
-          if (document.body.contains(exportContainer)) document.body.removeChild(exportContainer);
+      try {
+        const jsPDFConstructor = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (window.jsPDF || null);
+        
+        if (!jsPDFConstructor) {
           restoreBtn();
-        }).catch(err => {
-          console.warn('html2pdf save failed, trying Blob download:', err);
-          html2pdf().set(opt).from(exportContainer).output('blob').then(blob => {
-            if (document.body.contains(exportContainer)) document.body.removeChild(exportContainer);
-            restoreBtn();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Buku-Menu-Mahakarya.pdf';
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => {
-              if (document.body.contains(a)) document.body.removeChild(a);
-              URL.revokeObjectURL(url);
-            }, 1000);
-          }).catch(e => {
-            console.error('PDF blob failed:', e);
-            if (document.body.contains(exportContainer)) document.body.removeChild(exportContainer);
-            restoreBtn();
-            fallbackPrintWindow();
-          });
+          fallbackPrintWindow();
+          return;
+        }
+
+        const doc = new jsPDFConstructor({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
         });
-      } else {
-        if (document.body.contains(exportContainer)) document.body.removeChild(exportContainer);
+
+        // Cover title & sub
+        const coverTitleEl = document.querySelector('#menuBookModal h1');
+        const coverSubEl = document.querySelector('#menuBookModal div[contenteditable]');
+        const coverTitle = coverTitleEl ? coverTitleEl.innerText.trim() : 'THE MAHAKARYA';
+        const coverSub = coverSubEl ? coverSubEl.innerText.trim() : 'ENCYCLOPEDIA OF CULINARY ARTS · KATALOG RESTORAN & KAFE';
+
+        const pageWidth = doc.internal.pageSize.getWidth(); // 210mm
+        const pageHeight = doc.internal.pageSize.getHeight(); // 297mm
+        let y = 20;
+
+        // Header Title
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.setTextColor(17, 45, 59); // #112d3b
+        doc.text(coverTitle.toUpperCase(), pageWidth / 2, y, { align: 'center' });
+        y += 7;
+
+        // Subtitle
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(coverSub.toUpperCase(), pageWidth / 2, y, { align: 'center' });
+        y += 5;
+
+        // Decorative Line
+        doc.setDrawColor(201, 169, 110); // #c9a96e
+        doc.setLineWidth(0.4);
+        doc.line(pageWidth / 2 - 22, y, pageWidth / 2 + 22, y);
+        y += 12;
+
+        // Two Column Layout
+        const margin = 14;
+        const colWidth = 86;
+        const col1X = margin;
+        const col2X = margin + colWidth + 10;
+
+        const categories = Object.keys(menuBookData);
+        const half = Math.ceil(categories.length / 2);
+
+        let curYCol1 = y;
+        let curYCol2 = y;
+
+        categories.forEach((catName, index) => {
+          const isCol1 = index < half;
+          let curX = isCol1 ? col1X : col2X;
+          let curY = isCol1 ? curYCol1 : curYCol2;
+
+          const items = menuBookData[catName] || [];
+
+          // Check if space left for category header
+          if (curY + 25 > pageHeight - 15) {
+            doc.addPage();
+            curYCol1 = 18;
+            curYCol2 = 18;
+            curY = 18;
+          }
+
+          // Category Heading
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(9.5);
+          doc.setTextColor(201, 169, 110);
+          doc.text(catName.toUpperCase(), curX, curY);
+          curY += 2;
+          doc.setDrawColor(233, 201, 135);
+          doc.setLineWidth(0.25);
+          doc.line(curX, curY, curX + colWidth, curY);
+          curY += 5;
+
+          if (items.length === 0) {
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(7.5);
+            doc.setTextColor(170, 170, 170);
+            doc.text("Belum ada menu di kategori ini.", curX, curY);
+            curY += 6;
+          } else {
+            items.forEach(item => {
+              if (curY + 12 > pageHeight - 15) {
+                doc.addPage();
+                curYCol1 = 18;
+                curYCol2 = 18;
+                curY = 18;
+              }
+
+              const priceFormatted = "Rp " + new Intl.NumberFormat('id-ID').format(item.price);
+
+              // Menu Title
+              doc.setFont('helvetica', 'bold');
+              doc.setFontSize(8.5);
+              doc.setTextColor(17, 45, 59);
+
+              const titleLines = doc.splitTextToSize(item.title, colWidth - 24);
+              doc.text(titleLines, curX, curY);
+
+              // Price
+              doc.setFont('helvetica', 'bold');
+              doc.setFontSize(8);
+              doc.setTextColor(201, 169, 110);
+              doc.text(priceFormatted, curX + colWidth, curY, { align: 'right' });
+
+              curY += (titleLines.length * 3.6);
+
+              // Description
+              if (item.desc) {
+                doc.setFont('helvetica', 'italic');
+                doc.setFontSize(7);
+                doc.setTextColor(100, 100, 100);
+                const descLines = doc.splitTextToSize(item.desc, colWidth);
+                doc.text(descLines, curX, curY);
+                curY += (descLines.length * 3.0);
+              }
+
+              curY += 2.5;
+            });
+          }
+
+          curY += 4;
+          if (isCol1) curYCol1 = curY;
+          else curYCol2 = curY;
+        });
+
+        // Save PDF directly
+        doc.save('Buku-Menu-Mahakarya.pdf');
+        restoreBtn();
+      } catch (err) {
+        console.error('jsPDF vector export error:', err);
         restoreBtn();
         fallbackPrintWindow();
       }
