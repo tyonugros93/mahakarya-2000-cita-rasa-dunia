@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Instagram Slides - Mahakarya Cita Rasa Dunia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+  <style>
+    .slide-canvas {
+      width: 540px;
+      height: 540px;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 p-4 md:p-8 min-h-screen">
+
+  <div class="max-w-6xl mx-auto space-y-8">
+    
+    <!-- Navigation back & Header -->
+    <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+      <a href="index.html" class="text-amber-400 text-xs font-bold hover:underline flex items-center gap-1">
+        ← Kembali ke Aplikasi Utama
+      </a>
+      <span class="text-xs text-slate-400 font-semibold">Fazza Raihan Techno · Instagram Studio</span>
+    </div>
+
+    <!-- Top Control Bar -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-6">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold mb-3">
+          📸 Instagram Carousel PNG Exporter (1080x1080px)
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-white">Download Slide Instagram Mahakarya</h1>
+        <p class="text-xs md:text-sm text-slate-400 mt-1">Halaman ini berjalan di jendela utama browser. Klik tombol di bawah untuk mengunduh gambar PNG resolusi tinggi ke HP/Laptop Anda.</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="downloadAllSlides()" class="px-6 py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs md:text-sm rounded-2xl shadow-xl shadow-amber-500/20 transition flex items-center gap-2">
+          <span>🚀 Download SEMUA 7 Slide PNG</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Grid of 7 Slide Canvas Previews -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 justify-items-center">
+
+      <!-- SLIDE 1 -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center w-[540px]">
+          <span class="text-xs font-bold text-amber-400">Slide 1 · Cover / Hook Utama</span>
+          <button onclick="downloadSingleSlide('slide1', 'Slide-1-Cover.png')" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-400 border border-slate-700 shadow">📥 Download Slide 1</button>
+        </div>
+        <div id="slide1" class="slide-canvas bg-[#112d3b] border-2 border-[#f0b75f]/40 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+          <div class="space-y-3 relative z-10">
+            <span class="inline-block px-3 py-1 rounded-full bg-[#f0b75f]/15 border border-[#f0b75f]/40 text-[#f0b75f] text-[10px] font-extrabold tracking-widest uppercase">Encyclopedia of Culinary Arts</span>
+            <h2 class="text-2xl font-extrabold text-white leading-tight font-serif pt-2">
+              Buka Resto / Cafe Tapi Bingung Bikin Menu? 📖
+            </h2>
+            <p class="text-xs text-slate-300 leading-relaxed pt-1">
+              Platform Resto Suite Ini Memiliki <span class="text-[#f0b75f] font-extrabold">2.962 Resep Siap Jual</span> & Feature Buku Menu Vector PDF!
+            </p>
+          </div>
+
+          <div class="bg-slate-900/80 backdrop-blur p-4 rounded-2xl border border-slate-700 space-y-2 relative z-10">
+            <div class="flex justify-between items-center text-[11px] font-bold text-amber-300 border-b border-slate-700/60 pb-1.5">
+              <span>FAZZA RAIHAN TECHNO</span>
+              <span>2.962 MAHAKARYA</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-[10px] text-slate-300">
+              <div>🇮🇩 11 Bab Cita Rasa Dunia</div>
+              <div>💼 4 Set Business F&B</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center w-[540px]">
+          <span class="text-xs font-bold text-rose-400">Slide 2 · Problem / Pain Point</span>
+          <button onclick="downloadSingleSlide('slide2', 'Slide-2-Problem.png')" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-rose-400 border border-slate-700 shadow">📥 Download Slide 2</button>
+        </div>
+        <div id="slide2" class="slide-canvas bg-[#181119] border-2 border-rose-500/40 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+          <div class="space-y-3">
+            <span class="inline-block px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 text-[10px] font-extrabold tracking-widest uppercase">Problem Yang Sering Dialami</span>
+            <h2 class="text-2xl font-extrabold text-white font-serif">
+              Apakah Kamu Mengalami Masalah Ini?
+            </h2>
+            <div class="space-y-2.5 pt-2 text-xs">
+              <div class="flex items-start gap-2.5 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                <span class="text-rose-400 font-bold text-sm">❌</span>
+                <span class="text-slate-200">Bingung menentukan variasi & takaran resep yang konsisten saat jualan.</span>
+              </div>
+              <div class="flex items-start gap-2.5 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                <span class="text-rose-400 font-bold text-sm">❌</span>
+                <span class="text-slate-200">Bahan di kulkas terbatas tapi bingung mau masak hidangan apa.</span>
+              </div>
+              <div class="flex items-start gap-2.5 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                <span class="text-rose-400 font-bold text-sm">❌</span>
+                <span class="text-slate-200">Desain buku menu resto memakan waktu & susah di-export ke PDF cetak.</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-right text-[10px] text-slate-500 font-bold">SWIPE FOR SOLUTION →</div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center w-[540px]">
+          <span class="text-xs font-bold text-emerald-400">Slide 3 · Solusi Utama</span>
+          <button onclick="downloadSingleSlide('slide3', 'Slide-3-Solusi.png')" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-emerald-400 border border-slate-700 shadow">📥 Download Slide 3</button>
+        </div>
+        <div id="slide3" class="slide-canvas bg-[#0d221e] border-2 border-emerald-500/40 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+          <div class="space-y-3">
+            <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-extrabold tracking-widest uppercase">Solusi Lengkap</span>
+            <h2 class="text-2xl font-extrabold text-white font-serif">
+              Solusinya: Mahakarya Cita Rasa Dunia
+            </h2>
+            <div class="grid grid-cols-2 gap-3 pt-2 text-xs">
+              <div class="bg-slate-900/90 p-3.5 rounded-xl border border-emerald-500/30 space-y-1">
+                <div class="font-bold text-amber-400 text-[11px]">🇮🇩 11 Bab Cita Rasa Dunia</div>
+                <div class="text-[10px] text-slate-300">700 Nusantara, Rempah India, Italia, Jepang, Tiongkok & Prancis.</div>
+              </div>
+              <div class="bg-slate-900/90 p-3.5 rounded-xl border border-emerald-500/30 space-y-1">
+                <div class="font-bold text-cyan-400 text-[11px]">💼 4 Set Business F&B</div>
+                <div class="text-[10px] text-slate-300">Fine Dining Resto, Chinese Resto, Coffee Shop & Pastry Bakery.</div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/30 text-[11px] text-emerald-300 font-bold text-center">
+            ✦ 100% Otentik · Presisi · Terkurasi ✦
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center w-[540px]">
+          <span class="text-xs font-bold text-cyan-400">Slide 4 · Pantry Matcher</span>
+          <button onclick="downloadSingleSlide('slide4', 'Slide-4-Kulkas.png')" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-cyan-400 border border-slate-700 shadow">📥 Download Slide 4</button>
+        </div>
+        <div id="slide4" class="slide-canvas bg-[#0b1e2b] border-2 border-cyan-500/40 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+          <div class="space-y-3">
+            <span class="inline-block px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-400 text-[10px] font-extrabold tracking-widest uppercase">Fitur Cerdas #1</span>
+            <h2 class="text-2xl font-extrabold text-white font-serif">
+              🥦 Cari Resep dari Sisa Bahan Kulkas!
+            </h2>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Tinggal pilih tag bahan yang ada di rumah (misal: <b>Ayam + Kecap + Bawang Putih</b>), sistem akan mencarikan hidangan otentik secara instan!
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-2">
+              <span class="px-2.5 py-1 bg-slate-800 border border-cyan-500/40 rounded-full text-[10px] text-cyan-300 font-bold">+ Ayam</span>
+              <span class="px-2.5 py-1 bg-slate-800 border border-cyan-500/40 rounded-full text-[10px] text-cyan-300 font-bold">+ Sapi</span>
+              <span class="px-2.5 py-1 bg-slate-800 border border-cyan-500/40 rounded-full text-[10px] text-cyan-300 font-bold">+ Udang</span>
+              <span class="px-2.5 py-1 bg-slate-800 border border-cyan-500/40 rounded-full text-[10px] text-cyan-300 font-bold">+ Telur</span>
+            </div>
+          </div>
+          <div class="bg-cyan-500/10 p-3 rounded-xl border border-cyan-500/30 text-[10px] text-cyan-300 font-bold flex justify-between items-center">
+            <span>FITUR: PANTRY MATCHER</span>
+            <span>INSTANT MATCH ⚡</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center w-[540px]">
+          <span class="text-xs font-bold text-amber-400">Slide 5 · Substitusi & Scale</span>
+          <button onclick="downloadSingleSlide('slide5', 'Slide-5-Substitusi.png')" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-400 border border-slate-700 shadow">📥 Download Slide 5</button>
+        </div>
+        <div id="slide5" class="slide-canvas bg-[#211a0c] border-2 border-amber-500/40 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+          <div class="space-y-3">
+            <span class="inline-block px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 text-[10px] font-extrabold tracking-widest uppercase">Fitur Cerdas #2</span>
+            <h2 class="text-2xl font-extrabold text-white font-serif">
+              🧑‍🍳 Substitusi Cerdas & Scale Porsi!
+            </h2>
+            <div class="space-y-2 pt-1 text-xs">
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-amber-500/30">
+                <b class="text-amber-400 text-[11px] block mb-1">💡 Substitusi Bahan:</b>
+                <span class="text-slate-300">Ganti santan/alkohol/gluten dengan racikan halal & sehat tanpa merusak profil rasa.</span>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/30">
+                <b class="text-emerald-400 text-[11px] block mb-1">⚖️ Scale Porsi Katering:</b>
+                <span class="text-slate-300">Ubah 2 porsi jadi 100 porsi katering sekali klik!</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-[10px] text-amber-400 font-bold text-center">PRESISI TAKARAN DENGAN KALKULATOR CERDAS</div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6 -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center w-[540px]">
+          <span class="text-xs font-bold text-indigo-400">Slide 6 · Buku Menu Vector PDF</span>
+          <button onclick="downloadSingleSlide('slide6', 'Slide-6-BukuMenu.png')" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-indigo-400 border border-slate-700 shadow">📥 Download Slide 6</button>
+        </div>
+        <div id="slide6" class="slide-canvas bg-[#12132b] border-2 border-indigo-500/40 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+          <div class="space-y-3">
+            <span class="inline-block px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 text-[10px] font-extrabold tracking-widest uppercase">Fitur Khusus F&B Owner</span>
+            <h2 class="text-2xl font-extrabold text-white font-serif">
+              📖 Mockup Buku Menu & Direct Vector PDF
+            </h2>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Rancang & edit katalog menu cafe/resto sendiri, tambahkan resep dari 2.962 database, lalu <b>Export ke PDF Vektor Siap Cetak A4</b> tanpa takut blank!
+            </p>
+            <div class="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl text-xs text-emerald-300 flex items-center gap-2 font-bold">
+              <span>📄 100% Vector PDF · Direct Auto Download</span>
+            </div>
+          </div>
+          <div class="text-[10px] text-indigo-300 font-bold text-center">SIAP CETAK A4 UNTUK CAFE & RESTORAN</div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7 -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center w-[540px]">
+          <span class="text-xs font-bold text-amber-400">Slide 7 · Call to Action</span>
+          <button onclick="downloadSingleSlide('slide7', 'Slide-7-CTA.png')" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-400 border border-slate-700 shadow">📥 Download Slide 7</button>
+        </div>
+        <div id="slide7" class="slide-canvas bg-[#241807] border-2 border-amber-500/40 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+          <div class="text-center space-y-4 my-auto">
+            <span class="inline-block px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-extrabold uppercase">Cobain Sekarang!</span>
+            <h2 class="text-3xl font-extrabold text-white font-serif">Coba Pengalaman Kuliner Digital Masa Kini!</h2>
+            <p class="text-xs text-slate-300 max-w-sm mx-auto leading-relaxed">100% Responsif di Layar HP & Laptop. Cepat, Terkurasi & Elegan.</p>
+            <div class="pt-2">
+              <span class="inline-block bg-amber-500 text-slate-950 font-extrabold px-6 py-3 rounded-2xl text-xs shadow-xl shadow-amber-500/20">
+                🔗 Klik Link Di Bio Instagram!
+              </span>
+            </div>
+          </div>
+          <div class="text-[10px] text-amber-400 font-bold text-center">FAZZA RAIHAN TECHNO · MAHAKARYA</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function downloadSingleSlide(slideId, filename) {
+      const element = document.getElementById(slideId);
+      html2canvas(element, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          document.body.removeChild(link);
+        }, 500);
+      });
+    }
+
+    function downloadAllSlides() {
+      const slides = [
+        { id: 'slide1', name: 'Slide-1-Cover.png' },
+        { id: 'slide2', name: 'Slide-2-Problem.png' },
+        { id: 'slide3', name: 'Slide-3-Solusi.png' },
+        { id: 'slide4', name: 'Slide-4-Kulkas.png' },
+        { id: 'slide5', name: 'Slide-5-Substitusi.png' },
+        { id: 'slide6', name: 'Slide-6-BukuMenu.png' },
+        { id: 'slide7', name: 'Slide-7-CTA.png' }
+      ];
+
+      slides.forEach((slide, idx) => {
+        setTimeout(() => {
+          downloadSingleSlide(slide.id, slide.name);
+        }, idx * 700);
+      });
+    }
+  </script>
+</body>
+</html>

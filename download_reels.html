@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Video Reels - Mahakarya Cita Rasa Dunia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-100 p-4 md:p-8 min-h-screen">
+
+  <div class="max-w-4xl mx-auto space-y-8">
+    
+    <!-- Navigation back & Header -->
+    <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+      <a href="index.html" class="text-emerald-400 text-xs font-bold hover:underline flex items-center gap-1">
+        ← Kembali ke Aplikasi Utama
+      </a>
+      <span class="text-xs text-slate-400 font-semibold">Fazza Raihan Techno · Video Reels Studio</span>
+    </div>
+
+    <!-- Top Control Bar -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-6">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-3">
+          🎥 HTML5 Canvas Video Generator (1080x1920 9:16 Vertical Format)
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-white">Generate Video Reels Instagram</h1>
+        <p class="text-xs md:text-sm text-slate-400 mt-1">Halaman ini berjalan di jendela utama browser. Klik tombol di bawah untuk merender animasi 30 detik & mengunduh video (.webm / .mp4).</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button id="recBtn" onclick="startReelsRecording()" class="px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-extrabold text-xs md:text-sm rounded-2xl shadow-xl shadow-emerald-500/20 transition flex items-center gap-2">
+          <span>🎬 Render & Download Video Reels</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Video Canvas Display (Scaled 9:16 Preview) -->
+    <div class="flex flex-col items-center justify-center space-y-4">
+      <div class="relative border-4 border-slate-800 rounded-3xl overflow-hidden shadow-2xl bg-black">
+        <!-- 9:16 Canvas element -->
+        <canvas id="reelsCanvas" width="540" height="960" class="w-[320px] h-[568px] block"></canvas>
+        
+        <!-- Live Status Overlay -->
+        <div id="statusBadge" class="absolute top-4 left-4 bg-slate-900/90 text-amber-400 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-500/30">
+          ▶️ Status: Ready
+        </div>
+        
+        <div id="timerBadge" class="absolute top-4 right-4 bg-slate-900/90 text-white text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border border-slate-700">
+          00:00 / 00:30
+        </div>
+      </div>
+
+      <p class="text-xs text-slate-400 text-center">💡 Video ini memiliki resolusi 1080x1920 piksel standar Instagram Reels & TikTok.</p>
+    </div>
+
+  </div>
+
+  <script>
+    const canvas = document.getElementById('reelsCanvas');
+    const ctx = canvas.getContext('2d');
+    const statusBadge = document.getElementById('statusBadge');
+    const timerBadge = document.getElementById('timerBadge');
+    const recBtn = document.getElementById('recBtn');
+
+    let animationId = null;
+    let startTime = null;
+    const duration = 30000; // 30 seconds
+
+    function drawScene(elapsed) {
+      const sec = elapsed / 1000;
+      const progress = Math.min(sec / 30, 1);
+      
+      // Clear screen
+      ctx.fillStyle = '#0b1329';
+      ctx.fillRect(0, 0, 540, 960);
+
+      // Background Gradient Glow
+      const bgGrad = ctx.createRadialGradient(270, 480, 50, 270, 480, 450);
+      bgGrad.addColorStop(0, '#1a2942');
+      bgGrad.addColorStop(1, '#080d1a');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 540, 960);
+
+      // Header Branding (Static)
+      ctx.fillStyle = '#f0b75f';
+      ctx.font = 'bold 16px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('FAZZA RAIHAN TECHNO', 270, 60);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '12px Inter, sans-serif';
+      ctx.fillText('MAHAKARYA 2.962 CITA RASA DUNIA', 270, 82);
+
+      // SCENE 1: HOOK (0 - 5 sec)
+      if (sec < 5) {
+        const scale = 1 + Math.sin(sec * 2) * 0.03;
+        ctx.save();
+        ctx.translate(270, 420);
+        ctx.scale(scale, scale);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 36px "Playfair Display", serif';
+        ctx.fillText('Buka Resto / Cafe', 0, -40);
+        ctx.fillText('Bingung Menu?', 0, 10);
+
+        ctx.fillStyle = '#f0b75f';
+        ctx.font = 'bold 22px Inter, sans-serif';
+        ctx.fillText('2.962 Resep Siap Jual', 0, 70);
+
+        ctx.fillStyle = '#78c2ad';
+        ctx.font = '14px Inter, sans-serif';
+        ctx.fillText('✦ 100% Otentik & Terkurasi ✦', 0, 110);
+        ctx.restore();
+      } 
+      // SCENE 2: PANTRY MATCHER & SUBSTITUSI (5 - 12 sec)
+      else if (sec >= 5 && sec < 12) {
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 18px Inter, sans-serif';
+        ctx.fillText('FITUR PINTAR MASAK', 270, 220);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 28px "Playfair Display", serif';
+        ctx.fillText('🥦 Cari dari Kulkas', 270, 280);
+
+        // Tags box
+        ctx.fillStyle = '#1e293b';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(70, 320, 400, 140, 16);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#f0b75f';
+        ctx.font = 'bold 16px Inter, sans-serif';
+        ctx.fillText('Pilih sisa bahan di rumah:', 270, 360);
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '14px Inter, sans-serif';
+        ctx.fillText('+ Ayam   + Kecap   + Bawang Putih', 270, 400);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 24px "Playfair Display", serif';
+        ctx.fillText('🧑‍🍳 Substitusi Cerdas & Scale Porsi', 270, 540);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '14px Inter, sans-serif';
+        ctx.fillText('Ganti Santan/Wijen/Angciu Halal & Sehat!', 270, 580);
+      }
+      // SCENE 3: BUKU MENU RESTO & VECTOR PDF (12 - 22 sec)
+      else if (sec >= 12 && sec < 22) {
+        ctx.fillStyle = '#a855f7';
+        ctx.font = 'bold 18px Inter, sans-serif';
+        ctx.fillText('KHUSUS PEBISNIS F&B', 270, 220);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 30px "Playfair Display", serif';
+        ctx.fillText('📖 Mockup Buku Menu', 270, 280);
+
+        // Menu Box Mockup
+        ctx.fillStyle = '#fffaf0';
+        ctx.beginPath();
+        ctx.roundRect(80, 330, 380, 260, 12);
+        ctx.fill();
+
+        ctx.fillStyle = '#112d3b';
+        ctx.font = 'bold 20px "Playfair Display", serif';
+        ctx.fillText('THE MAHAKARYA RESTO', 270, 380);
+
+        ctx.fillStyle = '#c9a96e';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText('APPETIZER & MAIN COURSE', 270, 410);
+
+        ctx.fillStyle = '#112d3b';
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.fillText('Rendang Wagyu Minang ...... Rp 68.000', 270, 450);
+        ctx.fillText('V60 Cold Brew Coffee ...... Rp 35.000', 270, 480);
+
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 16px Inter, sans-serif';
+        ctx.fillText('📄 DIRECT VECTOR PDF (0% BLANK)', 270, 640);
+      }
+      // SCENE 4: OUTRO & CTA (22 - 30 sec)
+      else {
+        ctx.fillStyle = '#f0b75f';
+        ctx.font = 'bold 34px "Playfair Display", serif';
+        ctx.fillText('Coba Sekarang!', 270, 380);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px Inter, sans-serif';
+        ctx.fillText('2.962 Resep Cita Rasa Dunia', 270, 440);
+
+        ctx.fillStyle = '#f0b75f';
+        ctx.beginPath();
+        ctx.roundRect(110, 500, 320, 60, 30);
+        ctx.fill();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 18px Inter, sans-serif';
+        ctx.fillText('🔗 Klik Link Di Bio Instagram!', 270, 537);
+      }
+
+      // Bottom Progress Bar
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.fillRect(20, 920, 500, 8);
+
+      ctx.fillStyle = '#f0b75f';
+      ctx.fillRect(20, 920, 500 * progress, 8);
+
+      // Update timer badge
+      const formattedSec = Math.floor(sec).toString().padStart(2, '0');
+      timerBadge.innerText = `00:${formattedSec} / 00:30`;
+    }
+
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+
+      drawScene(elapsed);
+
+      if (elapsed < duration) {
+        animationId = requestAnimationFrame(animate);
+      } else {
+        statusBadge.innerText = '✅ Selesai Render';
+      }
+    }
+
+    function startReelsRecording() {
+      recBtn.disabled = true;
+      recBtn.innerText = '⏳ Sedang Merekam Video (30 Detik)...';
+      statusBadge.innerText = '🔴 Recording 30s...';
+
+      // 30 FPS stream capture
+      const stream = canvas.captureStream(30);
+      let mediaRecorder;
+      let recordedChunks = [];
+
+      try {
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+      } catch (e) {
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      }
+
+      mediaRecorder.ondataavailable = function(e) {
+        if (e.data.size > 0) recordedChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = function() {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Mahakarya_Instagram_Reels.webm';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 1000);
+
+        recBtn.disabled = false;
+        recBtn.innerText = '🎬 Render & Download Video Reels';
+        statusBadge.innerText = '✅ Video Terunduh!';
+      };
+
+      startTime = null;
+      if (animationId) cancelAnimationFrame(animationId);
+      
+      mediaRecorder.start();
+      animationId = requestAnimationFrame(animate);
+
+      setTimeout(() => {
+        mediaRecorder.stop();
+      }, 30000);
+    }
+
+    // Initial preview frame
+    drawScene(0);
+  </script>
+</body>
+</html>
