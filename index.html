@@ -59,23 +59,27 @@
     .collection-dock #chapterNav, .collection-dock .business-nav { overflow: hidden; }
     .crumb { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
     
-    /* ── GOOGLE TRANSLATE CUSTOM STYLE ── */
+    /* ── GOOGLE TRANSLATE CUSTOM UI ── */
     .goog-te-banner-frame.skiptranslate { display: none !important; }
     body { top: 0px !important; }
-    #google_translate_element select {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      padding: 8px 10px;
-      width: 100%;
-      font-size: 12px;
-      outline: none;
-      cursor: pointer;
-    }
-    #google_translate_element select option { color: #000; }
-    .goog-logo-link { display: none !important; }
-    .goog-te-gadget { color: transparent !important; font-size: 0px; }
+    .custom-lang-selector { position: relative; width: 100%; margin-bottom: 25px; font-family: inherit; }
+    .lang-selector-btn { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.06); border: 1px solid rgba(240,183,95,0.3); padding: 10px 14px; border-radius: 9px; cursor: pointer; color: #fff; font-size: 12px; transition: 0.2s ease; }
+    .lang-selector-btn:hover { background: rgba(255,255,255,0.1); border-color: #f0b75f; }
+    .lang-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; flex: 1; margin-right: 10px; }
+    .lang-arrow { display: flex; align-items: center; color: #f0b75f; transition: 0.2s; }
+    .custom-lang-selector.open .lang-arrow { transform: rotate(180deg); }
+    .lang-dropdown { position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background: #0f1c24; border: 1px solid rgba(240,183,95,0.4); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; max-height: 280px; z-index: 99999; overflow: hidden; }
+    .custom-lang-selector.open .lang-dropdown { display: flex; }
+    .lang-search-box { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.2); }
+    .lang-search-box input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 8px 10px; color: #fff; font-size: 12px; outline: none; }
+    .lang-search-box input:focus { border-color: #f0b75f; background: rgba(255,255,255,0.1); }
+    .lang-list { flex: 1; overflow-y: auto; padding: 6px; scrollbar-width: thin; scrollbar-color: rgba(240,183,95,.4) transparent; }
+    .lang-list::-webkit-scrollbar { width: 4px; }
+    .lang-list::-webkit-scrollbar-thumb { background-color: rgba(240,183,95,.4); border-radius: 4px; }
+    .lang-item { padding: 8px 10px; color: #b9cbd0; font-size: 12px; cursor: pointer; border-radius: 6px; transition: 0.15s; margin-bottom: 2px; }
+    .lang-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .lang-item.selected { background: #f0b75f; color: #112d3b; font-weight: 700; }
+
 
     .crumb strong { color: var(--ink); }
     .actions { display: flex; align-items: center; gap: 10px; }
@@ -595,7 +599,24 @@
       <button class="nav-item" data-scroll="glossary"><span><span class="nav-num">Aa</span> Glosarium & Indeks</span></button>
       
       <div class="side-label" style="margin-top: 25px;">🌐 Bahasa / Language</div>
-      <div id="google_translate_element" style="padding: 0 11px; margin-bottom: 20px; overflow: hidden; max-width: 100%;"></div>
+      <div id="google_translate_element" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;"></div>
+      
+      <div class="custom-lang-selector" id="customLangSelector">
+        <div class="lang-selector-btn" id="langSelectorBtn">
+          <span class="lang-text" id="langSelectorText">Memuat bahasa...</span>
+          <span class="lang-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </div>
+        <div class="lang-dropdown" id="langDropdown">
+          <div class="lang-search-box">
+            <input type="text" id="langSearchInput" placeholder="Cari bahasa (contoh: English)..." autocomplete="off" />
+          </div>
+          <div class="lang-list" id="langList">
+            <div class="lang-item" style="opacity:0.5;">Sedang memuat daftar bahasa...</div>
+          </div>
+        </div>
+      </div>
 
       <div class="side-note"><strong id="sideNoteTitle">2.962 Menu Dunia</strong><span id="sideNoteText">Koleksi inti untuk eksplorasi kuliner lintas budaya.</span></div>
     </aside>
@@ -1262,5 +1283,92 @@
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+  <!-- Custom Language Selector Logic -->
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+      const gtContainer = document.getElementById('google_translate_element');
+      const customSelector = document.getElementById('customLangSelector');
+      const langList = document.getElementById('langList');
+      const searchInput = document.getElementById('langSearchInput');
+      const btn = document.getElementById('langSelectorBtn');
+      const btnText = document.getElementById('langSelectorText');
+      const dropdown = document.getElementById('langDropdown');
+
+      // Wait for Google Translate to load its select element
+      const interval = setInterval(() => {
+        const selectEl = gtContainer.querySelector('.goog-te-combo');
+        if (selectEl && selectEl.options.length > 0) {
+          clearInterval(interval);
+          buildCustomDropdown(selectEl);
+        }
+      }, 500);
+
+      function buildCustomDropdown(selectEl) {
+        let html = '';
+        const currentVal = selectEl.value;
+        let currentText = 'Pilih Bahasa...';
+
+        Array.from(selectEl.options).forEach((opt, index) => {
+          let val = opt.value;
+          let text = opt.text;
+          
+          if (index === 0 || !val) {
+            val = '';
+            text = '🇮🇩 Asli (Indonesia)';
+          }
+
+          const isSelected = val === currentVal;
+          if (isSelected || (!currentVal && val === '')) currentText = text;
+          html += `<div class="lang-item${(isSelected || (!currentVal && val === '')) ? ' selected' : ''}" data-val="${val}">${text}</div>`;
+        });
+        
+        langList.innerHTML = html;
+        btnText.textContent = currentText;
+
+        const items = langList.querySelectorAll('.lang-item');
+        
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          customSelector.classList.toggle('open');
+          if (customSelector.classList.contains('open')) {
+            searchInput.value = '';
+            items.forEach(i => i.style.display = 'block');
+            searchInput.focus();
+          }
+        };
+
+        searchInput.oninput = (e) => {
+          const q = e.target.value.toLowerCase();
+          items.forEach(i => {
+            if (i.textContent.toLowerCase().includes(q)) {
+              i.style.display = 'block';
+            } else {
+              i.style.display = 'none';
+            }
+          });
+        };
+
+        langList.onclick = (e) => {
+          const item = e.target.closest('.lang-item');
+          if (!item) return;
+          
+          items.forEach(i => i.classList.remove('selected'));
+          item.classList.add('selected');
+          btnText.textContent = item.textContent;
+          
+          selectEl.value = item.dataset.val;
+          selectEl.dispatchEvent(new Event('change'));
+          
+          customSelector.classList.remove('open');
+        };
+
+        document.addEventListener('click', (e) => {
+          if (!customSelector.contains(e.target)) {
+            customSelector.classList.remove('open');
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
