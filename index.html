@@ -387,6 +387,7 @@
         font-size: 10.5px !important;
       }
       .mega-dropdown {
+        display: none !important;
         position: fixed !important;
         top: 135px !important;
         left: 16px !important;
@@ -398,6 +399,9 @@
         gap: 16px !important;
         padding: 18px !important;
         z-index: 99999 !important;
+      }
+      .mega-dropdown.open {
+        display: flex !important;
       }
       .mega-divider {
         width: 100% !important;
@@ -1096,7 +1100,23 @@
     document.getElementById('modalBackdrop').onclick=e=>{if(e.target.id==='modalBackdrop')e.currentTarget.classList.remove('open')};
     document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modalBackdrop').classList.remove('open')});
     document.querySelectorAll('[data-scroll]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.scroll).scrollIntoView());
-    document.getElementById('searchInput').oninput=e=>{query=e.target.value.trim(); render();};
+    const sInput = document.getElementById('searchInput');
+    if (sInput) {
+      sInput.addEventListener('input', e => {
+        query = e.target.value.trim();
+        render();
+      });
+      sInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          query = sInput.value.trim();
+          render();
+          const recEl = document.getElementById('recipes');
+          if (recEl) recEl.scrollIntoView({ behavior: 'smooth' });
+          sInput.blur();
+        }
+      });
+    }
     document.getElementById('fontUp').onclick=()=>document.body.style.fontSize='16px';
     document.getElementById('fontDown').onclick=()=>document.body.style.fontSize='14px';
     updateCollectionCopy();
