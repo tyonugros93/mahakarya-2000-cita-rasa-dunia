@@ -1356,8 +1356,12 @@
           item.classList.add('selected');
           btnText.textContent = item.textContent;
           
-          selectEl.value = item.dataset.val;
-          selectEl.dispatchEvent(new Event('change'));
+          // Google Translate re-renders the select occasionally, so we MUST fetch it dynamically
+          const currentSelect = document.querySelector('.goog-te-combo');
+          if (currentSelect) {
+            currentSelect.value = item.dataset.val;
+            currentSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          }
           
           customSelector.classList.remove('open');
         };
