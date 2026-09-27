@@ -60,7 +60,7 @@
     .crumb { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
     
     /* ── AGGRESSIVE GOOGLE TRANSLATE BANNER NUKE ── */
-    body > *:not(.app):not(script):not(style):not(link):not(#google_translate_element):not(.modal-backdrop):not(#menuBookModal):not(#chefAssistantModal):not(#pantryMatcherModal):not(#recipePickerModal):not(.floating-assistant-btn) {
+    body > *:not(.app):not(script):not(style):not(link):not(#google_translate_element):not(.modal-backdrop):not(#menuBookModal):not(#chefAssistantModal):not(#pantryMatcherModal):not(#recipePickerModal):not(#licenseAuthModal):not(#proUpgradeModal):not(.floating-assistant-btn) {
       display: none !important;
       opacity: 0 !important;
       visibility: hidden !important;
@@ -872,7 +872,7 @@
       <header class="topbar">
           <div class="crumb">E-BOOK / <strong id="crumbText">2.962 MAHAKARYA</strong></div>
         <div class="topbar-center">
-          <span class="topbar-tagline">Encyclopedia of Culinary Arts · <strong id="topbarCount">2.962</strong> Resep</span>
+          <span class="topbar-tagline">Ensiklopedi Kuliner Dunia · <strong id="topbarCount">2.962</strong> Resep</span>
           
           <div id="google_translate_element" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;"></div>
           <div class="custom-lang-selector topbar-lang" id="customLangSelector" style="margin-bottom:0;">
@@ -890,7 +890,11 @@
                 <div class="lang-item" style="opacity:0.5;">Sedang memuat daftar bahasa...</div>
               </div>
             </div>
-          </div>
+          <!-- User License Status Badge (Fase 1 & 2 Auth Controller) -->
+          <button id="userLicenseBtn" onclick="openLicenseAuthModal()" style="background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); color: #f0b75f; border: 1px solid #f0b75f; border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(17,45,59,0.15); margin-left: 8px;">
+            <span id="userLicenseIcon">✨</span>
+            <span id="userLicenseBadgeText">PRO MEMBER</span>
+          </button>
 
         </div>
         <div class="actions">
@@ -925,7 +929,7 @@
         <section class="hero" id="overview">
           <div class="hero-bg"></div><div class="hero-overlay"></div>
           <div class="hero-copy">
-            <div class="eyebrow">Encyclopedia of culinary arts · Edisi digital</div>
+            <div class="eyebrow">Ensiklopedi Kuliner Dunia · Edisi digital</div>
             <h1>Mahakarya,<br /><span style="color:#f0b75f"><span id="collectionTotalHeading">2.962</span> cita rasa dunia.</span></h1>
             <p id="heroDescription">Menjelajah resep otentik dari Nusantara hingga kuliner Tiongkok dalam pengalaman membaca yang terstruktur, tenang, dan mudah dipindai.</p>
             <div class="hero-footer">
@@ -1377,6 +1381,11 @@
     document.querySelectorAll('[data-mode-switch]').forEach(button => button.onclick = () => setCollectionMode(button.dataset.modeSwitch));
     document.querySelectorAll('[data-root]').forEach(button => button.onclick = () => { librarySection = 'root'; collectionMode = 'core'; activeChapter = 0; query = ''; document.getElementById('searchInput').value = ''; updateCollectionCopy(); renderNavigation(); render(); });
     function renderThumbHtml(r) {
+      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+      // For Guest view (free), sample recipes (no <= 10) do not show image thumbnail
+      if (!isPro && r.no <= 10) {
+        return '';
+      }
       if (typeof getRecipeImage === 'function') {
         const url = getRecipeImage(r.no);
         if (url) return `<div class="recipe-thumb-wrap"><img src="${url}" alt="${escapeHtml(r.title)}" class="recipe-thumb" loading="lazy" /></div>`;
@@ -1393,6 +1402,8 @@
     function render() {
       const listEl = document.getElementById('recipeList');
       const searchTerms = searchRequirements(query);
+      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+
       const filtered = currentRecipes().filter(r => {
         const matchesChapter = !activeChapter || r.chapter === activeChapter;
         const corpus = searchableText(r);
@@ -1409,7 +1420,31 @@
 
       if (listEl) {
         let html = paginated.length 
-          ? paginated.map(r => `<article class="recipe"><div class="recipe-top"><span>No. ${String(r.no).padStart(4,'0')}</span><span>${escapeHtml(collectionMode === 'business' ? r.cat : chapterLabel(r.chapter))}</span></div><div class="recipe-body">${renderThumbHtml(r)}<div class="recipe-info"><h3>${formatRichText(r.title)}</h3><p>${formatRichText(r.desc)}</p></div></div><div class="recipe-foot"><span>◷ ${escapeHtml(r.time)} &nbsp; · &nbsp; ${escapeHtml(r.serve)}</span><button class="detail-btn" data-recipe="${r.no}">Buka resep →</button></div></article>`).join('') 
+          ? paginated.map((r, idx) => {
+              const itemIndex = startIndex + idx + 1;
+              const isLocked = !isPro && itemIndex > 10;
+              const btnText = isLocked ? '🔒 Akses Pro (Terkunci)' : 'Buka resep →';
+              const btnStyle = isLocked ? 'background: #fff8eb; color: #b45309; border: 1px solid #fcd34d;' : '';
+              return `
+                <article class="recipe${isLocked ? ' recipe-locked' : ''}">
+                  <div class="recipe-top">
+                    <span>No. ${String(r.no).padStart(4,'0')}</span>
+                    <span>${escapeHtml(collectionMode === 'business' ? r.cat : chapterLabel(r.chapter))}</span>
+                  </div>
+                  <div class="recipe-body">
+                    ${renderThumbHtml(r)}
+                    <div class="recipe-info">
+                      <h3>${formatRichText(r.title)}</h3>
+                      <p>${formatRichText(r.desc)}</p>
+                    </div>
+                  </div>
+                  <div class="recipe-foot">
+                    <span>◷ ${escapeHtml(r.time)} &nbsp; · &nbsp; ${escapeHtml(r.serve)}</span>
+                    <button class="detail-btn" data-recipe="${r.no}" style="${btnStyle}">${btnText}</button>
+                  </div>
+                </article>
+              `;
+            }).join('') 
           : '<div class="empty">Tidak ada resep yang cocok. Coba kata kunci lain.</div>';
         
         if (totalPages > 1) {
@@ -1480,6 +1515,11 @@
       return entries.filter(item => item.length > 1);
     }
     function openRecipe(no) {
+      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+      if (!isPro && no > 10) {
+        openProUpgradeModal(`Resep No. ${String(no).padStart(4, '0')}`);
+        return;
+      }
       const r = currentRecipes().find(x => x.no === no);
       const ingredients = splitEntries(r.mainIngredients || r.ingredients, 'ingredients');
       const spices = splitEntries(r.spices, 'ingredients');
@@ -1670,6 +1710,17 @@
 
   <!-- Google Translate Script -->
   <script type="text/javascript">
+    // Force default language to Bahasa Indonesia by clearing any auto-translate cookie on load
+    (function() {
+      const savedLang = localStorage.getItem('mahakarya_lang');
+      if (!savedLang || savedLang === '' || savedLang === 'id') {
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + location.hostname + "; path=/;";
+        document.cookie = "googtrans=/id/id; path=/;";
+        document.cookie = "googtrans=/id/id; domain=" + location.hostname + "; path=/;";
+      }
+    })();
+
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'id',
@@ -1724,14 +1775,25 @@
         const item = e.target.closest('.lang-item');
         if (!item || (!item.dataset.val && item.dataset.val !== '')) return;
         
+        const val = item.dataset.val;
+        localStorage.setItem('mahakarya_lang', val);
+
         const items = langList.querySelectorAll('.lang-item');
         items.forEach(i => i.classList.remove('selected'));
         item.classList.add('selected');
         btnText.textContent = item.textContent;
+
+        if (val === '' || val === 'id') {
+          // Clear translation cookies to restore original Indonesian
+          document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + location.hostname + "; path=/;";
+          document.cookie = "googtrans=/id/id; path=/;";
+          document.cookie = "googtrans=/id/id; domain=" + location.hostname + "; path=/;";
+        }
         
         const currentSelect = document.querySelector('.goog-te-combo');
         if (currentSelect) {
-          currentSelect.value = item.dataset.val;
+          currentSelect.value = val;
           currentSelect.dispatchEvent(new Event('change', { bubbles: true }));
         }
         
@@ -1744,9 +1806,15 @@
         if (selectEl && selectEl.options.length > 10) {
           clearInterval(interval);
           
+          const savedLang = localStorage.getItem('mahakarya_lang');
+          if ((!savedLang || savedLang === '' || savedLang === 'id') && selectEl.value !== '') {
+            selectEl.value = '';
+            selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+
           let html = '';
-          const currentVal = selectEl.value;
-          let currentText = 'Pilih Bahasa...';
+          const currentVal = (savedLang !== null && savedLang !== undefined) ? savedLang : selectEl.value;
+          let currentText = '🇮🇩 Asli (Indonesia)';
 
           Array.from(selectEl.options).forEach((opt, index) => {
             let val = opt.value;
@@ -1757,9 +1825,9 @@
               text = '🇮🇩 Asli (Indonesia)';
             }
 
-            const isSelected = val === currentVal;
-            if (isSelected || (!currentVal && val === '')) currentText = text;
-            html += `<div class="lang-item${(isSelected || (!currentVal && val === '')) ? ' selected' : ''}" data-val="${val}">${text}</div>`;
+            const isSelected = (val === currentVal) || (!currentVal && val === '');
+            if (isSelected) currentText = text;
+            html += `<div class="lang-item${isSelected ? ' selected' : ''}" data-val="${val}">${text}</div>`;
           });
           
           langList.innerHTML = html;
@@ -1774,7 +1842,7 @@
           const isAllowed = el.classList.contains('app') ||
                             el.classList.contains('modal-backdrop') ||
                             el.classList.contains('floating-assistant-btn') ||
-                            ['menuBookModal', 'chefAssistantModal', 'pantryMatcherModal', 'recipePickerModal', 'google_translate_element'].includes(el.id) ||
+                            ['menuBookModal', 'chefAssistantModal', 'pantryMatcherModal', 'recipePickerModal', 'licenseAuthModal', 'proUpgradeModal', 'google_translate_element'].includes(el.id) ||
                             ['SCRIPT', 'STYLE', 'LINK'].includes(el.tagName);
           if (!isAllowed) {
             el.style.display = 'none';
@@ -1792,6 +1860,128 @@
     <span>🤖 Asisten Koki AI</span>
   </button>
 
+  <!-- PRO UPGRADE MODAL (High-Converting Luxury Paywall) -->
+  <div id="proUpgradeModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100010; backdrop-filter: blur(10px); padding: 20px; overflow-y: auto;">
+    <div style="max-width: 520px; margin: 30px auto; background: #ffffff; border-radius: 20px; box-shadow: 0 35px 70px rgba(0,0,0,0.5); overflow: hidden; display: flex; flex-direction: column; border: 1px solid rgba(240,183,95,0.4);">
+      
+      <!-- Header Banner -->
+      <div style="background: linear-gradient(135deg, #112d3b 0%, #0a1c25 100%); color: #fff; padding: 26px 28px; text-align: center; position: relative;">
+        <button onclick="closeProUpgradeModal()" style="position: absolute; right: 18px; top: 18px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer;">×</button>
+        
+        <div style="width: 56px; height: 56px; background: linear-gradient(135deg, rgba(240,183,95,0.2) 0%, rgba(240,183,95,0.05) 100%); border: 1.5px solid #f0b75f; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(240,183,95,0.2);">👑</div>
+        
+        <h3 style="margin: 0 0 6px; font-size: 20px; color: #f0b75f; font-weight: 800; letter-spacing: 0.02em;" id="proModalTitle">Buka Akses Penuh Mahakarya Pro</h3>
+        <p style="margin: 0; font-size: 12px; color: #cbd5e1; line-height: 1.5;" id="proModalSubtitle">
+          Nikmati 2.962 Resep Otentik Dunia, AI Chef Assistant & Generator Buku Menu Restoran Kualitas HD.
+        </p>
+      </div>
+
+      <!-- Body Content -->
+      <div style="padding: 24px 28px;">
+        
+        <!-- Feature Alert Reason -->
+        <div style="background: #fff8eb; border: 1px solid #fcd34d; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; font-size: 12px; color: #78350f; display: flex; align-items: flex-start; gap: 10px;">
+          <span style="font-size: 18px; flex-shrink: 0;">🔒</span>
+          <div id="proReasonText" style="line-height: 1.5;">
+            Fitur ini merupakan fasilitas eksklusif untuk pemilik <strong>Lisensi Mahakarya Pro</strong>.
+          </div>
+        </div>
+
+        <!-- Feature List -->
+        <div style="display: grid; gap: 10px; margin-bottom: 22px; font-size: 12px; color: #334155;">
+          <div style="display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <span style="color: #0f766e; font-weight: 900; font-size: 14px;">✓</span>
+            <div><strong style="color: #112d3b;">2.962 Database Resep Otentik</strong> (Nusantara & 15 Bab Dunia)</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <span style="color: #0f766e; font-weight: 900; font-size: 14px;">✓</span>
+            <div><strong style="color: #112d3b;">AI Chef Assistant</strong> (Substitusi Halal & Skala Porsi Catering)</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <span style="color: #0f766e; font-weight: 900; font-size: 14px;">✓</span>
+            <div><strong style="color: #112d3b;">Smart Pantry Matcher</strong> (Cari Resep dari Stok Bahan Kulkas)</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <span style="color: #0f766e; font-weight: 900; font-size: 14px;">✓</span>
+            <div><strong style="color: #112d3b;">Generator Buku Menu & PDF Vektor</strong> Siap Cetak A4</div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: grid; gap: 10px;">
+          <a href="https://fazzaraihan-techno.myscalev.com/checkout-mahakarya-cita-rasa-dunia" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); color: #f0b75f; border: 1px solid #f0b75f; border-radius: 10px; font-weight: 800; font-size: 13.5px; text-decoration: none; box-shadow: 0 4px 16px rgba(17,45,59,0.25); text-align: center;">
+            🛍️ Beli Akses Lisensi Pro Sekarang (Scalev Instant Checkout)
+          </a>
+          
+          <button onclick="closeProUpgradeModal(); openLicenseAuthModal();" style="padding: 12px; background: #ffffff; color: #0f766e; border: 1px solid #0f766e; border-radius: 10px; font-weight: 700; font-size: 12.5px; cursor: pointer; text-align: center;">
+            🔑 Sudah Punya Kode Kunci Lisensi? Aktivasi Di Sini
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- LICENSE & AUTHENTICATION MODAL (Fase 1 & 2 Local Manager) -->
+  <div id="licenseAuthModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100005; backdrop-filter: blur(8px); padding: 20px; overflow-y: auto;">
+    <div style="max-width: 520px; margin: 40px auto; background: #ffffff; border-radius: 16px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); overflow: hidden; display: flex; flex-direction: column;">
+      
+      <!-- Modal Header -->
+      <div style="background: linear-gradient(135deg, #112d3b 0%, #0a1c25 100%); color: #fff; padding: 22px 24px; position: relative;">
+        <button onclick="closeLicenseAuthModal()" style="position: absolute; right: 18px; top: 18px; background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer;">×</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 28px; background: rgba(240,183,95,0.15); padding: 6px 10px; border-radius: 12px; border: 1px solid rgba(240,183,95,0.3);">🔑</span>
+          <div>
+            <h3 style="margin: 0; font-size: 18px; color: #f0b75f; font-weight: 800;">Aktivasi Lisensi Mahakarya Pro</h3>
+            <span style="font-size: 11px; color: #9eb1b5;">Akses Penuh 2.962 Resep, AI Assistant & Custom PDF Watermark</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div style="padding: 24px;">
+        <!-- Active User Info Box -->
+        <div id="licenseStatusCard" style="background: #f4fbf9; border: 1px solid #0f766e; border-radius: 10px; padding: 14px; margin-bottom: 18px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <span style="font-size: 11px; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 0.05em;">Status Lisensi Perangkat Ini</span>
+            <span id="licenseBadgePill" style="background: #0f766e; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">PRO UNLOCKED</span>
+          </div>
+          <div style="font-size: 13px; color: #112d3b; font-weight: 700; margin-bottom: 2px;" id="licenseUserEmail">user@example.com</div>
+          <div style="font-size: 11.5px; color: #64748b; line-height: 1.5;">
+            Pemilik Lisensi: <strong id="licenseUserName">Setyo Member</strong><br/>
+            ID Transaksi: <span id="licenseTxnId" style="font-weight:700; color:#112d3b;">#MHK-88291</span> · ID Perangkat: <code id="licenseDeviceId" style="font-size: 10px; background: #e2e8f0; padding: 1px 5px; border-radius: 4px;">DEV-892A</code>
+          </div>
+        </div>
+
+        <!-- Activation Form -->
+        <div id="licenseFormBox">
+          <label style="font-size: 12px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 5px;">Masukkan Kode Kunci Lisensi:</label>
+          <input type="text" id="inputLicenseKey" placeholder="Contoh: MAHAKARYA-PRO-2026" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 700; color: #112d3b; outline: none; margin-bottom: 12px; letter-spacing: 0.05em; text-transform: uppercase;">
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Nama Lengkap Pembeli:</label>
+              <input type="text" id="inputLicenseName" placeholder="Contoh: Budi Santoso" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; outline: none;">
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Email Pembeli (Untuk Watermark):</label>
+              <input type="email" id="inputLicenseEmail" placeholder="budi@gmail.com" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; outline: none;">
+            </div>
+          </div>
+
+          <button onclick="activateLicenseKey()" style="width: 100%; padding: 13px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);">✨ Aktivasi Akses Mahakarya Pro</button>
+          <div style="font-size: 11px; color: #64748b; text-align: center; margin-top: 10px; background: #fff8eb; padding: 6px 10px; border-radius: 6px; border: 1px solid #fcd34d;">
+            💡 <i>Kode Lisensi Demo Kunci: <b>MAHAKARYA-PRO-2026</b> atau <b>SETYO-VIP-KEY</b></i>
+          </div>
+        </div>
+
+        <div id="licenseLogoutBox" style="display: none; margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px; text-align: center;">
+          <button onclick="deactivateLicense()" style="background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; padding: 9px 16px; border-radius: 6px; font-weight: 700; font-size: 11.5px; cursor: pointer;">🚪 Logout / Deaktivasi Lisensi di Perangkat Ini</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CHEF ASSISTANT MODAL (Local Engine) -->
   <div id="chefAssistantModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100000; backdrop-filter: blur(5px); padding: 20px;">
     <div style="max-width: 600px; margin: 40px auto; background: #fff; border-radius: 16px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; max-height: 85vh;">
@@ -1808,9 +1998,11 @@
 
       <div style="padding: 20px 24px; overflow-y: auto; flex: 1;">
         <!-- Tab Navigation -->
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-          <button id="tabSubBtn" onclick="switchChefTab('sub')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; background: #112d3b; color: #f0b75f; font-weight: 700; cursor: pointer;">🔄 Substitusi Bahan</button>
-          <button id="tabPortionBtn" onclick="switchChefTab('portion')" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; cursor: pointer;">🍲 Kalkulator Porsi Catering</button>
+        <div style="display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
+          <button id="tabSubBtn" onclick="switchChefTab('sub')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: none; background: #112d3b; color: #f0b75f; font-weight: 700; font-size: 11.5px; cursor: pointer;">🔄 Substitusi</button>
+          <button id="tabPortionBtn" onclick="switchChefTab('portion')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">🍲 Scale Porsi</button>
+          <button id="tabFaqBtn" onclick="switchChefTab('faq')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">📖 Panduan & FAQ</button>
+          <button id="tabTncBtn" onclick="switchChefTab('tnc')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">⚖️ Hak Cipta & TNC</button>
         </div>
 
         <!-- Tab 1: Substitusi Bahan -->
@@ -1828,14 +2020,14 @@
             <option value="jeruk_nipis">Jeruk Nipis / Asam Jawa</option>
           </select>
 
-          <div id="subResult" style="background: #fdfbf7; border: 1px solid #f0b75f; border-radius: 10px; padding: 16px; font-size: 13.5px; color: #333; line-height: 1.6;">
+          <div id="subResult" style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #f0b75f; border-radius: 10px; padding: 16px; font-size: 13.5px; color: #334155; line-height: 1.6; box-shadow: 0 4px 12px rgba(17,45,59,0.04);">
             💡 <i>Pilih bahan di atas untuk melihat rekomendasi bahan pengganti beserta takaran rasionya.</i>
           </div>
         </div>
 
         <!-- Tab 2: Kalkulator Porsi Catering -->
         <div id="chefTabPortion" style="display: none;">
-          <p style="font-size: 13px; color: #666; margin-top: 0;">Hitung ulang takaran resep untuk acara catering atau porsi porsi besar secara presisi.</p>
+          <p style="font-size: 13px; color: #666; margin-top: 0;">Hitung ulang takaran resep untuk acara catering atau porsi besar secara presisi.</p>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
             <div>
               <label style="font-size: 12px; font-weight: 700; color: #333;">Porsi Asal Resep:</label>
@@ -1846,10 +2038,222 @@
               <input type="number" id="portionTarget" value="50" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #f0b75f; font-weight: bold; text-align: center; margin-top: 5px; color: #112d3b; background: #fffdf9;">
             </div>
           </div>
-          <button onclick="calculateCateringPortion()" style="width: 100%; padding: 12px; background: #112d3b; color: #f0b75f; border: none; border-radius: 8px; font-weight: 800; cursor: pointer;">🔢 Hitung Skala Takaran (x<span id="scaleFactor">12.5</span>)</button>
+          <button onclick="calculateCateringPortion()" style="width: 100%; padding: 12px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(17,45,59,0.2);">🔢 Hitung Skala Takaran (x<span id="scaleFactor">12.5</span>)</button>
           
-          <div id="portionResult" style="margin-top: 15px; background: #f4f8f9; border-radius: 8px; padding: 14px; font-size: 13px; color: #333;">
+          <div id="portionResult" style="margin-top: 15px; background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #0f766e; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #334155; box-shadow: 0 4px 12px rgba(17,45,59,0.04);">
             📌 <i>Faktor pengali adalah <b>12.5x</b>. Semua gramasi bahan (daging, bumbu, cairan) pada resep yang Anda buka akan dikalikan 12.5x lipat secara otomatis saat dicetak!</i>
+          </div>
+        </div>
+
+        <!-- Tab 3: Panduan & FAQ -->
+        <div id="chefTabFaq" style="display: none;">
+          <!-- Panduan Header Box -->
+          <div style="background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; color: #fff; box-shadow: 0 8px 24px rgba(17,45,59,0.15); border: 1px solid rgba(240,183,95,0.25); position: relative; overflow: hidden;">
+            <div style="position: absolute; right: -15px; top: -15px; width: 90px; height: 90px; background: radial-gradient(circle, rgba(240,183,95,0.2) 0%, transparent 70%); pointer-events: none;"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: rgba(240,183,95,0.2); color: #f0b75f; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid rgba(240,183,95,0.4);">📖</span>
+                <h4 style="margin: 0; font-size: 14px; color: #f0b75f; font-weight: 800; letter-spacing: 0.03em;">Panduan Lengkap Eksplorasi & Fitur Platform</h4>
+              </div>
+              <span style="font-size: 10px; background: rgba(255,255,255,0.1); color: #dce7e8; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Panduan Fitur Utama</span>
+            </div>
+            
+            <div style="display: grid; gap: 10px; font-size: 12px;">
+              <!-- Langkah 01: Pencarian Ketik Manual -->
+              <div style="background: rgba(255,255,255,0.07); border-radius: 8px; padding: 10px 12px; border-left: 3px solid #f0b75f; display: flex; align-items: flex-start; gap: 10px;">
+                <span style="background: #f0b75f; color: #112d3b; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 2px; flex-shrink: 0;">01</span>
+                <div style="color: #e5eff1; line-height: 1.5;">
+                  <strong style="color: #fff; font-size: 12.5px; display: block; margin-bottom: 2px;">🔍 Pencarian Ketik Manual (Real-Time Search Bar)</strong>
+                  Ketik nama masakan (contoh: <i>Rendang, Tom Yum, Cappuccino</i>) atau nama bahan utama (contoh: <i>Ayam, Udang, Espresso, Santan</i>) pada kolom pencarian topbar di bagian atas (<b>⌕ Cari nama atau bahan...</b>). Hasil 2.962 resep akan tersaring secara otomatis dan instan saat Anda mengetik.
+                </div>
+              </div>
+
+              <!-- Langkah 02: Filter Dropdown Kategori -->
+              <div style="background: rgba(255,255,255,0.07); border-radius: 8px; padding: 10px 12px; border-left: 3px solid #78c2ad; display: flex; align-items: flex-start; gap: 10px;">
+                <span style="background: #78c2ad; color: #112d3b; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 2px; flex-shrink: 0;">02</span>
+                <div style="color: #e5eff1; line-height: 1.5;">
+                  <strong style="color: #fff; font-size: 12.5px; display: block; margin-bottom: 2px;">📚 Filter Dropdown Kategori (Mega Menu 2500+ Mahakarya)</strong>
+                  Klik tombol dropdown <b>"2500+ Mahakarya (Pilih Kategori Resep Menu)"</b> di topbar untuk membuka panel Mega Menu 2 kolom:
+                  <br/>• <b>Fullset Menu Business F&B (Bab 12-15)</b>: Khusus resep standar komersial seperti <i>Appetizer, Soup & Salad, Main Course, Dessert, Coffee (Espresso & Manual Brew), Specialty Tea</i>, hingga <i>Craft Mocktail</i>.
+                  <br/>• <b>Cita Rasa Dunia (Bab 01-11)</b>: Akses cepat bab masakan otentik Nusantara dan Mancanegara. (Atau filter per-bab dari Sidebar kiri).
+                </div>
+              </div>
+
+              <!-- Langkah 03: Cari dari Kulkas -->
+              <div style="background: rgba(255,255,255,0.07); border-radius: 8px; padding: 10px 12px; border-left: 3px solid #f0b75f; display: flex; align-items: flex-start; gap: 10px;">
+                <span style="background: #f0b75f; color: #112d3b; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 2px; flex-shrink: 0;">03</span>
+                <div style="color: #e5eff1; line-height: 1.5;">
+                  <strong style="color: #fff; font-size: 12.5px; display: block; margin-bottom: 2px;">🥦 Smart Pantry Matcher (Cari dari Kulkas)</strong>
+                  Punya sisa bahan di rumah? Klik tombol <b>"🥦 Cari dari Kulkas"</b> di banner hero. Pilih atau masukkan sisa stok bahan yang Anda miliki (seperti <i>Telur, Tahu, Bawang Putih, Kecap</i>). Sistem akan mencocokkan secara pintar resep mana yang bisa langsung Anda masak tanpa menyisakan bahan terbuang.
+                </div>
+              </div>
+
+              <!-- Langkah 04: Substitusi Bahan -->
+              <div style="background: rgba(255,255,255,0.07); border-radius: 8px; padding: 10px 12px; border-left: 3px solid #78c2ad; display: flex; align-items: flex-start; gap: 10px;">
+                <span style="background: #78c2ad; color: #112d3b; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 2px; flex-shrink: 0;">04</span>
+                <div style="color: #e5eff1; line-height: 1.5;">
+                  <strong style="color: #fff; font-size: 12.5px; display: block; margin-bottom: 2px;">🔄 AI Chef Assistant - Substitusi Bahan Halal & Sehat</strong>
+                  Buka tab <b>"Substitusi"</b> di jendela modal Asisten Koki ini saat ada bahan masakan yang habis atau memerlukan alternatif lebih sehat/halal. Pilih nama bahan dapur (seperti <i>Minyak Wijen, Santan, Angciu, Maizena</i>) untuk melihat rasio takaran pengganti secara presisi.
+                </div>
+              </div>
+
+              <!-- Langkah 05: Scale Porsi Catering -->
+              <div style="background: rgba(255,255,255,0.07); border-radius: 8px; padding: 10px 12px; border-left: 3px solid #f0b75f; display: flex; align-items: flex-start; gap: 10px;">
+                <span style="background: #f0b75f; color: #112d3b; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 2px; flex-shrink: 0;">05</span>
+                <div style="color: #e5eff1; line-height: 1.5;">
+                  <strong style="color: #fff; font-size: 12.5px; display: block; margin-bottom: 2px;">🍲 AI Chef Assistant - Kalkulator Skala Porsi Catering</strong>
+                  Buka tab <b>"Scale Porsi"</b> untuk mengubah takaran resep rumahan (contoh: 4 porsi) menjadi skala katering besar (contoh: 50 atau 100 porsi). Klik tombol hitung, dan faktor pengali takaran (misal x25.0) akan otomatis diaplikasikan ke semua bumbu dan gramasi resep saat dicetak.
+                </div>
+              </div>
+
+              <!-- Langkah 06: Buku Menu & Vector PDF -->
+              <div style="background: rgba(255,255,255,0.07); border-radius: 8px; padding: 10px 12px; border-left: 3px solid #78c2ad; display: flex; align-items: flex-start; gap: 10px;">
+                <span style="background: #78c2ad; color: #112d3b; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 2px; flex-shrink: 0;">06</span>
+                <div style="color: #e5eff1; line-height: 1.5;">
+                  <strong style="color: #fff; font-size: 12.5px; display: block; margin-bottom: 2px;">📖 Mockup Buku Menu Book & Export PDF Vektor</strong>
+                  Tekan tombol <b>"📖 Buka Mockup Menu Book"</b> di banner utama untuk merancang katalog buku menu profesional F&B milik Anda sendiri. Anda dapat mengedit nama menu dan harga secara interaktif di layar, lalu klik tombol <b>"🖨️ Vector PDF"</b> untuk mengunduh dokumen A4 murni vektor siap cetak tanpa risiko blank.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Title -->
+          <div style="display: flex; align-items: center; gap: 8px; margin: 20px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #e5f3f0;">
+            <span style="font-size: 16px;">❓</span>
+            <h4 style="margin: 0; font-size: 14px; color: #112d3b; font-weight: 800;">Pertanyaan Umum (FAQ)</h4>
+          </div>
+          
+          <!-- FAQ Cards Grid -->
+          <div style="display: grid; gap: 12px;">
+            <!-- FAQ 1 -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #0f766e; border-radius: 10px; padding: 14px 16px; box-shadow: 0 4px 12px rgba(17,45,59,0.04);">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background: #e6f4f1; color: #0f766e; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 12px; border: 1px solid rgba(15,118,110,0.2);">Q1</span>
+                <b style="color: #112d3b; font-size: 13px;">Bagaimana cara cepat menemukan resep masakan atau minuman tertentu?</b>
+              </div>
+              <div style="color: #4a5568; font-size: 12px; line-height: 1.55; padding-left: 28px; position: relative;">
+                <span style="position: absolute; left: 8px; top: 0; color: #0f766e; font-weight: 800;">A:</span>
+                Anda memiliki 2 cara terbaik: (1) Gunakan kolom <b>Pencarian Manual</b> di header atas untuk mencari kata kunci nama masakan/bahan secara instant real-time, atau (2) Gunakan <b>Mega Menu Dropdown (2500+ Mahakarya)</b> di bar navigasi untuk memilih kategori bisnis F&B spesifik seperti <i>Main Course, Espresso Based Coffee, Craft Mocktail</i>, atau bab wilayah Cita Rasa Dunia.
+              </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #d88b28; border-radius: 10px; padding: 14px 16px; box-shadow: 0 4px 12px rgba(17,45,59,0.04);">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background: #fff4df; color: #d88b28; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 12px; border: 1px solid rgba(216,139,40,0.2);">Q2</span>
+                <b style="color: #112d3b; font-size: 13px;">Bagaimana cara memasak dari stok sisa bahan di kulkas agar tidak terbuang?</b>
+              </div>
+              <div style="color: #4a5568; font-size: 12px; line-height: 1.55; padding-left: 28px; position: relative;">
+                <span style="position: absolute; left: 8px; top: 0; color: #d88b28; font-weight: 800;">A:</span>
+                Tekan tombol <strong style="color: #112d3b;">"🥦 Cari dari Kulkas"</strong> di halaman utama. Masukkan bahan-bahan yang ada di dapur Anda (misal: Telur, Tahu, Kecap). Fitur *Smart Pantry Matcher* akan memfilter database 2.962 resep dan menyajikan masakan lezat yang paling cocok dengan bahan yang Anda miliki.
+              </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #112d3b; border-radius: 10px; padding: 14px 16px; box-shadow: 0 4px 12px rgba(17,45,59,0.04);">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background: #eef3f6; color: #112d3b; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 12px; border: 1px solid rgba(17,45,59,0.2);">Q3</span>
+                <b style="color: #112d3b; font-size: 13px;">Bagaimana cara mengubah resep porsi kecil (rumahan) menjadi porsi katering besar?</b>
+              </div>
+              <div style="color: #4a5568; font-size: 12px; line-height: 1.55; padding-left: 28px; position: relative;">
+                <span style="position: absolute; left: 8px; top: 0; color: #112d3b; font-weight: 800;">A:</span>
+                Buka modal <strong style="color: #112d3b;">Asisten Koki Pintar</strong> -> pilih tab <strong style="color: #0f766e;">"Scale Porsi"</strong>. Masukkan porsi target katering Anda (misal: 100 porsi). Kalkulator presisi akan menghitung faktor pengali gramasi (misal x25.0) dan mengalikan seluruh bumbu resep secara otomatis saat dicetak.
+              </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #0f766e; border-radius: 10px; padding: 14px 16px; box-shadow: 0 4px 12px rgba(17,45,59,0.04);">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background: #e6f4f1; color: #0f766e; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 12px; border: 1px solid rgba(15,118,110,0.2);">Q4</span>
+                <b style="color: #112d3b; font-size: 13px;">Bagaimana cara mengedit dan mengunduh PDF Buku Menu Restoran tanpa blank?</b>
+              </div>
+              <div style="color: #4a5568; font-size: 12px; line-height: 1.55; padding-left: 28px; position: relative;">
+                <span style="position: absolute; left: 8px; top: 0; color: #0f766e; font-weight: 800;">A:</span>
+                Buka modal <strong style="color: #112d3b;">"📖 Buka Mockup Menu Book"</strong>. Anda dapat mengedit nama menu dan harga secara interaktif di layar. Setelah sesuai, tekan tombol <strong style="color: #0f766e;">"🖨️ Vector PDF"</strong>. Engine PDF vektor murni akan mengunduh dokumen A4 berkualitas cetak tinggi tanpa risiko blank baik di laptop maupun smartphone.
+              </div>
+            </div>
+
+            <!-- FAQ 5 -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #d88b28; border-radius: 10px; padding: 14px 16px; box-shadow: 0 4px 12px rgba(17,45,59,0.04);">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background: #fff4df; color: #d88b28; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 12px; border: 1px solid rgba(216,139,40,0.2);">Q5</span>
+                <b style="color: #112d3b; font-size: 13px;">Apa solusi jika ada bahan resep yang tidak tersedia atau butuh opsi pengganti halal/sehat?</b>
+              </div>
+              <div style="color: #4a5568; font-size: 12px; line-height: 1.55; padding-left: 28px; position: relative;">
+                <span style="position: absolute; left: 8px; top: 0; color: #d88b28; font-weight: 800;">A:</span>
+                Gunakan tab <strong style="color: #112d3b;">"Substitusi"</strong> pada modal Asisten Koki Pintar. Pilih bahan yang habis (seperti Minyak Wijen, Santan, atau Angciu) untuk melihat daftar rekomendasi alternatif pengganti beserta rasio takaran rincinya.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Hak Cipta & TNC -->
+        <div id="chefTabTnc" style="display: none;">
+          <!-- High-End Legal Banner -->
+          <div style="background: linear-gradient(135deg, #112d3b 0%, #2a0a10 100%); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; color: #fff; box-shadow: 0 8px 24px rgba(17,45,59,0.18); border: 1px solid rgba(220,53,69,0.3); position: relative; overflow: hidden;">
+            <div style="position: absolute; right: -20px; bottom: -20px; width: 110px; height: 110px; background: radial-gradient(circle, rgba(220,53,69,0.25) 0%, transparent 70%); pointer-events: none;"></div>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: rgba(220,53,69,0.25); color: #ff6b7a; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid rgba(220,53,69,0.4);">⚖️</span>
+                <h4 style="margin: 0; font-size: 14px; color: #f0b75f; font-weight: 800; letter-spacing: 0.03em;">Syarat, Ketentuan & Hak Cipta Resmi</h4>
+              </div>
+              <span style="font-size: 9.5px; background: rgba(240,183,95,0.15); color: #f0b75f; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.06em; border: 1px solid rgba(240,183,95,0.3);">Protected Asset</span>
+            </div>
+            
+            <p style="margin: 0; font-size: 11.5px; color: #e2e8f0; line-height: 1.55;">
+              Seluruh isi konten, arsitektur bab, database 2.962 resep, kode sistem, dan antarmuka UI/UX adalah karya cipta terdaftar dan milik eksklusif <span style="background: rgba(240,183,95,0.2); color: #f0b75f; padding: 2px 7px; border-radius: 4px; font-weight: 800; border: 1px solid rgba(240,183,95,0.4);">Setyo Nugroho / Fazza Raihan Techno</span>.
+            </p>
+          </div>
+
+          <!-- TNC Detailed Cards -->
+          <div style="display: grid; gap: 12px;">
+            <!-- Card 1: Allowed Use -->
+            <div style="background: #ffffff; border: 1px solid #e0f2fe; border-left: 4px solid #0f766e; border-radius: 10px; padding: 14px 16px; box-shadow: 0 4px 12px rgba(17,45,59,0.04);">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span style="background: #e6f4f1; color: #0f766e; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900;">✓</span>
+                <b style="color: #0f766e; font-size: 13px;">1. Hak Penggunaan yang Diizinkan (Allowed Use):</b>
+              </div>
+              <div style="display: grid; gap: 6px; padding-left: 30px; font-size: 12px; color: #334155; line-height: 1.5;">
+                <div style="display: flex; gap: 6px; align-items: flex-start;">
+                  <span style="color: #0f766e; font-weight: 800;">•</span>
+                  <span>Mengakses & membaca resep untuk memasak di dapur pribadi maupun kebutuhan usaha F&B.</span>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: flex-start;">
+                  <span style="color: #0f766e; font-weight: 800;">•</span>
+                  <span>Memanfaatkan dan menggunakan seluruh fitur yang tersedia di platform ini (termasuk Generator Mockup Buku Menu, AI Chef Assistant, Cari dari Kulkas, Skala Porsi, dan Substitusi Bahan) untuk mendukung kebutuhan dapur pribadi maupun operasional bisnis restoran/kafe milik Anda sendiri.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Strictly Prohibited -->
+            <div style="background: #ffffff; border: 1px solid #fee2e2; border-left: 4px solid #dc2626; border-radius: 10px; padding: 14px 16px; box-shadow: 0 4px 12px rgba(220,38,38,0.04);">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span style="background: #fef2f2; color: #dc2626; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900;">✕</span>
+                <b style="color: #dc2626; font-size: 13px;">2. Larangan Penyebaran & Penyalahgunaan (Strictly Prohibited):</b>
+              </div>
+              <div style="display: grid; gap: 8px; padding-left: 30px; font-size: 12px; color: #334155; line-height: 1.5;">
+                <div style="background: #fff5f5; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 10px;">
+                  <span style="background: #ef4444; color: #fff; font-size: 9.5px; font-weight: 800; padding: 1px 6px; border-radius: 3px; margin-right: 6px; text-transform: uppercase;">Dilarang Keras</span>
+                  Mengkloning <i>source code</i>, menggandakan database resep, memperjualbelikan ulang, atau menyebarluaskan isi platform ini dalam bentuk aplikasi, e-book, atau media komersial lain <b>tanpa izin tertulis resmi dari pemilik (Setyo Nugroho / Fazza Raihan Techno)</b>.
+                </div>
+                <div style="background: #fff5f5; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 10px;">
+                  <span style="background: #ef4444; color: #fff; font-size: 9.5px; font-weight: 800; padding: 1px 6px; border-radius: 3px; margin-right: 6px; text-transform: uppercase;">Dilarang Keras</span>
+                  Menghapus, mengubah, atau menyamarkan atribusi hak cipta dan nama pemilik resmi dari sistem maupun hasil cetakan dokumen.
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Legal Enforcement -->
+            <div style="background: #ffffff; border: 1px solid #fef3c7; border-left: 4px solid #d97706; border-radius: 10px; padding: 14px 16px; box-shadow: 0 4px 12px rgba(217,119,6,0.04);">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background: #fffbeb; color: #d97706; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900;">🏛️</span>
+                <b style="color: #b45309; font-size: 13px;">3. Perlindungan Hukum (Legal Enforcement):</b>
+              </div>
+              <p style="margin: 0; padding-left: 30px; font-size: 12px; color: #334155; line-height: 1.55;">
+                Setiap bentuk penyalahgunaan, penyebaran tanpa izin, atau pelanggaran hak cipta akan diproses secara tegas melalui jalur hukum sesuai ketentuan <span style="background: #fef3c7; color: #92400e; font-weight: 800; padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(217,119,6,0.3);">Undang-Undang Hak Cipta Republik Indonesia (UU No. 28 Tahun 2014)</span>.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -1907,8 +2311,6 @@
         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
           <span style="font-size: 11.5px; font-weight: 700; color: #f0b75f;">✏️ Mode Edit Buku Menu:</span>
           <button onclick="openRecipePickerModal()" style="background: #f0b75f; color: #112d3b; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px;">➕ Pilih Resep</button>
-          <a href="download_slides.html" target="_blank" style="background: #38bdf8; color: #0f172a; text-decoration: none; padding: 6px 11px; border-radius: 6px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;">📸 Download Slide PNG</a>
-          <a href="download_reels.html" target="_blank" style="background: #10b981; color: #0f172a; text-decoration: none; padding: 6px 11px; border-radius: 6px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;">🎬 Download Video Reels</a>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
           <button onclick="printMenuBook()" style="background: #78c2ad; color: #112d3b; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer;">🖨️ Vector PDF</button>
@@ -1919,7 +2321,7 @@
       <!-- Menu Book Cover / Header -->
       <div style="text-align: center; padding: 24px 30px 16px; border-bottom: 2px solid #e9c987;">
         <h1 contenteditable="true" style="font-family: 'Playfair Display', serif; color: #112d3b; font-size: 26px; margin: 0; letter-spacing: 0.05em; text-transform: uppercase; outline: none;">The Mahakarya</h1>
-        <div contenteditable="true" style="font-family: 'Inter', sans-serif; color: #666; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; outline: none;">Encyclopedia of Culinary Arts · Katalog Restoran & Kafe</div>
+        <div contenteditable="true" style="font-family: 'Inter', sans-serif; color: #666; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; outline: none;">Ensiklopedi Kuliner Dunia · Katalog Restoran & Kafe</div>
         <div style="margin: 10px auto 0; width: 45px; border-top: 1px solid #c9a96e;"></div>
       </div>
       
@@ -2015,6 +2417,198 @@
   </div>
 
   <script>
+    // ── 0. FASE 1 & FASE 2: LICENSE & AUTHENTICATION MANAGER (LOCAL CONTROLLER) ──
+    const LICENSE_STORAGE_KEY = 'mahakarya_user_session';
+    const VALID_DEMO_KEYS = ['MAHAKARYA-PRO-2026', 'SETYO-VIP-KEY', 'DEMO-VIP', 'FAZZA-TECHNO'];
+
+    function getOrCreateDeviceId() {
+      let devId = localStorage.getItem('mahakarya_device_id');
+      if (!devId) {
+        devId = 'DEV-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        localStorage.setItem('mahakarya_device_id', devId);
+      }
+      return devId;
+    }
+
+    function getActiveUserLicenseInfo() {
+      const devId = getOrCreateDeviceId();
+      const raw = localStorage.getItem(LICENSE_STORAGE_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.isPro) {
+            return {
+              isPro: true,
+              email: parsed.email || 'lisensi.resmi@mahakarya.id',
+              name: parsed.name || 'Member Resmi',
+              txnId: parsed.txnId || '#MHK-' + Math.floor(10000 + Math.random() * 90000),
+              key: parsed.key || 'MAHAKARYA-PRO-2026',
+              deviceId: devId
+            };
+          }
+        } catch(e) {}
+      }
+      
+      return {
+        isPro: false,
+        email: 'tamu.demo@mahakarya.id',
+        name: 'Pengunjung Demo',
+        txnId: '#DEMO-GUEST',
+        key: 'GUEST',
+        deviceId: devId
+      };
+    }
+
+    function updateLicenseUI() {
+      const info = getActiveUserLicenseInfo();
+      const btn = document.getElementById('userLicenseBtn');
+      const icon = document.getElementById('userLicenseIcon');
+      const badgeText = document.getElementById('userLicenseBadgeText');
+
+      const card = document.getElementById('licenseStatusCard');
+      const pill = document.getElementById('licenseBadgePill');
+      const emailEl = document.getElementById('licenseUserEmail');
+      const nameEl = document.getElementById('licenseUserName');
+      const txnEl = document.getElementById('licenseTxnId');
+      const devEl = document.getElementById('licenseDeviceId');
+      const logoutBox = document.getElementById('licenseLogoutBox');
+
+      if (info.isPro) {
+        if (btn) {
+          btn.style.background = 'linear-gradient(135deg, #112d3b 0%, #1a495e 100%)';
+          btn.style.borderColor = '#f0b75f';
+          btn.style.color = '#f0b75f';
+        }
+        if (icon) icon.textContent = '✨';
+        if (badgeText) badgeText.textContent = 'PRO MEMBER';
+
+        if (card) {
+          card.style.background = '#f4fbf9';
+          card.style.borderColor = '#0f766e';
+        }
+        if (pill) {
+          pill.textContent = 'PRO UNLOCKED';
+          pill.style.background = '#0f766e';
+        }
+        if (emailEl) emailEl.textContent = info.email;
+        if (nameEl) nameEl.textContent = info.name;
+        if (txnEl) txnEl.textContent = info.txnId;
+        if (devEl) devEl.textContent = info.deviceId;
+
+        if (logoutBox) logoutBox.style.display = 'block';
+      } else {
+        if (btn) {
+          btn.style.background = '#fff4df';
+          btn.style.borderColor = '#d88b28';
+          btn.style.color = '#b45309';
+        }
+        if (icon) icon.textContent = '🔒';
+        if (badgeText) badgeText.textContent = 'AKTIVASI LISENSI';
+
+        if (card) {
+          card.style.background = '#fffdf9';
+          card.style.borderColor = '#d88b28';
+        }
+        if (pill) {
+          pill.textContent = 'DEMO / GUEST';
+          pill.style.background = '#d88b28';
+        }
+        if (emailEl) emailEl.textContent = info.email + ' (Akses Sampel)';
+        if (nameEl) nameEl.textContent = info.name;
+        if (txnEl) txnEl.textContent = info.txnId;
+        if (devEl) devEl.textContent = info.deviceId;
+
+        if (logoutBox) logoutBox.style.display = 'none';
+      }
+    }
+
+    function openLicenseAuthModal() {
+      updateLicenseUI();
+      document.getElementById('licenseAuthModal').style.display = 'block';
+    }
+
+    function closeLicenseAuthModal() {
+      document.getElementById('licenseAuthModal').style.display = 'none';
+    }
+
+    function activateLicenseKey() {
+      const keyInput = (document.getElementById('inputLicenseKey').value || '').trim().toUpperCase();
+      const nameInput = (document.getElementById('inputLicenseName').value || '').trim();
+      const emailInput = (document.getElementById('inputLicenseEmail').value || '').trim();
+
+      if (!keyInput) {
+        alert('Mohon masukkan Kode Lisensi terlebih dahulu.\n\n(Kode Kunci Demo: MAHAKARYA-PRO-2026 atau SETYO-VIP-KEY)');
+        return;
+      }
+
+      const isValid = VALID_DEMO_KEYS.includes(keyInput) || keyInput.length >= 8;
+
+      if (!isValid) {
+        alert('Kode Lisensi tidak valid. Silakan hubungi penjual via Instagram / Mayar.');
+        return;
+      }
+
+      const txnId = '#MHK-' + Math.floor(100000 + Math.random() * 900000);
+      const sessionData = {
+        isPro: true,
+        key: keyInput,
+        name: nameInput || 'Member Resmi Mahakarya',
+        email: emailInput || 'pembeli@mahakarya.id',
+        txnId: txnId,
+        activatedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
+      updateLicenseUI();
+      alert(`🎉 Selamat! Lisensi Akses Mahakarya Pro Berhasil Diaktifkan!\n\nNama Pembeli: ${sessionData.name}\nEmail: ${sessionData.email}\nID Transaksi: ${sessionData.txnId}\n\nSeluruh 2.962 Resep, AI Assistant, dan PDF Vector Watermarking telah aktif.`);
+      closeLicenseAuthModal();
+    }
+
+    function deactivateLicense() {
+      if (confirm('Apakah Anda yakin ingin melakukan Deaktivasi / Logout lisensi di perangkat ini?')) {
+        localStorage.removeItem(LICENSE_STORAGE_KEY);
+        updateLicenseUI();
+        alert('Lisensi berhasil dideaktivasi. Perangkat kembali ke mode Demo / Guest.');
+        closeLicenseAuthModal();
+      }
+    }
+
+    function checkUrlAutoLicenseActivation() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramEmail = urlParams.get('email');
+      const paramName = urlParams.get('name');
+      const paramOrder = urlParams.get('order_id') || urlParams.get('order') || urlParams.get('txn');
+      const paramKey = urlParams.get('key') || urlParams.get('license');
+
+      // If URL contains parameters from Scalev checkout redirect
+      if (paramEmail || paramOrder || paramKey) {
+        const txnId = paramOrder ? (paramOrder.startsWith('#') ? paramOrder : '#' + paramOrder) : ('#MHK-' + Math.floor(100000 + Math.random() * 900000));
+        const sessionData = {
+          isPro: true,
+          key: paramKey || 'MAHAKARYA-PRO-2026',
+          name: paramName || 'Pembeli Resmi Scalev',
+          email: paramEmail || 'pembeli@myscalev.com',
+          txnId: txnId,
+          activatedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
+        
+        // Clean URL parameters from browser address bar so URL cannot be forwarded with params
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        setTimeout(() => {
+          updateLicenseUI();
+          alert(`🎉 Selamat Datang, ${sessionData.name}!\n\nAkses Lisensi Mahakarya Pro Anda dari Scalev telah aktif otomatis!\n\nEmail: ${sessionData.email}\nID Pesanan: ${sessionData.txnId}\n\nSeluruh 2.962 Resep, AI Assistant, dan Watermarking PDF Vektor telah terbuka.`);
+        }, 400);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      checkUrlAutoLicenseActivation();
+      updateLicenseUI();
+    });
+
     // ── 1. ASISTEN KOKI PINTAR (SUBSTITUSI & PORTION SCALER) ──
     const SUB_DATABASE = {
       minyak_wijen: "<b>Substitusi Minyak Wijen:</b><br/>• 1 sdm Minyak Wijen = 1 sdm Minyak Zaitun/Sayur + 1/2 sdt Biji Wijen Sangrai.<br/>• Alternative: Minyak Alpukat (rasa gurih netral).",
@@ -2027,26 +2621,46 @@
       jeruk_nipis: "<b>Substitusi Jeruk Nipis:</b><br/>• 1 sdm Jeruk Nipis = 1 sdm Air Asam Jawa cair ATAU 1/2 sdm Cuka Masak."
     };
 
+    function openProUpgradeModal(featureName) {
+      const reasonText = document.getElementById('proReasonText');
+      if (reasonText && featureName) {
+        reasonText.innerHTML = `Akses ke <strong>${featureName}</strong> merupakan fasilitas eksklusif untuk pemilik <strong>Lisensi Mahakarya Pro</strong>. Silakan tingkatkan ke Pro untuk membuka kunci penuh.`;
+      }
+      document.getElementById('proUpgradeModal').style.display = 'block';
+    }
+
+    function closeProUpgradeModal() {
+      document.getElementById('proUpgradeModal').style.display = 'none';
+    }
+
     function openChefAssistant() {
+      if (!getActiveUserLicenseInfo().isPro) {
+        openProUpgradeModal('🤖 Asisten Koki AI (Substitusi & Skala Porsi)');
+        return;
+      }
       document.getElementById('chefAssistantModal').style.display = 'block';
     }
 
     function switchChefTab(tab) {
-      if (tab === 'sub') {
-        document.getElementById('chefTabSub').style.display = 'block';
-        document.getElementById('chefTabPortion').style.display = 'none';
-        document.getElementById('tabSubBtn').style.background = '#112d3b';
-        document.getElementById('tabSubBtn').style.color = '#f0b75f';
-        document.getElementById('tabPortionBtn').style.background = '#f9f9f9';
-        document.getElementById('tabPortionBtn').style.color = '#555';
-      } else {
-        document.getElementById('chefTabSub').style.display = 'none';
-        document.getElementById('chefTabPortion').style.display = 'block';
-        document.getElementById('tabPortionBtn').style.background = '#112d3b';
-        document.getElementById('tabPortionBtn').style.color = '#f0b75f';
-        document.getElementById('tabSubBtn').style.background = '#f9f9f9';
-        document.getElementById('tabSubBtn').style.color = '#555';
-      }
+      const tabs = ['sub', 'portion', 'faq', 'tnc'];
+      tabs.forEach(t => {
+        const contentEl = document.getElementById('chefTab' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btnEl = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
+        if (contentEl) contentEl.style.display = (t === tab) ? 'block' : 'none';
+        if (btnEl) {
+          if (t === tab) {
+            btnEl.style.background = '#112d3b';
+            btnEl.style.color = '#f0b75f';
+            btnEl.style.border = '1px solid #f0b75f';
+            btnEl.style.boxShadow = '0 4px 14px rgba(17,45,59,0.25)';
+          } else {
+            btnEl.style.background = '#f8fafc';
+            btnEl.style.color = '#64748b';
+            btnEl.style.border = '1px solid #e2e8f0';
+            btnEl.style.boxShadow = 'none';
+          }
+        }
+      });
     }
 
     function checkSubstitution() {
@@ -2069,6 +2683,10 @@
 
     // ── 2. SMART PANTRY MATCHER ──
     function openPantryMatcher() {
+      if (!getActiveUserLicenseInfo().isPro) {
+        openProUpgradeModal('🥦 Smart Pantry Matcher (Cari dari Kulkas)');
+        return;
+      }
       document.getElementById('pantryMatcherModal').style.display = 'block';
     }
 
@@ -2170,6 +2788,10 @@
     };
 
     function openMenuBook() {
+      if (!getActiveUserLicenseInfo().isPro) {
+        openProUpgradeModal('📖 Generator Buku Menu Restoran & PDF Vektor');
+        return;
+      }
       const modal = document.getElementById('menuBookModal');
       modal.style.display = 'block';
       renderMenuBookDOM();
@@ -2383,7 +3005,7 @@
         const coverTitleEl = document.querySelector('#menuBookModal h1');
         const coverSubEl = document.querySelector('#menuBookModal div[contenteditable]');
         const coverTitle = coverTitleEl ? coverTitleEl.innerText.trim() : 'THE MAHAKARYA';
-        const coverSub = coverSubEl ? coverSubEl.innerText.trim() : 'ENCYCLOPEDIA OF CULINARY ARTS · KATALOG RESTORAN & KAFE';
+        const coverSub = coverSubEl ? coverSubEl.innerText.trim() : 'ANSIKLOPEDI KULINER DUNIA · KATALOG RESTORAN & KAFE';
 
         const pageWidth = doc.internal.pageSize.getWidth(); // 210mm
         const pageHeight = doc.internal.pageSize.getHeight(); // 297mm
@@ -2499,8 +3121,38 @@
           else curYCol2 = curY;
         });
 
-        // Save PDF directly
-        doc.save('Buku-Menu-Mahakarya.pdf');
+        // ── FASE 1: STAMP DYNAMIC BUYER LICENSE WATERMARK ON EVERY PAGE ──
+        const pageCount = doc.internal.getNumberOfPages();
+        const activeLic = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo() : { name: 'Member Resmi', email: 'lisensi.resmi@mahakarya.id', txnId: '#MHK-8891' };
+        
+        for (let p = 1; p <= pageCount; p++) {
+          doc.setPage(p);
+          
+          // Fine separator line above footer
+          doc.setDrawColor(220, 220, 220);
+          doc.setLineWidth(0.2);
+          doc.line(14, pageHeight - 11, pageWidth - 14, pageHeight - 11);
+
+          // Baris 1: Hak Cipta & Halaman
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(6.0);
+          doc.setTextColor(120, 120, 120);
+          doc.text('© Mahakarya 2.962 Cita Rasa Dunia · Hak Cipta Terdaftar Setyo Nugroho / Fazza Raihan Techno', 14, pageHeight - 7.5);
+          doc.text(`Halaman ${p} dari ${pageCount}`, pageWidth - 14, pageHeight - 7.5, { align: 'right' });
+
+          // Baris 2: Lisensi Resmi Pembeli & ID Transaksi (Gold Accent)
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(6.0);
+          doc.setTextColor(165, 125, 60); // Warm gold accent
+          const userLabel = `LISENSI RESMI: ${activeLic.email} (${activeLic.name})`;
+          const txnLabel = `ID TRANSAKSI: ${activeLic.txnId}`;
+          doc.text(userLabel, 14, pageHeight - 4.0);
+          doc.text(txnLabel, pageWidth - 14, pageHeight - 4.0, { align: 'right' });
+        }
+
+        // Save PDF directly with custom License Transaction filename
+        const safeTxn = activeLic.txnId ? activeLic.txnId.replace('#', '') : 'PRO';
+        doc.save(`Buku-Menu-Mahakarya-${safeTxn}.pdf`);
         restoreBtn();
       } catch (err) {
         console.error('jsPDF vector export error:', err);
