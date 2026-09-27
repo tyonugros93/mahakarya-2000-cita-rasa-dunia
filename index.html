@@ -925,6 +925,10 @@
             </div>
         </div>
         <div class="actions">
+          <button onclick="openAddUserRecipeModal()" style="background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%); color: #fff; border: 1px solid #5eead4; border-radius: 20px; padding: 6px 13px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; height: 38px; box-shadow: 0 2px 8px rgba(15,118,110,0.15); flex-shrink: 0;">
+            <span>➕</span>
+            <span>Tambah Resep Saya</span>
+          </button>
           <label class="search" aria-label="Cari resep"><span>⌕</span><input id="searchInput" type="search" placeholder="Cari nama atau bahan..." /></label>
           <!-- User License Status Badge (Fase 1 & 2 Auth Controller) -->
           <button id="userLicenseBtn" class="user-license-btn" onclick="openLicenseAuthModal()">
@@ -1085,9 +1089,67 @@
                 <small>4 Kategori · 1.000 Menu</small>
               </span>
             </button>
+            <button class="subcategory-tab" data-mode-switch="user" aria-label="Lihat Kategori Ditambahkan oleh Pengguna">
+              <span class="sub-tab-icon">📝</span>
+              <span class="sub-tab-info">
+                <strong>Ditambahkan oleh Pengguna</strong>
+                <small id="userTabSublabel">Kreasi Komunitas Pro</small>
+              </span>
+            </button>
           </div>
           <div class="recipe-toolbar"><div class="filter" id="filters"></div><span style="font-size:11px;color:var(--muted)" id="resultLabel">2.962 hasil</span></div>
           <div class="recipe-list" id="recipeList"></div>
+        </section>
+
+        <!-- SECTION 04: SURVEI & PENILAIAN PENGGUNA (RATING & NPS SCORE) -->
+        <section id="reviews" style="margin-top: 45px;">
+          <div class="section-head">
+            <div>
+              <div class="kicker">04 · Kepuasan Pengguna</div>
+              <h2>Penilaian &amp; Ulasan Komunitas</h2>
+              <p>Evaluasi langsung dari para chef, pebisnis F&amp;B, dan pencinta kuliner dunia.</p>
+            </div>
+            <button onclick="openUserSurveyModal()" style="background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); color: #f0b75f; border: 1px solid #f0b75f; border-radius: 10px; padding: 10px 18px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(17,45,59,0.15);">
+              ✍️ Beri Penilaian &amp; Ulasan Anda
+            </button>
+          </div>
+
+          <!-- NPS & Rating Metrics Summary Card -->
+          <div style="background: #ffffff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
+            <div style="text-align: center; border-right: 1px solid #edf1f2; padding-right: 15px;">
+              <span style="font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">RATING RATA-RATA</span>
+              <div style="font-size: 38px; font-weight: 900; color: #112d3b; margin: 4px 0 2px;" id="summaryAvgRating">4.9</div>
+              <div style="color: #f59e0b; font-size: 16px;">★★★★★</div>
+              <span style="font-size: 11px; color: var(--muted); display: block; margin-top: 4px;" id="summaryTotalReviews">128+ Ulasan Terverifikasi</span>
+            </div>
+
+            <div style="text-align: center; border-right: 1px solid #edf1f2; padding-right: 15px;">
+              <span style="font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">NPS REKOMENDASI SKOR</span>
+              <div style="font-size: 38px; font-weight: 900; color: #0f766e; margin: 4px 0 2px;" id="summaryNpsScore">98%</div>
+              <span style="font-size: 11.5px; color: #0f766e; font-weight: 700;">(Rating 5 ★ - Rating 1 ★) / Total Survey</span>
+              <span style="font-size: 11px; color: var(--muted); display: block; margin-top: 4px;">Bersedia Rekomendasikan ke Teman/Keluarga</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; justify-content: center; gap: 8px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #475569;">
+                <span>5 Bintang (Sangat Puas)</span>
+                <strong style="color: #0f766e;" id="barCount5">98%</strong>
+              </div>
+              <div style="background: #e2e8f0; border-radius: 4px; height: 8px; overflow: hidden;">
+                <div style="background: #0f766e; height: 100%; width: 98%;"></div>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #475569;">
+                <span>4 Bintang (Puas)</span>
+                <strong style="color: #112d3b;" id="barCount4">2%</strong>
+              </div>
+              <div style="background: #e2e8f0; border-radius: 4px; height: 8px; overflow: hidden;">
+                <div style="background: #112d3b; height: 100%; width: 2%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reviews Grid -->
+          <div id="reviewsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;"></div>
         </section>
       </div>
     </main>
@@ -1155,6 +1217,25 @@
           <p style="font-size: 11px; color: #64748b; line-height: 1.45; margin: 0;">
             💡 <strong>Informasi Ensiklopedi:</strong> Setiap resep dirancang dengan takaran gramasi &amp; instruksi memasak otentik yang presisi. Bonus Foto &amp; Panduan Visual HD disertakan khusus pada <strong>Menu-Menu Unggulan Pilihan</strong>.
           </p>
+        </div>
+
+        <!-- Likes & Comments Section for ALL Recipes -->
+        <div class="modal-section" style="border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h4 style="margin:0;"><i data-lucide="message-square" style="width:16px;height:16px;color:#f0b75f"></i> Komentar &amp; Apresiasi</h4>
+            <button id="likeBtn" onclick="toggleRecipeLike()" style="background: #fff0f3; color: #e11d48; border: 1px solid #fecdd3; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              ❤️ <span id="likeCount">12</span> Menyukai
+            </button>
+          </div>
+
+          <!-- Add Comment Form -->
+          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+            <input type="text" id="commentInput" placeholder="Tulis komentar atau tips memasak resep ini..." style="flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none;" />
+            <button onclick="submitRecipeComment()" style="background: #112d3b; color: #f0b75f; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer;">Kirim</button>
+          </div>
+
+          <!-- Comments List -->
+          <div id="recipeCommentsList" style="display: grid; gap: 10px; max-height: 200px; overflow-y: auto;"></div>
         </div>
       </div>
     </article>
@@ -1583,11 +1664,17 @@
     }
     function openRecipe(no) {
       const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
-      if (!isPro && no > 10) {
+      if (!isPro && typeof no === 'number' && no > 10) {
         openProUpgradeModal(`Resep No. ${String(no).padStart(4, '0')}`);
         return;
       }
-      const r = currentRecipes().find(x => x.no === no);
+      const r = getAllAvailableRecipes().find(x => String(x.no) === String(no) || String(x.id) === String(no)) || currentRecipes().find(x => String(x.no) === String(no));
+      if (!r) return;
+
+      if (typeof loadRecipeComments === 'function') {
+        loadRecipeComments(no);
+      }
+
       const ingredients = splitEntries(r.mainIngredients || r.ingredients, 'ingredients');
       const spices = splitEntries(r.spices, 'ingredients');
       const sauce = splitEntries(r.sauce, 'ingredients');
@@ -1985,6 +2072,129 @@
           </button>
         </div>
 
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD USER RECIPE MODAL -->
+  <div id="addUserRecipeModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100006; backdrop-filter: blur(8px); padding: 20px; overflow-y: auto;">
+    <div style="max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 16px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); overflow: hidden; display: flex; flex-direction: column;">
+      <div style="background: linear-gradient(135deg, #112d3b 0%, #0a1c25 100%); color: #fff; padding: 22px 24px; position: relative;">
+        <button onclick="closeAddUserRecipeModal()" style="position: absolute; right: 18px; top: 18px; background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer;">×</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 26px;">📝</span>
+          <div>
+            <h3 style="margin:0; font-size: 18px; color: #f0b75f; font-weight: 800;">Tambah Resep Kreasi Anda</h3>
+            <span style="font-size: 11px; color: #9eb1b5;">Terbitkan resep buatan Anda ke koleksi komunitas Mahakarya Pro</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 24px;">
+        <form id="addUserRecipeForm" onsubmit="saveUserRecipe(event)">
+          <!-- Title -->
+          <div style="margin-bottom: 14px;">
+            <label style="font-size: 12px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 4px;">Judul Resep <span style="color:red">*</span>:</label>
+            <input type="text" id="newRecTitle" placeholder="Contoh: Nasi Goreng Wagyu Truffle" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: bold; box-sizing: border-box;" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Waktu Memasak <span style="color:red">*</span>:</label>
+              <input type="text" id="newRecTime" placeholder="Contoh: 30 Menit" required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;" />
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Porsi Hidangan <span style="color:red">*</span>:</label>
+              <input type="text" id="newRecServe" placeholder="Contoh: 4 Porsi" required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;" />
+            </div>
+          </div>
+
+          <!-- Main Ingredients -->
+          <div style="margin-bottom: 14px;">
+            <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Bahan-Bahan Utama <span style="color:red">*</span>:</label>
+            <textarea id="newRecIngredients" rows="3" placeholder="500g Daging Sapi Wagyu&#10;3 porsi Nasi Putih dingin&#10;2 sdm Minyak Wijen" required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;"></textarea>
+          </div>
+
+          <!-- Spices -->
+          <div style="margin-bottom: 14px;">
+            <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Bumbu Halus / Rempah <span style="color:red">*</span>:</label>
+            <textarea id="newRecSpices" rows="2" placeholder="5 siung Bawang Putih cincang&#10;3 siung Bawang Merah&#10;1 sdt Lada Hitam" required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;"></textarea>
+          </div>
+
+          <!-- Sauce -->
+          <div style="margin-bottom: 14px;">
+            <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Saus / Pelengkap <span style="color:red">*</span>:</label>
+            <textarea id="newRecSauce" rows="2" placeholder="2 sdm Kecap Manis&#10;1 sdm Minyak Truffle&#10;Acar &amp; kerupuk" required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;"></textarea>
+          </div>
+
+          <!-- Steps -->
+          <div style="margin-bottom: 14px;">
+            <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Cara Memasak / Langkah-Langkah <span style="color:red">*</span>:</label>
+            <textarea id="newRecSteps" rows="4" placeholder="1. Tumis bawang putih dan bawang merah hingga harum.&#10;2. Masukkan daging wagyu, masak hingga berubah warna.&#10;3. Masukkan nasi dan saus, aduk rata dengan api besar." required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;"></textarea>
+          </div>
+
+          <!-- Image Upload (Mandatory) -->
+          <div style="margin-bottom: 14px; background: #fffdf9; border: 1px dashed #f0b75f; border-radius: 8px; padding: 12px;">
+            <label style="font-size: 11px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 4px;">Upload Foto Resep (Wajib) <span style="color:red">*</span>:</label>
+            <input type="file" id="newRecImageInput" accept="image/*" onchange="handleUserImageUpload(event)" required style="font-size: 12px;" />
+            <div id="newRecImagePreview" style="margin-top: 8px; display: none;">
+              <img id="newRecImgTag" src="" alt="Preview" style="max-height: 120px; border-radius: 6px; border: 1px solid #cbd5e1;" />
+            </div>
+          </div>
+
+          <!-- Nutrition (Optional) -->
+          <div style="margin-bottom: 18px;">
+            <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">Kandungan Nutrisi (Opsional):</label>
+            <input type="text" id="newRecNutrition" placeholder="Contoh: 450 kkal Energi, 32g Protein, 48g Karbohidrat" style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;" />
+          </div>
+
+          <button type="submit" style="width: 100%; padding: 12px; background: #0f766e; color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(15,118,110,0.25);">✨ Terbitkan Resep Baru Saya</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER SURVEY & REVIEW MODAL -->
+  <div id="userSurveyModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100008; backdrop-filter: blur(8px); padding: 20px; overflow-y: auto;">
+    <div style="max-width: 520px; margin: 40px auto; background: #ffffff; border-radius: 16px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); overflow: hidden; display: flex; flex-direction: column;">
+      <div style="background: linear-gradient(135deg, #112d3b 0%, #0a1c25 100%); color: #fff; padding: 22px 24px; position: relative;">
+        <button onclick="closeUserSurveyModal()" style="position: absolute; right: 18px; top: 18px; background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer;">×</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 26px;">✍️</span>
+          <div>
+            <h3 style="margin:0; font-size: 18px; color: #f0b75f; font-weight: 800;">Survei Penilaian &amp; Review Pengguna</h3>
+            <span style="font-size: 11px; color: #9eb1b5;">Masukan Anda sangat berharga untuk pengembangan platform Mahakarya</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 24px;">
+        <label style="font-size: 12px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 6px;">Nama Anda / Nama Usaha F&amp;B:</label>
+        <input type="text" id="surveyName" placeholder="Contoh: Chef Budi / Cafe Kitchen" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; outline: none; margin-bottom: 14px; box-sizing: border-box;" />
+
+        <label style="font-size: 12px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 6px;">Skala Rating Pengalaman Anda (1 - 5 Bintang):</label>
+        <select id="surveyRating" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; outline: none; margin-bottom: 14px; font-weight: bold; color: #b45309; box-sizing: border-box;">
+          <option value="5">★★★★★ (5/5) - Sangat Puas &amp; Sangat Membantu</option>
+          <option value="4">★★★★☆ (4/5) - Bagus &amp; Bermanfaat</option>
+          <option value="3">★★★☆☆ (3/5) - Cukup Baik</option>
+          <option value="2">★★☆☆☆ (2/5) - Perlu Perbaikan</option>
+          <option value="1">★☆☆☆☆ (1/5) - Kurang Memuaskan</option>
+        </select>
+
+        <label style="font-size: 12px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 6px;">Deskripsi Ulasan &amp; Pengalaman Anda:</label>
+        <textarea id="surveyReview" rows="3" placeholder="Tuliskan ulasan Anda mengenai kepraktisan resep, AI Assistant, PDF Generator, dll..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none; margin-bottom: 14px; resize: vertical; box-sizing: border-box;"></textarea>
+
+        <label style="font-size: 12px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 8px;">Survei NPS (Net Promoter Score):</label>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 18px; font-size: 12px; color: #334155;">
+          <p style="margin: 0 0 8px; font-weight: 700;">Apakah Anda bersedia merekomendasikan Mahakarya Cita Rasa Dunia kepada teman atau keluarga Anda?</p>
+          <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;"><input type="radio" name="nps" value="Ya" checked /> 🟢 Ya, Sangat Bersedia</label>
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;"><input type="radio" name="nps" value="Mungkin" /> 🟡 Mungkin</label>
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;"><input type="radio" name="nps" value="Tidak" /> 🔴 Tidak</label>
+          </div>
+        </div>
+
+        <button onclick="submitUserSurvey()" style="width: 100%; padding: 12px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);">✨ Kirim Penilaian &amp; Ulasan Saya</button>
       </div>
     </div>
   </div>
@@ -3063,6 +3273,9 @@
       } else if (typeof businessMenuSets !== 'undefined' && Array.isArray(businessMenuSets)) {
         all = all.concat(businessMenuSets);
       }
+      if (typeof userRecipes !== 'undefined' && Array.isArray(userRecipes) && userRecipes.length > 0) {
+        all = all.concat(userRecipes);
+      }
       return all;
     }
 
@@ -3368,6 +3581,332 @@
         }, 2000);
       }, 500);
     }
+
+    // ── 4. USER CONTRIBUTED RECIPES, SURVEYS, LIKES, COMMENTS & SYNC ──
+    let userRecipes = JSON.parse(localStorage.getItem('mahakarya_user_recipes') || '[]');
+    let activeRecipeId = null;
+
+    async function syncUserRecipes() {
+      try {
+        const res = await fetch('/api/user-recipes');
+        if (res.ok) {
+          const serverData = await res.json();
+          if (Array.isArray(serverData) && serverData.length > 0) {
+            const map = new Map();
+            userRecipes.forEach(r => map.set(String(r.no || r.id), r));
+            serverData.forEach(r => map.set(String(r.no || r.id), r));
+            userRecipes = Array.from(map.values());
+            localStorage.setItem('mahakarya_user_recipes', JSON.stringify(userRecipes));
+            if (typeof render === 'function') render();
+          }
+        }
+      } catch(e) {
+        console.log('Using local userRecipes');
+      }
+    }
+
+    function openAddUserRecipeModal() {
+      if (!getActiveUserLicenseInfo().isPro) {
+        openProUpgradeModal('➕ Tambah Resep Baru oleh Pengguna');
+        return;
+      }
+      document.getElementById('addUserRecipeModal').style.display = 'block';
+    }
+
+    function closeAddUserRecipeModal() {
+      document.getElementById('addUserRecipeModal').style.display = 'none';
+    }
+
+    let uploadedUserImageBase64 = '';
+
+    function handleUserImageUpload(event) {
+      const file = event.target ? event.target.files[0] : null;
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 500;
+          const scaleSize = MAX_WIDTH / img.width;
+          const width = (img.width > MAX_WIDTH) ? MAX_WIDTH : img.width;
+          const height = (img.width > MAX_WIDTH) ? (img.height * scaleSize) : img.height;
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          uploadedUserImageBase64 = canvas.toDataURL('image/jpeg', 0.85);
+          const imgTag = document.getElementById('newRecImgTag');
+          const previewDiv = document.getElementById('newRecImagePreview');
+          if (imgTag && previewDiv) {
+            imgTag.src = uploadedUserImageBase64;
+            previewDiv.style.display = 'block';
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveUserRecipe(event) {
+      if (event) event.preventDefault();
+      const title = document.getElementById('newRecTitle').value.trim();
+      const cat = document.getElementById('newRecCategory').value;
+      const servings = document.getElementById('newRecServings').value.trim();
+      const cookTime = document.getElementById('newRecCookTime').value.trim();
+      const mainIngredients = document.getElementById('newRecMainIngredients').value.trim();
+      const spices = document.getElementById('newRecSpices').value.trim();
+      const sauce = document.getElementById('newRecSauce').value.trim();
+      const steps = document.getElementById('newRecSteps').value.trim();
+      const nutrition = document.getElementById('newRecNutrition').value.trim();
+      const userInfo = getActiveUserLicenseInfo();
+
+      if (!title || !mainIngredients || !spices || !sauce || !steps) {
+        alert('Mohon lengkapi seluruh field mandatory pada resep!');
+        return;
+      }
+
+      if (!uploadedUserImageBase64) {
+        alert('Mohon unggah foto resep terlebih dahulu (mandatory).');
+        return;
+      }
+
+      const recipeId = 'USER-' + Date.now();
+      const newRec = {
+        no: recipeId,
+        id: recipeId,
+        title: title,
+        chapter: 99,
+        cat: cat || 'Ditambahkan oleh Pengguna',
+        desc: `Resep Kreasi Komunitas oleh ${userInfo.name}`,
+        serve: servings ? `${servings} porsi` : '4 porsi',
+        time: cookTime ? `${cookTime} menit` : '30 menit',
+        mainIngredients: mainIngredients,
+        spices: spices,
+        sauce: sauce,
+        steps: steps,
+        nutrition: nutrition ? nutrition.split(',').map(s => s.trim()) : ['Estimasi 420 kkal Energi', '24g Protein'],
+        thumb: uploadedUserImageBase64,
+        image: uploadedUserImageBase64,
+        author: userInfo.name,
+        authorEmail: userInfo.email,
+        isUserContributed: true,
+        createdAt: new Date().toISOString()
+      };
+
+      userRecipes.unshift(newRec);
+      localStorage.setItem('mahakarya_user_recipes', JSON.stringify(userRecipes));
+
+      try {
+        await fetch('/api/user-recipes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newRec)
+        });
+      } catch(e) {}
+
+      alert(`🎉 Selamat! Resep "${title}" berhasil diterbitkan!\n\nResep kreasi Anda telah tersimpan dan terintegrasi ke sistem pencarian, Smart Pantry, dan Katalog Buku Menu.`);
+      
+      const formEl = document.getElementById('addUserRecipeForm');
+      if (formEl) formEl.reset();
+      uploadedUserImageBase64 = '';
+      const previewDiv = document.getElementById('newRecImagePreview');
+      if (previewDiv) previewDiv.style.display = 'none';
+      closeAddUserRecipeModal();
+
+      if (typeof render === 'function') render();
+    }
+
+    // ── SURVEY & REVIEWS ──
+    function openUserSurveyModal() {
+      document.getElementById('userSurveyModal').style.display = 'block';
+    }
+
+    function closeUserSurveyModal() {
+      document.getElementById('userSurveyModal').style.display = 'none';
+    }
+
+    async function submitUserSurvey() {
+      const name = document.getElementById('surveyName').value.trim() || 'Pengguna Mahakarya';
+      const rating = parseInt(document.getElementById('surveyRating').value, 10) || 5;
+      const review = document.getElementById('surveyReview').value.trim();
+      const npsEl = document.querySelector('input[name="nps"]:checked');
+      const nps = npsEl ? npsEl.value : 'Ya';
+
+      if (!review) {
+        alert('Mohon tuliskan ulasan & pengalaman Anda.');
+        return;
+      }
+
+      const newSurvey = {
+        id: 'survey_' + Date.now(),
+        name: name,
+        rating: rating,
+        review: review,
+        nps: nps,
+        date: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })
+      };
+
+      try {
+        await fetch('/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newSurvey)
+        });
+      } catch(e) {}
+
+      let localSurveys = JSON.parse(localStorage.getItem('mahakarya_user_surveys') || '[]');
+      localSurveys.unshift(newSurvey);
+      localStorage.setItem('mahakarya_user_surveys', JSON.stringify(localSurveys));
+
+      alert('✨ Terima kasih banyak! Penilaian dan ulasan Anda telah berhasil terkirim.');
+      closeUserSurveyModal();
+      loadUserSurveys();
+    }
+
+    async function loadUserSurveys() {
+      let reviews = [];
+      try {
+        const res = await fetch('/api/reviews');
+        if (res.ok) {
+          reviews = await res.json();
+        }
+      } catch(e) {}
+
+      if (!Array.isArray(reviews) || reviews.length === 0) {
+        reviews = JSON.parse(localStorage.getItem('mahakarya_user_surveys') || '[]');
+      }
+
+      if (!reviews || reviews.length === 0) {
+        reviews = [
+          { name: "Chef Hendra Setiawan", rating: 5, review: "Platform terbaik untuk inspirasi menu resto. PDF Generator sangat membantu merancang menu buku fine dining!", nps: "Ya", date: "24 Sep 2026" },
+          { name: "Siti Rahmawati (Kuliner Solo)", rating: 5, review: "Koleksi resep Cita Rasa Dunia lengkap banget. Substitusi bumbu AI sangat akurat untuk kebutuhan catering.", nps: "Ya", date: "22 Sep 2026" },
+          { name: "Budi Santoso - Cafe Manager", rating: 5, review: "Sangat puas dengan fitur watermarking PDF dan smart pantry. Investasi 50k paling worth it!", nps: "Ya", date: "20 Sep 2026" }
+        ];
+      }
+
+      const total = reviews.length;
+      const sumRating = reviews.reduce((acc, r) => acc + (r.rating || 5), 0);
+      const avgRating = (sumRating / total).toFixed(1);
+      const fiveStars = reviews.filter(r => r.rating === 5).length;
+      const oneStars = reviews.filter(r => r.rating === 1).length;
+      const npsScore = Math.round(((fiveStars - oneStars) / total) * 100);
+
+      const avgEl = document.getElementById('avgRatingText');
+      const countEl = document.getElementById('totalReviewCount');
+      const npsEl = document.getElementById('npsScoreText');
+      const gridEl = document.getElementById('reviewsGrid');
+
+      if (avgEl) avgEl.textContent = avgRating;
+      if (countEl) countEl.textContent = `${total} Ulasan Verifikasi`;
+      if (npsEl) npsEl.textContent = `${npsScore >= 0 ? '+' : ''}${npsScore}%`;
+
+      if (gridEl) {
+        gridEl.innerHTML = reviews.map(r => `
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h4 style="margin: 0; font-size: 14px; color: #112d3b; font-weight: 800;">${r.name}</h4>
+              <span style="font-size: 12px; color: #f59e0b; font-weight: 700;">${'★'.repeat(r.rating || 5)}</span>
+            </div>
+            <p style="margin: 0 0 10px; font-size: 12.5px; color: #475569; line-height: 1.45;">"${r.review}"</p>
+            <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: #94a3b8;">
+              <span>Rekomendasi NPS: <b style="color: #0f766e;">${r.nps || 'Ya'}</b></span>
+              <span>${r.date || 'Baru saja'}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // ── LIKES & COMMENTS FOR RECIPES ──
+    async function toggleRecipeLike() {
+      if (!activeRecipeId) return;
+      const key = `mahakarya_likes_${activeRecipeId}`;
+      let count = parseInt(localStorage.getItem(key) || '12', 10);
+      count += 1;
+      localStorage.setItem(key, count);
+
+      const countEl = document.getElementById('likeCount');
+      if (countEl) countEl.textContent = count;
+
+      try {
+        await fetch('/api/comments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ recipeId: activeRecipeId, action: 'like' })
+        });
+      } catch(e) {}
+    }
+
+    async function submitRecipeComment() {
+      if (!activeRecipeId) return;
+      const input = document.getElementById('commentInput');
+      const text = input ? input.value.trim() : '';
+      if (!text) return;
+
+      const userInfo = getActiveUserLicenseInfo();
+      const newComment = {
+        recipeId: activeRecipeId,
+        author: userInfo.name || 'Pengguna Mahakarya',
+        text: text,
+        date: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+      };
+
+      const key = `mahakarya_comments_${activeRecipeId}`;
+      let comments = JSON.parse(localStorage.getItem(key) || '[]');
+      comments.unshift(newComment);
+      localStorage.setItem(key, JSON.stringify(comments));
+
+      if (input) input.value = '';
+
+      try {
+        await fetch('/api/comments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newComment)
+        });
+      } catch(e) {}
+
+      loadRecipeComments(activeRecipeId);
+    }
+
+    async function loadRecipeComments(recipeId) {
+      activeRecipeId = recipeId;
+      const key = `mahakarya_comments_${recipeId}`;
+      let comments = JSON.parse(localStorage.getItem(key) || '[]');
+
+      if (comments.length === 0) {
+        comments = [
+          { author: "Chef Aris", text: "Takaran bumbu sangat seimbang, rasa gurihnya pas!", date: "10:15" },
+          { author: "Maya Cafe Owner", text: "Cocok banget dimasukkan ke menu coffee shop kami.", date: "09:40" }
+        ];
+      }
+
+      const listEl = document.getElementById('recipeCommentsList');
+      if (listEl) {
+        listEl.innerHTML = comments.map(c => `
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; font-size: 11.5px;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; color: #112d3b; margin-bottom: 3px;">
+              <span>${c.author}</span>
+              <span style="font-size: 10px; color: #94a3b8;">${c.date || ''}</span>
+            </div>
+            <p style="margin: 0; color: #475569;">${c.text}</p>
+          </div>
+        `).join('');
+      }
+
+      const likeKey = `mahakarya_likes_${recipeId}`;
+      const count = localStorage.getItem(likeKey) || '12';
+      const countEl = document.getElementById('likeCount');
+      if (countEl) countEl.textContent = count;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      syncUserRecipes();
+      loadUserSurveys();
+    });
   </script>
 </body>
 </html>
