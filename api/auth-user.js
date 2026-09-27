@@ -30,7 +30,8 @@ export default async function handler(req, res) {
       'pembeli@myscalev.com',
       'lisensi.resmi@mahakarya.id',
       'tyonugros93@gmail.com',
-      'sn.tyonyunu@gmail.com'
+      'sn.tyonyunu@gmail.com',
+      'sn.tyonunu@gmail.com'
     ];
 
     let isPro = paidEmails.includes(email);

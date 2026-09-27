@@ -3150,8 +3150,11 @@
           alert(data.message || 'Gagal login dengan Google.');
         }
       } catch(e) {
-        const paidWhitelist = ['arinii.sartika@gmail.com', 'fazzaraihantechno@gmail.com', 'pembeli@myscalev.com', 'lisensi.resmi@mahakarya.id', 'tyonugros93@gmail.com', 'sn.tyonyunu@gmail.com'];
+        console.warn('[GIS] API fetch failed (expected on localhost):', e.message);
+        console.log('[GIS] Fallback whitelist check for email:', email);
+        const paidWhitelist = ['arinii.sartika@gmail.com', 'fazzaraihantechno@gmail.com', 'pembeli@myscalev.com', 'lisensi.resmi@mahakarya.id', 'tyonugros93@gmail.com', 'sn.tyonyunu@gmail.com', 'sn.tyonunu@gmail.com'];
         const isOwner = paidWhitelist.includes(email);
+        console.log('[GIS] Whitelist match result:', isOwner, '| Email checked:', email);
         const sessionData = {
           isPro: isOwner,
           key: isOwner ? 'GOOGLE-PRO-VVIP' : 'GUEST',
@@ -3163,7 +3166,7 @@
         };
         localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
         updateLicenseUI();
-        alert(isOwner ? `🎉 Welcome, ${name}! Login Google Berhasil (Member Pro VVIP).` : `🎉 Welcome, ${name}! Login Google Berhasil (Member Gratis).`);
+        alert(isOwner ? `🎉 Welcome, ${name}! Login Google Berhasil (Member Pro VVIP).\n\nEmail: ${email}` : `🎉 Welcome, ${name}! Login Google Berhasil (Member Gratis).\n\nEmail: ${email}\n\nJika email ini seharusnya Pro, hubungi admin.`);
         closeLicenseAuthModal();
         window.location.reload();
       }
