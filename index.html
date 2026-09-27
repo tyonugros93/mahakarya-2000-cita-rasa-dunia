@@ -96,6 +96,31 @@
 
     .crumb strong { color: var(--ink); }
     .actions { display: flex; align-items: center; gap: 10px; }
+    .user-license-btn {
+      background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%);
+      color: #f0b75f;
+      border: 1px solid #f0b75f;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(17,45,59,0.15);
+      white-space: nowrap;
+      height: 38px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .user-license-btn:hover {
+      background: linear-gradient(135deg, #1a495e 0%, #24627d 100%);
+      box-shadow: 0 4px 12px rgba(240,183,95,0.3);
+      transform: translateY(-1px);
+    }
     .search { width: min(290px, 30vw); display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 8px 11px; color: var(--muted); }
     .search input { border: 0; outline: 0; width: 100%; color: var(--ink); background: transparent; font-size: 13px; }
     .icon-btn { width: 35px; height: 35px; border: 1px solid var(--line); background: #fff; border-radius: 8px; color: var(--navy); font-weight: 800; }
@@ -402,6 +427,14 @@
         align-items: stretch !important;
         gap: 8px !important;
         width: 100% !important;
+      }
+      .user-license-btn {
+        order: 0 !important;
+        width: 100% !important;
+        margin-bottom: 2px !important;
+        border-radius: 10px !important;
+        font-size: 12px !important;
+        height: 38px !important;
       }
       .search {
         order: 1 !important;
@@ -890,15 +923,14 @@
                 <div class="lang-item" style="opacity:0.5;">Sedang memuat daftar bahasa...</div>
               </div>
             </div>
-          <!-- User License Status Badge (Fase 1 & 2 Auth Controller) -->
-          <button id="userLicenseBtn" onclick="openLicenseAuthModal()" style="background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); color: #f0b75f; border: 1px solid #f0b75f; border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(17,45,59,0.15); margin-left: 8px;">
-            <span id="userLicenseIcon">✨</span>
-            <span id="userLicenseBadgeText">PRO MEMBER</span>
-          </button>
-
         </div>
         <div class="actions">
           <label class="search" aria-label="Cari resep"><span>⌕</span><input id="searchInput" type="search" placeholder="Cari nama atau bahan..." /></label>
+          <!-- User License Status Badge (Fase 1 & 2 Auth Controller) -->
+          <button id="userLicenseBtn" class="user-license-btn" onclick="openLicenseAuthModal()">
+            <span id="userLicenseIcon">✨</span>
+            <span id="userLicenseBadgeText">PRO MEMBER</span>
+          </button>
           <div class="mega-pill-wrap">
           <button class="mega-pill" id="megaPillBtn" aria-haspopup="true" aria-expanded="false" aria-controls="megaDropdown">
             <span class="mega-pill-icon">
@@ -1404,12 +1436,15 @@
       const searchTerms = searchRequirements(query);
       const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
 
-      const filtered = currentRecipes().filter(r => {
+      const allMatching = currentRecipes().filter(r => {
         const matchesChapter = !activeChapter || r.chapter === activeChapter;
         const corpus = searchableText(r);
         const matchesQuery = !searchTerms.length || searchTerms.every(options => options.some(term => corpus.includes(term)));
         return matchesChapter && matchesQuery;
       });
+
+      // For Guest view (free mode): only display 10 sample recipes total in the grid (specifically sample recipes without images r.no <= 10)
+      const filtered = isPro ? allMatching : allMatching.filter(r => r.no <= 10).slice(0, 10);
 
       const totalRecipes = filtered.length;
       const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE) || 1;
@@ -1474,15 +1509,27 @@
               <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center;">${navBtns}</div>
             </div>
           `;
+        } else if (!isPro) {
+          // Add Guest Callout Banner at bottom of guest recipe grid
+          html += `
+            <div style="grid-column: 1 / -1; margin-top: 25px; padding: 22px 24px; background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); border-radius: 14px; color: #fff; text-align: center; border: 1px solid #f0b75f; box-shadow: 0 10px 25px rgba(17,45,59,0.15);">
+              <div style="font-size: 26px; margin-bottom: 6px;">👑</div>
+              <h4 style="margin: 0 0 6px; color: #f0b75f; font-size: 16px; font-weight: 800;">Tampilan Guest Mode (10 Resep Sampel Gratis)</h4>
+              <p style="margin: 0 0 16px; font-size: 13px; color: #cbd5e1; max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+                Anda hanya dapat melihat 10 resep sampel tanpa gambar. Untuk membuka seluruh <strong>2.962 Resep Otentik Dunia</strong>, AI Chef Assistant, dan Generator Buku Menu HD, silakan aktivasi lisensi resmi Anda.
+              </p>
+              <button onclick="openLicenseAuthModal()" style="background: #f0b75f; color: #112d3b; border: none; padding: 10px 22px; border-radius: 20px; font-weight: 800; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(240,183,95,0.3);">✨ Input Kode Lisensi / Aktivasi Pro Sekarang</button>
+            </div>
+          `;
         }
 
         listEl.innerHTML = html;
       }
 
       const visEl = document.getElementById('visibleCount');
-      if (visEl) visEl.textContent = filtered.length.toLocaleString('id-ID');
+      if (visEl) visEl.textContent = isPro ? filtered.length.toLocaleString('id-ID') : '10 Sampel';
       const resEl = document.getElementById('resultLabel');
-      if (resEl) resEl.textContent = `${filtered.length.toLocaleString('id-ID')} hasil`;
+      if (resEl) resEl.textContent = isPro ? `${filtered.length.toLocaleString('id-ID')} hasil` : `10 sampel resep gratis (Buka Pro untuk 2.962 resep)`;
       document.querySelectorAll('[data-recipe]').forEach(b => b.addEventListener('click', () => openRecipe(Number(b.dataset.recipe))));
     }
 
@@ -1956,22 +2003,22 @@
         <!-- Activation Form -->
         <div id="licenseFormBox">
           <label style="font-size: 12px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 5px;">Masukkan Kode Kunci Lisensi:</label>
-          <input type="text" id="inputLicenseKey" placeholder="Contoh: MAHAKARYA-PRO-2026" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 700; color: #112d3b; outline: none; margin-bottom: 12px; letter-spacing: 0.05em; text-transform: uppercase;">
+          <input type="text" id="inputLicenseKey" placeholder="Masukkan Kode Lisensi Resmi Anda" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 700; color: #112d3b; outline: none; margin-bottom: 12px; letter-spacing: 0.05em; text-transform: uppercase;">
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
             <div>
               <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Nama Lengkap Pembeli:</label>
-              <input type="text" id="inputLicenseName" placeholder="Contoh: Budi Santoso" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; outline: none;">
+              <input type="text" id="inputLicenseName" placeholder="Nama Anda" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; outline: none;">
             </div>
             <div>
               <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Email Pembeli (Untuk Watermark):</label>
-              <input type="email" id="inputLicenseEmail" placeholder="budi@gmail.com" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; outline: none;">
+              <input type="email" id="inputLicenseEmail" placeholder="email@domain.com" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; outline: none;">
             </div>
           </div>
 
           <button onclick="activateLicenseKey()" style="width: 100%; padding: 13px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);">✨ Aktivasi Akses Mahakarya Pro</button>
-          <div style="font-size: 11px; color: #64748b; text-align: center; margin-top: 10px; background: #fff8eb; padding: 6px 10px; border-radius: 6px; border: 1px solid #fcd34d;">
-            💡 <i>Kode Lisensi Demo Kunci: <b>MAHAKARYA-PRO-2026</b> atau <b>SETYO-VIP-KEY</b></i>
+          <div style="font-size: 11px; color: #475569; text-align: center; margin-top: 10px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; line-height: 1.4;">
+            🔒 <i>Kode lisensi resmi dikirim otomatis ke email Anda setelah sukses checkout di Scalev. Hubungi CS jika butuh bantuan.</i>
           </div>
         </div>
 
