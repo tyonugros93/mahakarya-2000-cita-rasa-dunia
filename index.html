@@ -3232,6 +3232,11 @@
     };
 
     function openChefAssistant() {
+      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+      if (!isPro) {
+        openLicenseAuthModal();
+        return;
+      }
       document.getElementById('chefAssistantModal').style.display = 'block';
       switchChefTab('chatbot');
     }
@@ -3528,6 +3533,11 @@
 
     // ── 2. SMART PANTRY MATCHER ──
     function openPantryMatcher() {
+      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+      if (!isPro) {
+        openLicenseAuthModal();
+        return;
+      }
       document.getElementById('pantryMatcherModal').style.display = 'block';
     }
 
@@ -3629,6 +3639,11 @@
     };
 
     function openMenuBook() {
+      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+      if (!isPro) {
+        openLicenseAuthModal();
+        return;
+      }
       const modal = document.getElementById('menuBookModal');
       if (modal) {
         modal.style.setProperty('display', 'block', 'important');
@@ -4037,6 +4052,11 @@
     }
 
     function openAddUserRecipeModal() {
+      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+      if (!isPro) {
+        openLicenseAuthModal();
+        return;
+      }
       const modal = document.getElementById('addUserRecipeModal');
       if (modal) {
         modal.style.setProperty('display', 'block', 'important');
@@ -4193,6 +4213,11 @@
 
     // ── SURVEY & REVIEWS ──
     function openUserSurveyModal() {
+      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+      if (!isPro) {
+        openLicenseAuthModal();
+        return;
+      }
       const modal = document.getElementById('userSurveyModal');
       if (modal) {
         modal.style.setProperty('display', 'block', 'important');
