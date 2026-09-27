@@ -1246,6 +1246,19 @@
           <!-- Comments List -->
           <div id="recipeCommentsList" style="display: grid; gap: 10px; max-height: 200px; overflow-y: auto;"></div>
         </div>
+
+        <!-- Delete User Recipe Section (Matching Access Code / Owner) -->
+        <div id="modalUserDeleteBox" style="display: none; border-top: 1px dashed #fca5a5; padding-top: 14px; margin-top: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #fff1f2; border: 1px solid #fecdd3; padding: 12px 16px; border-radius: 10px;">
+            <div>
+              <strong style="color: #9f1239; font-size: 12px; display: block;">Resep Kreasi Anda</strong>
+              <span style="color: #be123c; font-size: 11px;">Anda dapat menghapus resep ini dari koleksi komunitas.</span>
+            </div>
+            <button onclick="deleteUserRecipe()" style="background: #e11d48; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(225,29,72,0.2);">
+              🗑️ Hapus Resep Ini
+            </button>
+          </div>
+        </div>
       </div>
     </article>
   </div>
@@ -1741,6 +1754,29 @@
       document.getElementById('modalGarnish').innerHTML = r.garnish ? formatRichText(`Garnish: ${r.garnish}`) : '';
 
       document.getElementById('modalNote').innerHTML = formatRichText(r.note || 'Sesuaikan teknik dan bumbu dengan karakter bahan yang digunakan.');
+      
+      window.currentOpenRecipeId = r.no || r.id;
+
+      // Handle Delete Button visibility for User Contributed Recipes
+      const deleteBox = document.getElementById('modalUserDeleteBox');
+      if (deleteBox) {
+        const userInfo = (typeof getActiveUserLicenseInfo === 'function') ? getActiveUserLicenseInfo() : {};
+        const activeKey = userInfo.key || '';
+        const isOwner = activeKey === '328473846878213218FRAJ';
+        const isUserContributed = r.isUserContributed || r.isUserCreated || String(r.no || r.id).startsWith('USER-') || r.cat === 'Ditambahkan oleh Pengguna';
+        const isCreator = isUserContributed && (
+          (r.creatorKey && r.creatorKey === activeKey) ||
+          (r.authorEmail && r.authorEmail === userInfo.email) ||
+          (r.author && r.author === userInfo.name)
+        );
+
+        if (isUserContributed && (isOwner || isCreator)) {
+          deleteBox.style.display = 'block';
+        } else {
+          deleteBox.style.display = 'none';
+        }
+      }
+
       document.getElementById('modalBackdrop').classList.add('open');
       if (window.lucide) lucide.createIcons();
     }
@@ -2109,18 +2145,10 @@
             <input type="text" id="newRecTitle" placeholder="Contoh: Nasi Goreng Wagyu Truffle" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: bold; box-sizing: border-box;" />
           </div>
 
-          <!-- Category Select -->
+          <!-- Category (Pre-filled & Non-editable) -->
           <div style="margin-bottom: 14px;">
             <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Kategori Resep <span style="color:red">*</span>:</label>
-            <select id="newRecCategory" required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;">
-              <option value="Ditambahkan oleh Pengguna">Ditambahkan oleh Pengguna</option>
-              <option value="Eksotika Nusantara">Eksotika Nusantara</option>
-              <option value="MPASI Nusantara Sehat & Bergizi">MPASI Nusantara Sehat & Bergizi</option>
-              <option value="Pesona Timur Tengah">Pesona Timur Tengah</option>
-              <option value="Klasik Amerika">Klasik Amerika</option>
-              <option value="Keanggunan Kontinental">Keanggunan Kontinental</option>
-              <option value="Fullset Menu Business F&B">Fullset Menu Business F&B</option>
-            </select>
+            <input type="text" id="newRecCategory" value="Ditambahkan oleh Pengguna" readonly style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #0f766e; font-size: 12px; font-weight: 800; box-sizing: border-box; cursor: not-allowed;" />
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
@@ -3729,6 +3757,7 @@
         image: uploadedUserImageBase64,
         author: userInfo.name,
         authorEmail: userInfo.email,
+        creatorKey: userInfo.key || userInfo.email || '',
         isUserContributed: true,
         createdAt: new Date().toISOString()
       };
@@ -3753,6 +3782,40 @@
       if (previewDiv) previewDiv.style.display = 'none';
       closeAddUserRecipeModal();
 
+      if (typeof render === 'function') render();
+    }
+
+    async function deleteUserRecipe() {
+      const recId = window.currentOpenRecipeId;
+      if (!recId) return;
+
+      if (!confirm('Apakah Anda yakin ingin menghapus resep ini dari koleksi?')) {
+        return;
+      }
+
+      const userInfo = (typeof getActiveUserLicenseInfo === 'function') ? getActiveUserLicenseInfo() : {};
+      const activeKey = userInfo.key || userInfo.email || '';
+
+      userRecipes = userRecipes.filter(r => String(r.no || r.id) !== String(recId));
+      localStorage.setItem('mahakarya_user_recipes', JSON.stringify(userRecipes));
+
+      try {
+        await fetch('/api/user-recipes', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipeId: recId,
+            userKey: activeKey
+          })
+        });
+      } catch(e) {
+        console.error('Failed to delete recipe from server:', e);
+      }
+
+      const modalBackdrop = document.getElementById('modalBackdrop');
+      if (modalBackdrop) modalBackdrop.classList.remove('open');
+
+      alert('🗑️ Resep telah berhasil dihapus!');
       if (typeof render === 'function') render();
     }
 
