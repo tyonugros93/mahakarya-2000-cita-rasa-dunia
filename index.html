@@ -2648,7 +2648,7 @@
       document.getElementById('licenseAuthModal').style.display = 'none';
     }
 
-    function activateLicenseKey() {
+    async function activateLicenseKey() {
       const keyInput = (document.getElementById('inputLicenseKey').value || '').trim().toUpperCase();
       const nameInput = (document.getElementById('inputLicenseName').value || '').trim();
       const emailInput = (document.getElementById('inputLicenseEmail').value || '').trim();
@@ -2658,36 +2658,73 @@
         return;
       }
 
-      const isValid = VALID_DEMO_KEYS.includes(keyInput) || keyInput.length >= 4;
-
-      if (!isValid) {
-        alert('Kode Lisensi atau Order ID tidak valid. Silakan cek email konfirmasi pembayaran Scalev Anda.');
-        return;
-      }
-
       const devId = getOrCreateDeviceId();
-      const licenseId = emailInput || keyInput;
-      const deviceCheck = registerDeviceForLicense(licenseId, devId);
-
-      if (!deviceCheck.allowed) {
-        alert(`⛔ AKSES DITOLAK: Batas Maksimal 2 Perangkat Terlampaui!\n\nLisensi ini (${licenseId}) sudah digunakan pada 2 perangkat lain:\n• Device 1: ${deviceCheck.devices[0]}\n• Device 2: ${deviceCheck.devices[1]}\n\nPerangkat Anda saat ini (${devId}) adalah perangkat ke-3.\nSilakan lakukan Logout / Deaktivasi pada salah satu perangkat sebelumnya terlebih dahulu.`);
-        return;
+      const btn = document.querySelector('#licenseFormBox button');
+      const originalText = btn ? btn.textContent : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Memverifikasi Order ID ke Scalev Server...';
       }
 
-      const txnId = keyInput.startsWith('#') ? keyInput : ('#' + keyInput);
-      const sessionData = {
-        isPro: true,
-        key: keyInput,
-        name: nameInput || 'Member Resmi Mahakarya',
-        email: emailInput || 'pembeli@mahakarya.id',
-        txnId: txnId,
-        activatedAt: new Date().toISOString()
-      };
+      try {
+        let isValidServer = false;
+        let serverMessage = '';
+        let verifiedName = nameInput;
+        let verifiedEmail = emailInput;
+        let verifiedTxn = keyInput.startsWith('#') ? keyInput : ('#' + keyInput);
 
-      localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
-      updateLicenseUI();
-      alert(`🎉 Selamat! Akses Mahakarya Pro Berhasil Diaktifkan!\n\nNama Pembeli: ${sessionData.name}\nEmail: ${sessionData.email}\nOrder ID / Lisensi: ${sessionData.txnId}\n\nSeluruh 2.962 Resep, AI Assistant, dan PDF Vector Watermarking telah aktif.`);
-      closeLicenseAuthModal();
+        // Call Vercel Serverless Endpoint /api/verify-order
+        try {
+          const res = await fetch('/api/verify-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId: keyInput, email: emailInput, deviceId: devId })
+          });
+          const data = await res.json();
+          isValidServer = data.valid;
+          serverMessage = data.message;
+          if (data.name) verifiedName = data.name;
+          if (data.email) verifiedEmail = data.email;
+          if (data.orderId) verifiedTxn = data.orderId;
+        } catch(e) {
+          // Fallback if local preview server without Vercel API
+          isValidServer = VALID_DEMO_KEYS.includes(keyInput) || /^#?(ORD|MHK|FAZ|SCALEV|ORDER)[\w-]{3,20}$/i.test(keyInput) || (/^\d{5,15}$/.test(keyInput.replace(/^#/,'')));
+          serverMessage = 'Order ID tidak valid / tidak terdaftar di Scalev.';
+        }
+
+        if (!isValidServer) {
+          alert(serverMessage || '⛔ Order ID atau Kode Lisensi tidak valid. Silakan cek email konfirmasi pembayaran Scalev Anda.');
+          if (btn) { btn.disabled = false; btn.textContent = originalText; }
+          return;
+        }
+
+        const licenseId = verifiedEmail || keyInput;
+        const deviceCheck = registerDeviceForLicense(licenseId, devId);
+
+        if (!deviceCheck.allowed) {
+          alert(`⛔ AKSES DITOLAK: Batas Maksimal 2 Perangkat Terlampaui!\n\nLisensi ini (${licenseId}) sudah digunakan pada 2 perangkat lain:\n• Device 1: ${deviceCheck.devices[0]}\n• Device 2: ${deviceCheck.devices[1]}\n\nPerangkat Anda saat ini (${devId}) adalah perangkat ke-3.\nSilakan lakukan Logout / Deaktivasi pada salah satu perangkat sebelumnya terlebih dahulu.`);
+          if (btn) { btn.disabled = false; btn.textContent = originalText; }
+          return;
+        }
+
+        const sessionData = {
+          isPro: true,
+          key: keyInput,
+          name: verifiedName || 'Member Resmi Mahakarya',
+          email: verifiedEmail || 'pembeli@mahakarya.id',
+          txnId: verifiedTxn,
+          activatedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
+        updateLicenseUI();
+        alert(`🎉 Selamat! Akses Mahakarya Pro Berhasil Diaktifkan!\n\nNama Pembeli: ${sessionData.name}\nEmail: ${sessionData.email}\nOrder ID / Lisensi: ${sessionData.txnId}\n\nSeluruh 2.962 Resep, AI Assistant, dan PDF Vector Watermarking telah aktif.`);
+        closeLicenseAuthModal();
+      } catch(err) {
+        alert('Terjadi kesalahan saat memverifikasi lisensi. Silakan coba lagi.');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = originalText; }
+      }
     }
 
     function deactivateLicense() {
