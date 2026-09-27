@@ -1135,7 +1135,7 @@
             <div style="text-align: center; border-right: 1px solid #edf1f2; padding-right: 15px;">
               <span style="font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">NPS REKOMENDASI SKOR</span>
               <div style="font-size: 38px; font-weight: 900; color: #0f766e; margin: 4px 0 2px;" id="summaryNpsScore">98%</div>
-              <span style="font-size: 11.5px; color: #0f766e; font-weight: 700;">(Rating 5 ★ - Rating 1 ★) / Total Survey</span>
+              <span style="font-size: 11.5px; color: #0f766e; font-weight: 700; display: none;">(Rating 5 ★ - Rating 1 ★) / Total Survey</span>
               <span style="font-size: 11px; color: var(--muted); display: block; margin-top: 4px;">Bersedia Rekomendasikan ke Teman/Keluarga</span>
             </div>
 
@@ -2344,14 +2344,22 @@
       <div style="padding: 20px 24px; overflow-y: auto; flex: 1;">
         <!-- Tab Navigation -->
         <div style="display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
-          <button id="tabSubBtn" onclick="switchChefTab('sub')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: none; background: #112d3b; color: #f0b75f; font-weight: 700; font-size: 11.5px; cursor: pointer;">🔄 Substitusi</button>
+          <button id="tabChatbotBtn" onclick="switchChefTab('chatbot')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #f0b75f; background: #112d3b; color: #f0b75f; font-weight: 700; font-size: 11.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);">💬 Chatbot Helpdesk</button>
+          <button id="tabSubBtn" onclick="switchChefTab('sub')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">🔄 Substitusi</button>
           <button id="tabPortionBtn" onclick="switchChefTab('portion')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">🍲 Scale Porsi</button>
           <button id="tabFaqBtn" onclick="switchChefTab('faq')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">📖 Panduan & FAQ</button>
           <button id="tabTncBtn" onclick="switchChefTab('tnc')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">⚖️ Hak Cipta & TNC</button>
         </div>
 
+        <!-- Tab 0: Interactive Chatbot AI & Helpdesk -->
+        <div id="chefTabChatbot">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px; max-height: 480px; overflow-y: auto;">
+            <div id="chatbotFeed" style="display: flex; flex-direction: column; gap: 12px;"></div>
+          </div>
+        </div>
+
         <!-- Tab 1: Substitusi Bahan -->
-        <div id="chefTabSub">
+        <div id="chefTabSub" style="display: none;">
           <label style="font-weight: 700; font-size: 13px; color: #333; display: block; margin-bottom: 8px;">Cari atau Pilih Bahan yang Ingin Diganti:</label>
           <select id="subIngredientSelect" onchange="checkSubstitution()" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; outline: none; margin-bottom: 15px;">
             <option value="">-- Pilih Bahan Dapur --</option>
@@ -3110,12 +3118,117 @@
       document.getElementById('proUpgradeModal').style.display = 'none';
     }
 
+    const CHATBOT_KNOWLEDGE = {
+      1: {
+        title: "1. 📖 Resep, Bahan & Cara Memasak",
+        questions: [
+          {
+            id: "1.1",
+            q: "1.1 Bagaimana cara mencari resep berdasarkan bahan di rumah?",
+            a: "Anda dapat memanfaatkan fitur **Smart Pantry (Bahan Kulkas)** pada menu navigasi utama. Cukup centang bahan-bahan yang Anda miliki (seperti Ayam, Bawang Merah, Cabai, Santan), dan algoritma Mahakarya akan menyaring resep yang cocok secara instan!"
+          },
+          {
+            id: "1.2",
+            q: "1.2 Bagaimana cara mengganti (substitusi) bumbu yang habis?",
+            a: "Gunakan tab **🔄 Substitusi** pada jendela modal ini! Pilih nama bahan dapur yang habis (seperti *Minyak Wijen, Santan, Angciu, Maizena*), dan sistem akan menampilkan rekomendasi bahan alternatif beserta rasio takarannya."
+          },
+          {
+            id: "1.3",
+            q: "1.3 Apakah gramasi resep Mahakarya sudah teruji presisi?",
+            a: "Ya! Seluruh 2.962 resep otentik dalam Mahakarya disusun berdasarkan gramasi standar chef profesional dan kuliner otentik regional, baik untuk porsi keluarga maupun porsi katering skala besar."
+          }
+        ]
+      },
+      2: {
+        title: "2. 🔑 Akses Pro & Kode Lisensi",
+        questions: [
+          {
+            id: "2.1",
+            q: "2.1 Bagaimana cara aktivasi Kode Akses Pro yang saya terima?",
+            a: "Klik tombol **🔑 Akses Pro** pada bagian atas website, lalu masukkan Kode Akses Unik yang Anda terima dari konfirmasi transaksi Scalev (contoh: `260927UHSLFJF` atau `328473846878213218FRAJ`). Sistem akan otomatis memverifikasi dan membuka seluruh resep VVIP."
+          },
+          {
+            id: "2.2",
+            q: "2.2 Mengapa Kode Akses saya dikatakan tidak dapat dipakai / error?",
+            a: "Pastikan tidak ada salah ketik huruf besar/kecil. Jika kode dibeli melalui transaksi resmi Scalev, sistem kami secara otomatis memvalidasi status pesanan secara real-time. Jika kendala berlanjut, Anda dapat mengajukan Form Pengaduan di bawah."
+          },
+          {
+            id: "2.3",
+            q: "2.3 Apakah 1 Kode Akses Pro bisa dipakai di beberapa HP/Laptop?",
+            a: "Ya! Kode Akses Pro Anda dapat digunakan secara fleksibel di beberapa perangkat milik Anda. Cukup masukkan Kode Akses pada perangkat baru Anda."
+          }
+        ]
+      },
+      3: {
+        title: "3. ➕ Tambah & Hapus Resep Pengguna",
+        questions: [
+          {
+            id: "3.1",
+            q: "3.1 Bagaimana cara mempublikasikan resep kreasi sendiri?",
+            a: "Klik tombol **➕ Tambah Resep** di halaman utama. Isi seluruh bagian mandatory (Judul, Bahan Utama, Bumbu, Cara Memasak, Porsi, Waktu, & Unggah Foto). Kategori akan otomatis terkunci pada *'Ditambahkan oleh Pengguna'*."
+          },
+          {
+            id: "3.2",
+            q: "3.2 Bagaimana cara menghapus resep yang pernah saya buat?",
+            a: "Buka detail resep yang pernah Anda tambahkan. Jika Kode Akses aktif Anda cocok dengan pembuat resep, tombol merah **🗑️ Hapus Resep Ini** akan otomatis muncul di bagian bawah modal detail resep."
+          },
+          {
+            id: "3.3",
+            q: "3.3 Apakah resep buatan saya bisa diakses oleh pengguna Pro lainnya?",
+            a: "Ya! Resep kreasi Anda diterbitkan ke server cloud komunitas Mahakarya secara real-time sehingga dapat dicari, disukai, diberi komentar, dan dimasak oleh seluruh pengguna Pro Mahakarya."
+          }
+        ]
+      },
+      4: {
+        title: "4. 🍳 Smart Pantry & Scaling Porsi",
+        questions: [
+          {
+            id: "4.1",
+            q: "4.1 Bagaimana cara kerja fitur Bahan Kulkas (Pantry)?",
+            a: "Pilih tab **Bahan Kulkas** di navigasi utama, lalu pilih bahan yang Anda miliki di rumah. Sistem akan memfilter resep yang bahan utamanya cocok dengan bahan di kulkas Anda."
+          },
+          {
+            id: "4.2",
+            q: "4.2 Bagaimana cara mengubah porsi resep untuk katering/pesta?",
+            a: "Buka tab **🍲 Scale Porsi** pada jendela ini. Masukkan porsi asal (misal 4 porsi) dan target porsi katering (misal 100 porsi). Kalkulator presisi akan menghitung faktor pengali gramasi secara otomatis."
+          }
+        ]
+      },
+      5: {
+        title: "5. 🛠️ Masalah Teknis & Form Pengaduan",
+        questions: [
+          {
+            id: "5.1",
+            q: "5.1 Aplikasi terasa lambat / tidak merespons di HP saya.",
+            a: "Cobalah untuk melakukan Refresh / Reload halaman browser Anda. Mahakarya telah dioptimalkan dengan local storage & offline caching agar tetap kencang digunakan."
+          },
+          {
+            id: "5.2",
+            q: "5.2 Saya menemukan kesalahan / bug pada aplikasi.",
+            a: "Terima kasih atas perhatian Anda! Silakan kirimkan detail temuan bug tersebut melalui Form Pengaduan di bawah agar tim pengembang kami langsung memperbaikinya."
+          },
+          {
+            id: "5.3",
+            q: "5.3 Saya ingin mengirim Form Pengaduan ke Customer Service.",
+            a: "FORMPROMPT"
+          }
+        ]
+      }
+    };
+
+    let chatbotState = {
+      selectedCategory: null,
+      selectedQuestion: null,
+      showComplaintForm: false
+    };
+
     function openChefAssistant() {
       document.getElementById('chefAssistantModal').style.display = 'block';
+      switchChefTab('chatbot');
     }
 
     function switchChefTab(tab) {
-      const tabs = ['sub', 'portion', 'faq', 'tnc'];
+      const tabs = ['chatbot', 'sub', 'portion', 'faq', 'tnc'];
       tabs.forEach(t => {
         const contentEl = document.getElementById('chefTab' + t.charAt(0).toUpperCase() + t.slice(1));
         const btnEl = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
@@ -3134,6 +3247,256 @@
           }
         }
       });
+      if (tab === 'chatbot') {
+        renderChatbotFeed();
+      }
+    }
+
+    function renderComplaintFormHtml() {
+      const userInfo = (typeof getActiveUserLicenseInfo === 'function') ? getActiveUserLicenseInfo() : {};
+      return `
+        <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
+          <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">🤖</div>
+          <div style="background: #ffffff; border: 1px solid #e11d48; border-radius: 12px; border-top-left-radius: 2px; padding: 16px; font-size: 13px; color: #1e293b; width: 100%; box-shadow: 0 4px 16px rgba(225,29,72,0.08);">
+            <strong style="color: #9f1239; font-size: 14px; display: block; margin-bottom: 4px;">📩 Form Pengaduan Layanan Pelanggan</strong>
+            <span style="font-size: 11.5px; color: #64748b; display: block; margin-bottom: 12px;">Pengaduan Anda akan dikirim langsung ke Customer Service via email <b>fazzaraihantechno@gmail.com</b>.</span>
+            
+            <form onsubmit="submitComplaintForm(event)" style="display: grid; gap: 10px;">
+              <div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Nama Lengkap <span style="color:red">*</span>:</label>
+                <input type="text" id="complaintName" value="${userInfo.name || ''}" placeholder="Masukkan Nama Anda" required style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;" />
+              </div>
+              <div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Email Pengirim <span style="color:red">*</span>:</label>
+                <input type="email" id="complaintEmail" value="${userInfo.email || ''}" placeholder="contoh: emailanda@gmail.com" required style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;" />
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                  <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Kode Akses / Transaksi:</label>
+                  <input type="text" id="complaintKey" value="${userInfo.key || ''}" placeholder="Kode Lisensi" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;" />
+                </div>
+                <div>
+                  <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Kategori Kendala:</label>
+                  <select id="complaintCategory" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;">
+                    <option value="Kendala Akses Pro">Kendala Akses Pro</option>
+                    <option value="Bug Aplikasi">Bug / Error Aplikasi</option>
+                    <option value="Saran & Masukan">Saran & Masukan Resep</option>
+                    <option value="Lainnya">Pengaduan Lainnya</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Detail Pengaduan <span style="color:red">*</span>:</label>
+                <textarea id="complaintMessage" rows="3" placeholder="Tuliskan kendala atau pengaduan Anda secara detail..." required style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box; resize: vertical;"></textarea>
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 4px;">
+                <button type="submit" style="flex: 1; background: #e11d48; color: #ffffff; border: none; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(225,29,72,0.25);">
+                  🚀 Kirim Laporan Pengaduan
+                </button>
+                <button type="button" onclick="resetChatbot()" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer;">
+                  Batal
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderChatbotFeed() {
+      const feedEl = document.getElementById('chatbotFeed');
+      if (!feedEl) return;
+
+      let html = '';
+
+      // Initial Greeting
+      html += `
+        <div style="display: flex; gap: 10px; align-items: flex-start;">
+          <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">🤖</div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; border-top-left-radius: 2px; padding: 12px 16px; font-size: 13px; color: #1e293b; max-width: 85%; box-shadow: 0 2px 6px rgba(0,0,0,0.02); line-height: 1.5;">
+            Halo! Saya <strong>Asisten Koki & Customer Service AI</strong> Mahakarya. 👋<br><br>
+            Silakan pilih <strong>Kategori Pertanyaan (1-5)</strong> di bawah ini untuk memulai:
+          </div>
+        </div>
+      `;
+
+      // Category buttons
+      if (!chatbotState.selectedCategory) {
+        html += `<div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-left: 44px;">`;
+        Object.keys(CHATBOT_KNOWLEDGE).forEach(catKey => {
+          const cat = CHATBOT_KNOWLEDGE[catKey];
+          html += `
+            <button onclick="selectChatbotCategory('${catKey}')" style="text-align: left; background: #ffffff; border: 1px solid #cbd5e1; color: #0f766e; padding: 10px 14px; border-radius: 10px; font-weight: 700; font-size: 12.5px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#0f766e'; this.style.background='#f0fdf4';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.background='#ffffff';">
+              ${cat.title}
+            </button>
+          `;
+        });
+        html += `</div>`;
+      } else {
+        const cat = CHATBOT_KNOWLEDGE[chatbotState.selectedCategory];
+        html += `
+          <div style="display: flex; justify-content: flex-end;">
+            <div style="background: #0f766e; color: #ffffff; border-radius: 12px; border-top-right-radius: 2px; padding: 10px 14px; font-size: 12.5px; font-weight: 700; max-width: 80%;">
+              ${cat.title}
+            </div>
+          </div>
+        `;
+
+        html += `
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">🤖</div>
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; border-top-left-radius: 2px; padding: 12px 16px; font-size: 13px; color: #1e293b; max-width: 85%;">
+              Berikut adalah pilihan pertanyaan untuk <strong>${cat.title}</strong>. Silakan pilih salah satu:
+            </div>
+          </div>
+        `;
+
+        if (!chatbotState.selectedQuestion) {
+          html += `<div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-left: 44px;">`;
+          cat.questions.forEach(qItem => {
+            html += `
+              <button onclick="selectChatbotQuestion('${qItem.id}')" style="text-align: left; background: #ffffff; border: 1px solid #94a3b8; color: #1e293b; padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#0f766e'; this.style.color='#0f766e';" onmouseout="this.style.borderColor='#94a3b8'; this.style.color='#1e293b';">
+                ${qItem.q}
+              </button>
+            `;
+          });
+          html += `
+            <button onclick="resetChatbot()" style="text-align: center; background: #f1f5f9; border: 1px solid #cbd5e1; color: #64748b; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 11.5px; cursor: pointer; margin-top: 4px;">
+              ⬅️ Kembali Pilih Kategori Utama
+            </button>
+          </div>`;
+        } else {
+          const qItem = cat.questions.find(x => x.id === chatbotState.selectedQuestion);
+          html += `
+            <div style="display: flex; justify-content: flex-end;">
+              <div style="background: #0f766e; color: #ffffff; border-radius: 12px; border-top-right-radius: 2px; padding: 10px 14px; font-size: 12.5px; font-weight: 700; max-width: 80%;">
+                ${qItem.q}
+              </div>
+            </div>
+          `;
+
+          if (qItem.a === 'FORMPROMPT' || chatbotState.showComplaintForm) {
+            html += renderComplaintFormHtml();
+          } else {
+            html += `
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">🤖</div>
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; border-top-left-radius: 2px; padding: 14px 16px; font-size: 13px; color: #334155; max-width: 88%; line-height: 1.6; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                  ${qItem.a.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+                  
+                  <div style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed #cbd5e1; text-align: center;">
+                    <span style="font-size: 12px; font-weight: 800; color: #475569; display: block; margin-bottom: 10px;">Apakah jawaban ini membantu Anda?</span>
+                    <div style="display: flex; gap: 8px; justify-content: center;">
+                      <button onclick="handleChatbotFeedback(true)" style="background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
+                        👍 Ya, Sangat Membantu! (Solved)
+                      </button>
+                      <button onclick="handleChatbotFeedback(false)" style="background: #ffe4e6; border: 1px solid #fecdd3; color: #9f1239; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
+                        👎 Tidak, Buat Pengaduan
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        }
+      }
+
+      feedEl.innerHTML = html;
+      feedEl.scrollTop = feedEl.scrollHeight;
+    }
+
+    function handleChatbotFeedback(isHelpful) {
+      const feedEl = document.getElementById('chatbotFeed');
+      if (!feedEl) return;
+
+      if (isHelpful) {
+        feedEl.innerHTML += `
+          <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+            <div style="background: #166534; color: #ffffff; border-radius: 12px; border-top-right-radius: 2px; padding: 10px 14px; font-size: 12.5px; font-weight: 700;">
+              👍 Ya, Sangat Membantu!
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 8px;">
+            <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">🤖</div>
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; border-top-left-radius: 2px; padding: 14px 16px; font-size: 13px; color: #166534; max-width: 88%; line-height: 1.5;">
+              <strong>🎉 Tiket Bantuan Diselesaikan (Solved Ticket)!</strong><br>
+              Terima kasih atas tanggapan Anda. Senang bisa membantu Anda! Selamat memasak bersama Mahakarya 🍳✨<br><br>
+              <button onclick="resetChatbot()" style="background: #0f766e; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
+                🔄 Tanya Hal Lain
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        chatbotState.showComplaintForm = true;
+        renderChatbotFeed();
+      }
+      feedEl.scrollTop = feedEl.scrollHeight;
+    }
+
+    async function submitComplaintForm(event) {
+      if (event) event.preventDefault();
+      const name = (document.getElementById('complaintName') || {}).value || '';
+      const email = (document.getElementById('complaintEmail') || {}).value || '';
+      const key = (document.getElementById('complaintKey') || {}).value || '';
+      const category = (document.getElementById('complaintCategory') || {}).value || 'Pengaduan Umum';
+      const message = (document.getElementById('complaintMessage') || {}).value || '';
+
+      if (!name || !email || !message) {
+        alert('Mohon isi seluruh field mandatory pada Form Pengaduan.');
+        return;
+      }
+
+      try {
+        await fetch('/api/send-complaint', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, key, category, message })
+        });
+      } catch(e) {
+        console.error('Failed to post complaint to API:', e);
+      }
+
+      const subject = encodeURIComponent(`[PENGADUAN] ${category} - ${name}`);
+      const bodyText = encodeURIComponent(
+        `Nama: ${name}\nEmail: ${email}\nKode Akses: ${key}\nKategori: ${category}\n\nDetail Pengaduan:\n${message}`
+      );
+      window.open(`mailto:fazzaraihantechno@gmail.com?subject=${subject}&body=${bodyText}`, '_blank');
+
+      const feedEl = document.getElementById('chatbotFeed');
+      if (feedEl) {
+        feedEl.innerHTML += `
+          <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
+            <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">🤖</div>
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; border-top-left-radius: 2px; padding: 14px 16px; font-size: 13px; color: #166534; max-width: 88%; line-height: 1.5;">
+              <strong>✅ Laporan Pengaduan Berhasil Terkirim!</strong><br>
+              Pengaduan Anda telah diteruskan ke backend dan membuka link email ke <b>fazzaraihantechno@gmail.com</b>. Tim Customer Support kami akan segera memproses laporan Anda.<br><br>
+              <button onclick="resetChatbot()" style="background: #0f766e; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
+                🏠 Kembali ke Menu Utama
+              </button>
+            </div>
+          </div>
+        `;
+        feedEl.scrollTop = feedEl.scrollHeight;
+      }
+    }
+
+    function selectChatbotCategory(catKey) {
+      chatbotState.selectedCategory = catKey;
+      chatbotState.selectedQuestion = null;
+      chatbotState.showComplaintForm = false;
+      renderChatbotFeed();
+    }
+
+    function selectChatbotQuestion(qId) {
+      chatbotState.selectedQuestion = qId;
+      renderChatbotFeed();
+    }
+
+    function resetChatbot() {
+      chatbotState = { selectedCategory: null, selectedQuestion: null, showComplaintForm: false };
+      renderChatbotFeed();
     }
 
     function checkSubstitution() {
