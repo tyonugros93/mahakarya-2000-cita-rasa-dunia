@@ -2008,14 +2008,8 @@
 
       // Aggressively hide any stray Google Translate banners and fix body shift
       setInterval(() => {
-        // Nuke any element directly in body that isn't our app, scripts, modals, or assistant
         Array.from(document.body.children).forEach(el => {
-          const isAllowed = el.classList.contains('app') ||
-                            el.classList.contains('modal-backdrop') ||
-                            el.classList.contains('floating-assistant-btn') ||
-                            ['menuBookModal', 'chefAssistantModal', 'pantryMatcherModal', 'recipePickerModal', 'licenseAuthModal', 'proUpgradeModal', 'google_translate_element'].includes(el.id) ||
-                            ['SCRIPT', 'STYLE', 'LINK'].includes(el.tagName);
-          if (!isAllowed) {
+          if (el.tagName === 'IFRAME' || el.classList.contains('goog-te-banner-frame') || (el.classList.contains('skiptranslate') && el.id !== 'google_translate_element')) {
             el.style.display = 'none';
             el.style.opacity = '0';
             el.style.visibility = 'hidden';
