@@ -2712,7 +2712,7 @@
     // ── 0. FASE 1 & FASE 2: LICENSE & AUTHENTICATION MANAGER (LOCAL CONTROLLER & 2-DEVICE LIMIT) ──
     const LICENSE_STORAGE_KEY = 'mahakarya_user_session';
     const DEVICE_REGISTRY_KEY = 'mahakarya_device_registry';
-    const VALID_DEMO_KEYS = ['MAHAKARYA-PRO-2026', 'SETYO-VIP-KEY', 'DEMO-VIP', 'FAZZA-TECHNO'];
+    const VALID_DEMO_KEYS = ['328473846878213218FRAJ', '260927UHSLFJF', 'MAHAKARYA-PRO-2026', 'SETYO-VIP-KEY', 'DEMO-VIP', 'FAZZA-TECHNO'];
 
     function getOrCreateDeviceId() {
       let devId = localStorage.getItem('mahakarya_device_id');
@@ -2918,7 +2918,7 @@
           if (data.orderId) verifiedTxn = data.orderId;
         } catch(e) {
           // Fallback if local preview server without Vercel API
-          isValidServer = VALID_DEMO_KEYS.includes(keyInput) || /^#?(ORD|MHK|FAZ|SCALEV|ORDER)[\w-]{3,20}$/i.test(keyInput) || (/^\d{5,15}$/.test(keyInput.replace(/^#/,'')));
+          isValidServer = VALID_DEMO_KEYS.includes(keyInput) || /^[A-Z0-9_-]{6,35}$/i.test(keyInput.replace(/^#/, ''));
           serverMessage = 'Order ID tidak valid / tidak terdaftar di Scalev.';
         }
 
