@@ -2317,7 +2317,7 @@
                  data-callback="handleGoogleCredentialResponse"
                  data-auto_prompt="false">
             </div>
-            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+            <div id="googleSignInBtnContainer" class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
             <span style="font-size: 11px; color: #64748b; text-align: center;">Otomatis sinkron ke email pembeli Scalev untuk aktivasi Pro VVIP</span>
           </div>
 
@@ -2974,6 +2974,25 @@
     function openLicenseAuthModal() {
       updateLicenseUI();
       document.getElementById('licenseAuthModal').style.display = 'block';
+      if (window.google && window.google.accounts && window.google.accounts.id) {
+        try {
+          window.google.accounts.id.initialize({
+            client_id: window.GOOGLE_CLIENT_ID || "609538634410-dvphjevkvbj17tqrobpq2qv1muf6due1.apps.googleusercontent.com",
+            callback: handleGoogleCredentialResponse,
+            auto_select: false
+          });
+          const container = document.getElementById('googleSignInBtnContainer');
+          if (container) {
+            container.innerHTML = '';
+            window.google.accounts.id.renderButton(
+              container,
+              { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "rectangular", logo_alignment: "left" }
+            );
+          }
+        } catch (e) {
+          console.warn("GIS render error:", e);
+        }
+      }
     }
 
     function closeLicenseAuthModal() {
@@ -3033,6 +3052,7 @@
           updateLicenseUI();
           alert(data.message || `🎉 Welcome, ${data.user.name}! Login Google Berhasil.`);
           closeLicenseAuthModal();
+          window.location.reload();
         } else {
           alert(data.message || 'Gagal login dengan Google.');
         }
@@ -3052,6 +3072,7 @@
         updateLicenseUI();
         alert(isOwner ? `🎉 Welcome, ${name}! Login Google Berhasil (Member Pro VVIP).` : `🎉 Welcome, ${name}! Login Google Berhasil (Member Gratis).`);
         closeLicenseAuthModal();
+        window.location.reload();
       }
     }
 
