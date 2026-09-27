@@ -1547,8 +1547,8 @@
     document.querySelectorAll('[data-root]').forEach(button => button.onclick = () => { librarySection = 'root'; collectionMode = 'core'; activeChapter = 0; query = ''; document.getElementById('searchInput').value = ''; updateCollectionCopy(); renderNavigation(); render(); });
     function renderThumbHtml(r) {
       const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
-      // For Guest view (free), sample recipes (no <= 10) do not show image thumbnail
-      if (!isPro && r.no <= 10) {
+      // In Free Mode (!isPro), ALL sample recipes are strictly WITHOUT IMAGES (tanpa gambar)
+      if (!isPro) {
         return '';
       }
       if (typeof getRecipeImage === 'function') {
@@ -1557,10 +1557,12 @@
       }
       return `<div class="recipe-thumb-wrap">${renderThumbFallbackHtml()}</div>`;
     }
+
     function renderThumbFallbackHtml() {
       const isBiz = collectionMode === 'business';
       return `<div class="recipe-thumb-fallback"><svg viewBox="0 0 24 24"><path d="M12 4v2M4 18h16M4 18a8 8 0 0 1 16 0"/><circle cx="12" cy="4" r="1.5"/></svg><span>${isBiz ? 'F&B' : 'RESEP'}</span></div>`;
     }
+
     let recipeCurrentPage = 1;
     const RECIPES_PER_PAGE = 100;
 
@@ -1576,19 +1578,20 @@
         return matchesChapter && matchesQuery;
       });
 
-      const filtered = allMatching;
+      // In Free Mode (!isPro), limit list strictly to 10 free sample recipes
+      const filtered = isPro ? allMatching : allMatching.slice(0, 10);
 
       const totalRecipes = filtered.length;
-      const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE) || 1;
+      const totalPages = isPro ? Math.ceil(allMatching.length / RECIPES_PER_PAGE) || 1 : 1;
       if (recipeCurrentPage > totalPages) recipeCurrentPage = 1;
 
       const startIndex = (recipeCurrentPage - 1) * RECIPES_PER_PAGE;
-      const paginated = filtered.slice(startIndex, startIndex + RECIPES_PER_PAGE);
+      const paginated = isPro ? allMatching.slice(startIndex, startIndex + RECIPES_PER_PAGE) : filtered;
 
       if (listEl) {
         let html = paginated.length 
           ? paginated.map((r, idx) => {
-              const itemIndex = startIndex + idx + 1;
+              const itemIndex = isPro ? (startIndex + idx + 1) : (idx + 1);
               const isLocked = !isPro && itemIndex > 10;
               const btnText = isLocked ? '🔒 Akses Pro (Terkunci)' : 'Buka resep →';
               const btnStyle = isLocked ? 'background: #fff8eb; color: #b45309; border: 1px solid #fcd34d;' : '';
@@ -1614,7 +1617,7 @@
             }).join('') 
           : '<div class="empty">Tidak ada resep yang cocok. Coba kata kunci lain.</div>';
         
-        if (totalPages > 1) {
+        if (isPro && totalPages > 1) {
           let navBtns = '';
           if (recipeCurrentPage > 1) {
             navBtns += `<button onclick="changeRecipePage(${recipeCurrentPage - 1})" style="padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--navy); font-weight: 700; cursor: pointer;">« Sebelumnya</button>`;
@@ -1637,20 +1640,20 @@
           
           html += `
             <div id="recipePagination" style="grid-column: 1 / -1; margin-top: 30px; padding: 20px; border-top: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; gap: 12px;">
-              <div style="font-size: 13px; color: var(--muted);">Menampilkan <b>${startIndex + 1} - ${Math.min(startIndex + RECIPES_PER_PAGE, totalRecipes)}</b> dari <b>${totalRecipes.toLocaleString('id-ID')}</b> resep</div>
+              <div style="font-size: 13px; color: var(--muted);">Menampilkan <b>${startIndex + 1} - ${Math.min(startIndex + RECIPES_PER_PAGE, allMatching.length)}</b> dari <b>${allMatching.length.toLocaleString('id-ID')}</b> resep</div>
               <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center;">${navBtns}</div>
             </div>
           `;
         } else if (!isPro) {
-          // Add Guest Callout Banner at bottom of guest recipe grid
+          // Banner for Free Mode at bottom of 10 free sample recipes
           html += `
-            <div style="grid-column: 1 / -1; margin-top: 25px; padding: 22px 24px; background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); border-radius: 14px; color: #fff; text-align: center; border: 1px solid #f0b75f; box-shadow: 0 10px 25px rgba(17,45,59,0.15);">
-              <div style="font-size: 26px; margin-bottom: 6px;">👑</div>
-              <h4 style="margin: 0 0 6px; color: #f0b75f; font-size: 16px; font-weight: 800;">Tampilan Guest Mode (10 Resep Sampel Gratis)</h4>
-              <p style="margin: 0 0 16px; font-size: 13px; color: #cbd5e1; max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.5;">
-                Anda hanya dapat melihat 10 resep sampel. Untuk membuka seluruh <strong>2.962 Resep Otentik Dunia</strong>, AI Chef Assistant, dan Generator Buku Menu HD, silakan aktivasi lisensi resmi Anda.
+            <div style="grid-column: 1 / -1; margin-top: 25px; padding: 24px; background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); border-radius: 14px; color: #fff; text-align: center; border: 1.5px solid #f0b75f; box-shadow: 0 10px 25px rgba(17,45,59,0.15);">
+              <div style="font-size: 32px; margin-bottom: 8px;">👑</div>
+              <h4 style="margin: 0 0 6px; color: #f0b75f; font-size: 18px; font-weight: 800;">Akses Terkunci (Mode Gratis 10 Resep Sampel)</h4>
+              <p style="margin: 0 0 16px; font-size: 13.5px; color: #cbd5e1; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                Anda sedang berada di Mode Gratis. Untuk membuka seluruh <strong>2.962 Resep Otentik Dunia (Lengkap dengan Foto HD)</strong>, Fitur AI Koki, Substitusi Bahan, Kalkulator Catering & PDF Download, silakan aktivasi lisensi resmi Anda.
               </p>
-              <button onclick="openLicenseAuthModal()" style="background: #f0b75f; color: #112d3b; border: none; padding: 10px 22px; border-radius: 20px; font-weight: 800; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(240,183,95,0.3);">✨ Input Kode Lisensi / Aktivasi Pro Sekarang</button>
+              <button onclick="openLicenseAuthModal()" style="background: #f0b75f; color: #112d3b; border: none; padding: 12px 26px; border-radius: 20px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(240,183,95,0.3);">✨ Input Kode Lisensi / Aktivasi Pro Sekarang</button>
             </div>
           `;
         }
@@ -1659,12 +1662,18 @@
       }
 
       const visEl = document.getElementById('visibleCount');
-      if (visEl) visEl.textContent = isPro ? filtered.length.toLocaleString('id-ID') : '10 Sampel';
+      if (visEl) visEl.textContent = isPro ? allMatching.length.toLocaleString('id-ID') : '10 Sampel';
       const resEl = document.getElementById('resultLabel');
-      if (resEl) resEl.textContent = isPro ? `${filtered.length.toLocaleString('id-ID')} hasil` : `10 sampel resep gratis (Buka Pro untuk 2.962 resep)`;
-      document.querySelectorAll('[data-recipe]').forEach(b => b.addEventListener('click', () => {
+      if (resEl) resEl.textContent = isPro ? `${allMatching.length.toLocaleString('id-ID')} hasil` : `10 sampel resep gratis (Buka Pro untuk 2.962 resep)`;
+      document.querySelectorAll('[data-recipe]').forEach(b => b.addEventListener('click', (e) => {
+        e.preventDefault();
         const rawId = b.dataset.recipe;
         const recId = /^\d+$/.test(rawId) ? Number(rawId) : rawId;
+        const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+        if (!isPro && Number(recId) > 10) {
+          openLicenseAuthModal();
+          return;
+        }
         openRecipe(recId);
       }));
     }
