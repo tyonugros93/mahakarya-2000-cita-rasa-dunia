@@ -2912,14 +2912,16 @@
       const devEl = document.getElementById('licenseDeviceId');
       const logoutBox = document.getElementById('licenseLogoutBox');
 
+      const firstName = info.name ? info.name.split(' ')[0] : 'User';
+
       if (info.isPro) {
         if (btn) {
           btn.style.background = 'linear-gradient(135deg, #112d3b 0%, #1a495e 100%)';
           btn.style.borderColor = '#f0b75f';
           btn.style.color = '#f0b75f';
         }
-        if (icon) icon.textContent = '✨';
-        if (badgeText) badgeText.textContent = 'PRO MEMBER';
+        if (icon) icon.textContent = '👑';
+        if (badgeText) badgeText.textContent = `👑 ${firstName} (PRO VVIP)`;
 
         if (card) {
           card.style.background = '#f4fbf9';
@@ -2936,6 +2938,32 @@
 
         const buyBanner = document.getElementById('licenseBuyBanner');
         if (buyBanner) buyBanner.style.display = 'none';
+        if (logoutBox) logoutBox.style.display = 'block';
+      } else if (info.email && info.provider === 'google') {
+        if (btn) {
+          btn.style.background = '#e2e8f0';
+          btn.style.borderColor = '#94a3b8';
+          btn.style.color = '#1e293b';
+        }
+        if (icon) icon.textContent = '👤';
+        if (badgeText) badgeText.textContent = `👤 ${firstName} (Gratis)`;
+
+        const buyBanner = document.getElementById('licenseBuyBanner');
+        if (buyBanner) buyBanner.style.display = 'block';
+
+        if (card) {
+          card.style.background = '#fffdf9';
+          card.style.borderColor = '#d88b28';
+        }
+        if (pill) {
+          pill.textContent = 'DEMO / GUEST';
+          pill.style.background = '#d88b28';
+        }
+        if (emailEl) emailEl.textContent = info.email + ' (Akses Sampel)';
+        if (nameEl) nameEl.textContent = info.name;
+        if (txnEl) txnEl.textContent = info.txnId;
+        if (devEl) devEl.textContent = info.deviceId;
+
         if (logoutBox) logoutBox.style.display = 'block';
       } else {
         if (btn) {
@@ -3057,7 +3085,7 @@
           alert(data.message || 'Gagal login dengan Google.');
         }
       } catch(e) {
-        const paidWhitelist = ['fazzaraihantechno@gmail.com', 'pembeli@myscalev.com', 'lisensi.resmi@mahakarya.id', 'tyonugros93@gmail.com'];
+        const paidWhitelist = ['arinii.sartika@gmail.com', 'fazzaraihantechno@gmail.com', 'pembeli@myscalev.com', 'lisensi.resmi@mahakarya.id', 'tyonugros93@gmail.com', 'sn.tyonyunu@gmail.com'];
         const isOwner = paidWhitelist.includes(email);
         const sessionData = {
           isPro: isOwner,
