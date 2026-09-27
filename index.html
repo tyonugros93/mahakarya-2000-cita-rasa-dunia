@@ -1419,7 +1419,13 @@
     let collectionMode = 'core', activeChapter = 0, query = '', librarySection = 'root';
 
     function currentChapters() { return collectionMode === 'business' ? businessChapters : coreChapters; }
-    function currentRecipes() { return collectionMode === 'business' ? businessRecipes : coreRecipes; }
+    function currentRecipes() {
+      let base = collectionMode === 'business' ? businessRecipes : coreRecipes;
+      if (typeof userRecipes !== 'undefined' && Array.isArray(userRecipes) && userRecipes.length > 0) {
+        return userRecipes.concat(base);
+      }
+      return base;
+    }
     function chapterLabel(chapter) {
       const chapterEntry = chapters.find(([no]) => Number(no) === Number(chapter));
       return chapterEntry ? chapterEntry[1] : `Bab ${chapter}`;
@@ -2098,6 +2104,20 @@
             <input type="text" id="newRecTitle" placeholder="Contoh: Nasi Goreng Wagyu Truffle" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: bold; box-sizing: border-box;" />
           </div>
 
+          <!-- Category Select -->
+          <div style="margin-bottom: 14px;">
+            <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Kategori Resep <span style="color:red">*</span>:</label>
+            <select id="newRecCategory" required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;">
+              <option value="Ditambahkan oleh Pengguna">Ditambahkan oleh Pengguna</option>
+              <option value="Eksotika Nusantara">Eksotika Nusantara</option>
+              <option value="MPASI Nusantara Sehat & Bergizi">MPASI Nusantara Sehat & Bergizi</option>
+              <option value="Pesona Timur Tengah">Pesona Timur Tengah</option>
+              <option value="Klasik Amerika">Klasik Amerika</option>
+              <option value="Keanggunan Kontinental">Keanggunan Kontinental</option>
+              <option value="Fullset Menu Business F&B">Fullset Menu Business F&B</option>
+            </select>
+          </div>
+
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
             <div>
               <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Waktu Memasak <span style="color:red">*</span>:</label>
@@ -2477,6 +2497,20 @@
               </div>
             </div>
           </div>
+
+          <!-- WhatsApp CS Deeplink Banner -->
+          <div style="margin-top: 16px; background: linear-gradient(135deg, #075e54 0%, #128c7e 100%); border-radius: 12px; padding: 16px; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 4px 14px rgba(18,140,126,0.25); flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 24px;">💬</span>
+              <div>
+                <h5 style="margin: 0; font-size: 13.5px; color: #fff; font-weight: 800;">Butuh Bantuan Kendala atau Pertanyaan Lain?</h5>
+                <span style="font-size: 11px; color: #d1fae5;">Tim Support Customer Mahakarya siap membantu Anda via WhatsApp</span>
+              </div>
+            </div>
+            <a href="https://wa.me/6285174322960?text=Halo%20Tim%20Mahakarya,%20saya%20butuh%20bantuan%20mengenai%20platform" target="_blank" rel="noopener noreferrer" style="background: #25d366; color: #fff; text-decoration: none; padding: 9px 15px; border-radius: 20px; font-weight: 800; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+              💬 Hubungi CS WhatsApp (085174322960)
+            </a>
+          </div>
         </div>
 
         <!-- Tab 4: Hak Cipta & TNC -->
@@ -2713,6 +2747,8 @@
     const LICENSE_STORAGE_KEY = 'mahakarya_user_session';
     const DEVICE_REGISTRY_KEY = 'mahakarya_device_registry';
     const VALID_DEMO_KEYS = ['328473846878213218FRAJ', '260927UHSLFJF', 'MAHAKARYA-PRO-2026', 'SETYO-VIP-KEY', 'DEMO-VIP', 'FAZZA-TECHNO'];
+    let userRecipes = JSON.parse(localStorage.getItem('mahakarya_user_recipes') || '[]');
+    let activeRecipeId = null;
 
     function getOrCreateDeviceId() {
       let devId = localStorage.getItem('mahakarya_device_id');
@@ -3583,9 +3619,6 @@
     }
 
     // ── 4. USER CONTRIBUTED RECIPES, SURVEYS, LIKES, COMMENTS & SYNC ──
-    let userRecipes = JSON.parse(localStorage.getItem('mahakarya_user_recipes') || '[]');
-    let activeRecipeId = null;
-
     async function syncUserRecipes() {
       try {
         const res = await fetch('/api/user-recipes');
@@ -3652,15 +3685,16 @@
 
     async function saveUserRecipe(event) {
       if (event) event.preventDefault();
-      const title = document.getElementById('newRecTitle').value.trim();
-      const cat = document.getElementById('newRecCategory').value;
-      const servings = document.getElementById('newRecServings').value.trim();
-      const cookTime = document.getElementById('newRecCookTime').value.trim();
-      const mainIngredients = document.getElementById('newRecMainIngredients').value.trim();
-      const spices = document.getElementById('newRecSpices').value.trim();
-      const sauce = document.getElementById('newRecSauce').value.trim();
-      const steps = document.getElementById('newRecSteps').value.trim();
-      const nutrition = document.getElementById('newRecNutrition').value.trim();
+      const title = (document.getElementById('newRecTitle') || {}).value || '';
+      const catEl = document.getElementById('newRecCategory');
+      const cat = catEl ? catEl.value : 'Ditambahkan oleh Pengguna';
+      const servings = ((document.getElementById('newRecServe') || document.getElementById('newRecServings') || {}).value || '4 Porsi').trim();
+      const cookTime = ((document.getElementById('newRecTime') || document.getElementById('newRecCookTime') || {}).value || '30 Menit').trim();
+      const mainIngredients = ((document.getElementById('newRecIngredients') || document.getElementById('newRecMainIngredients') || {}).value || '').trim();
+      const spices = (document.getElementById('newRecSpices') || {}).value ? document.getElementById('newRecSpices').value.trim() : '';
+      const sauce = (document.getElementById('newRecSauce') || {}).value ? document.getElementById('newRecSauce').value.trim() : '';
+      const steps = (document.getElementById('newRecSteps') || {}).value ? document.getElementById('newRecSteps').value.trim() : '';
+      const nutrition = (document.getElementById('newRecNutrition') || {}).value ? document.getElementById('newRecNutrition').value.trim() : '';
       const userInfo = getActiveUserLicenseInfo();
 
       if (!title || !mainIngredients || !spices || !sauce || !steps) {
@@ -3794,14 +3828,19 @@
       const oneStars = reviews.filter(r => r.rating === 1).length;
       const npsScore = Math.round(((fiveStars - oneStars) / total) * 100);
 
-      const avgEl = document.getElementById('avgRatingText');
-      const countEl = document.getElementById('totalReviewCount');
-      const npsEl = document.getElementById('npsScoreText');
+      const avgEl = document.getElementById('summaryAvgRating') || document.getElementById('avgRatingText');
+      const countEl = document.getElementById('summaryTotalReviews') || document.getElementById('totalReviewCount');
+      const npsEl = document.getElementById('summaryNpsScore') || document.getElementById('npsScoreText');
       const gridEl = document.getElementById('reviewsGrid');
 
       if (avgEl) avgEl.textContent = avgRating;
-      if (countEl) countEl.textContent = `${total} Ulasan Verifikasi`;
+      if (countEl) countEl.textContent = `${total} Ulasan Terverifikasi`;
       if (npsEl) npsEl.textContent = `${npsScore >= 0 ? '+' : ''}${npsScore}%`;
+
+      const bar5El = document.getElementById('barCount5');
+      const bar4El = document.getElementById('barCount4');
+      if (bar5El && total > 0) bar5El.textContent = `${Math.round((fiveStars / total) * 100)}%`;
+      if (bar4El && total > 0) bar4El.textContent = `${Math.round(((total - fiveStars) / total) * 100)}%`;
 
       if (gridEl) {
         gridEl.innerHTML = reviews.map(r => `
