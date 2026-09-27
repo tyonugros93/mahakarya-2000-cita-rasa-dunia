@@ -3014,14 +3014,15 @@
         
         if (window.google && window.google.accounts && window.google.accounts.id) {
           try {
-            // Initialize GIS
+            // Initialize GIS with FedCM opt-in (REQUIRED by Google since 2025)
             window.google.accounts.id.initialize({
               client_id: window.GOOGLE_CLIENT_ID,
               callback: handleGoogleCredentialResponse,
-              auto_select: false
+              auto_select: false,
+              use_fedcm_for_prompt: true
             });
             _gisInitialized = true;
-            console.log('[GIS] Initialized successfully with client_id:', window.GOOGLE_CLIENT_ID);
+            console.log('[GIS] Initialized successfully with client_id:', window.GOOGLE_CLIENT_ID, '(FedCM enabled)');
 
             // Clear container and render button
             container.innerHTML = '';
@@ -3038,21 +3039,6 @@
               }
             );
             console.log('[GIS] Button rendered successfully');
-
-            // Also trigger the One Tap prompt for better UX
-            try {
-              window.google.accounts.id.prompt(function(notification) {
-                console.log('[GIS] Prompt notification:', notification);
-                if (notification.isNotDisplayed()) {
-                  console.warn('[GIS] One Tap not displayed, reason:', notification.getNotDisplayedReason());
-                }
-                if (notification.isSkippedMoment()) {
-                  console.warn('[GIS] One Tap skipped, reason:', notification.getSkippedReason());
-                }
-              });
-            } catch(promptErr) {
-              console.warn('[GIS] prompt() error (non-critical):', promptErr);
-            }
 
           } catch (e) {
             console.error('[GIS] Render error:', e);
