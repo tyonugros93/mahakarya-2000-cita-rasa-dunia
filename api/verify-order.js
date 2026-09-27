@@ -1,5 +1,5 @@
 // Vercel Serverless Function: api/verify-order.js
-// Validates Order ID & Email with Scalev API / Webhook database
+// Validates Order ID & Email with Scalev API & Production SCALEV_API_KEY
 
 export default async function handler(req, res) {
   // CORS Headers
