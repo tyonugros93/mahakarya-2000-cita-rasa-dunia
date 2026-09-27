@@ -895,6 +895,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <div class="app">
@@ -2305,6 +2306,21 @@
             </a>
           </div>
 
+          <!-- Official Google Sign-In Section -->
+          <div style="position: relative; text-align: center; margin: 20px 0 16px; border-top: 1px dashed #cbd5e1;">
+            <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.04em;">MASUK DENGAN AKUN GOOGLE</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+            <div id="g_id_onload"
+                 data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                 data-callback="handleGoogleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+            <span style="font-size: 11px; color: #64748b; text-align: center;">Otomatis sinkron ke email pembeli Scalev untuk aktivasi Pro VVIP</span>
+          </div>
+
           <div style="position: relative; text-align: center; margin: 20px 0 18px; border-top: 1px dashed #cbd5e1;">
             <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.04em;">ATAU KODE MANUAL (SUDAH BELI)</span>
           </div>
@@ -2962,6 +2978,79 @@
 
     function closeLicenseAuthModal() {
       document.getElementById('licenseAuthModal').style.display = 'none';
+    }
+
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function handleGoogleCredentialResponse(response) {
+      if (!response || !response.credential) return;
+      const payload = parseJwt(response.credential);
+      if (!payload || !payload.email) {
+        alert('Gagal membaca kredensial akun dari Google.');
+        return;
+      }
+      const email = payload.email.toLowerCase().trim();
+      const name = payload.name || payload.given_name || email.split('@')[0];
+
+      try {
+        const res = await fetch('/api/auth-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'google_login',
+            provider: 'google',
+            name: name,
+            email: email
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.user) {
+          const sessionData = {
+            isPro: data.user.isPro,
+            key: data.user.isPro ? 'GOOGLE-PRO-VVIP' : 'GUEST',
+            name: data.user.name,
+            email: data.user.email,
+            txnId: '#GGL-' + Math.floor(10000 + Math.random() * 90000),
+            provider: 'google',
+            activatedAt: new Date().toISOString()
+          };
+
+          localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
+          updateLicenseUI();
+          alert(data.message || `🎉 Welcome, ${data.user.name}! Login Google Berhasil.`);
+          closeLicenseAuthModal();
+        } else {
+          alert(data.message || 'Gagal login dengan Google.');
+        }
+      } catch(e) {
+        const paidWhitelist = ['fazzaraihantechno@gmail.com', 'pembeli@myscalev.com', 'lisensi.resmi@mahakarya.id', 'tyonugros93@gmail.com'];
+        const isOwner = paidWhitelist.includes(email);
+        const sessionData = {
+          isPro: isOwner,
+          key: isOwner ? 'GOOGLE-PRO-VVIP' : 'GUEST',
+          name: name,
+          email: email,
+          txnId: '#GGL-' + Math.floor(10000 + Math.random() * 90000),
+          provider: 'google',
+          activatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
+        updateLicenseUI();
+        alert(isOwner ? `🎉 Welcome, ${name}! Login Google Berhasil (Member Pro VVIP).` : `🎉 Welcome, ${name}! Login Google Berhasil (Member Gratis).`);
+        closeLicenseAuthModal();
+      }
     }
 
     async function activateLicenseKey() {
