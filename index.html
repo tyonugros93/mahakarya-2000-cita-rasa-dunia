@@ -895,7 +895,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://accounts.google.com/gsi/client" async defer onload="if(typeof initAndRenderGoogleSignIn==='function') initAndRenderGoogleSignIn();"></script>
 </head>
 <body>
   <div class="app">
@@ -2312,12 +2312,7 @@
           </div>
 
           <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <div id="g_id_onload"
-                 data-client_id="609538634410-dvphjevkvbj17tqrobpq2qv1muf6due1.apps.googleusercontent.com"
-                 data-callback="handleGoogleCredentialResponse"
-                 data-auto_prompt="false">
-            </div>
-            <div id="googleSignInBtnContainer" class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+            <div id="googleSignInBtnContainer" style="min-height: 44px; width: 100%; display: flex; justify-content: center; align-items: center;"></div>
             <span style="font-size: 11px; color: #64748b; text-align: center;">Otomatis sinkron ke email pembeli Scalev untuk aktivasi Pro VVIP</span>
           </div>
 
@@ -2999,35 +2994,55 @@
       }
     }
 
-    function openLicenseAuthModal() {
-      updateLicenseUI();
-      document.getElementById('licenseAuthModal').style.display = 'block';
-      if (window.google && window.google.accounts && window.google.accounts.id) {
-        try {
-          window.google.accounts.id.initialize({
-            client_id: window.GOOGLE_CLIENT_ID || "609538634410-dvphjevkvbj17tqrobpq2qv1muf6due1.apps.googleusercontent.com",
-            callback: handleGoogleCredentialResponse,
-            auto_select: false
-          });
-          const container = document.getElementById('googleSignInBtnContainer');
-          if (container) {
+    window.GOOGLE_CLIENT_ID = "609538634410-dvphjevkvbj17tqrobpq2qv1muf6due1.apps.googleusercontent.com";
+
+    function initAndRenderGoogleSignIn() {
+      const container = document.getElementById('googleSignInBtnContainer');
+      if (!container) return;
+
+      let retries = 0;
+      function doRender() {
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+          try {
+            window.google.accounts.id.initialize({
+              client_id: window.GOOGLE_CLIENT_ID,
+              callback: handleGoogleCredentialResponse,
+              auto_select: false
+            });
             container.innerHTML = '';
             window.google.accounts.id.renderButton(
               container,
-              { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "rectangular", logo_alignment: "left" }
+              {
+                theme: "outline",
+                size: "large",
+                type: "standard",
+                text: "signin_with",
+                shape: "rectangular",
+                logo_alignment: "left",
+                width: Math.min(container.offsetWidth || 280, 320)
+              }
             );
+          } catch (e) {
+            console.warn("GIS render error:", e);
           }
-        } catch (e) {
-          console.warn("GIS render error:", e);
+        } else if (retries < 15) {
+          retries++;
+          setTimeout(doRender, 200);
         }
       }
+
+      setTimeout(doRender, 60);
+    }
+
+    function openLicenseAuthModal() {
+      updateLicenseUI();
+      document.getElementById('licenseAuthModal').style.display = 'block';
+      initAndRenderGoogleSignIn();
     }
 
     function closeLicenseAuthModal() {
       document.getElementById('licenseAuthModal').style.display = 'none';
     }
-
-    window.GOOGLE_CLIENT_ID = "609538634410-dvphjevkvbj17tqrobpq2qv1muf6due1.apps.googleusercontent.com";
 
     function parseJwt(token) {
       try {
