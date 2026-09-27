@@ -2017,8 +2017,8 @@
             <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.04em;">ATAU KODE MANUAL (SUDAH BELI)</span>
           </div>
 
-          <label style="font-size: 12px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 5px;">Masukkan Kode Kunci Lisensi:</label>
-          <input type="text" id="inputLicenseKey" placeholder="Masukkan Kode Lisensi Resmi Anda" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 700; color: #112d3b; outline: none; margin-bottom: 12px; letter-spacing: 0.05em; text-transform: uppercase;">
+          <label style="font-size: 12px; font-weight: 700; color: #112d3b; display: block; margin-bottom: 5px;">Masukkan Kode Lisensi / Order ID Pesanan:</label>
+          <input type="text" id="inputLicenseKey" placeholder="Kode Lisensi / Order ID dari email Scalev" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 700; color: #112d3b; outline: none; margin-bottom: 12px; letter-spacing: 0.05em; text-transform: uppercase;">
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
             <div>
@@ -2033,7 +2033,7 @@
 
           <button onclick="activateLicenseKey()" style="width: 100%; padding: 13px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);">✨ Aktivasi Akses Mahakarya Pro</button>
           <div style="font-size: 11px; color: #475569; text-align: center; margin-top: 10px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; line-height: 1.4;">
-            🔒 <i>Kode lisensi resmi dikirim otomatis ke email Anda setelah sukses checkout di Scalev. Hubungi CS jika butuh bantuan.</i>
+            💡 <i>Anda dapat menggunakan <strong>Order ID / Nomor Pesanan</strong> yang tertera pada email konfirmasi pembayaran Scalev Anda sebagai Kode Lisensi manual. (Batas maksimal 2 perangkat per lisensi).</i>
           </div>
         </div>
 
@@ -2479,8 +2479,9 @@
   </div>
 
   <script>
-    // ── 0. FASE 1 & FASE 2: LICENSE & AUTHENTICATION MANAGER (LOCAL CONTROLLER) ──
+    // ── 0. FASE 1 & FASE 2: LICENSE & AUTHENTICATION MANAGER (LOCAL CONTROLLER & 2-DEVICE LIMIT) ──
     const LICENSE_STORAGE_KEY = 'mahakarya_user_session';
+    const DEVICE_REGISTRY_KEY = 'mahakarya_device_registry';
     const VALID_DEMO_KEYS = ['MAHAKARYA-PRO-2026', 'SETYO-VIP-KEY', 'DEMO-VIP', 'FAZZA-TECHNO'];
 
     function getOrCreateDeviceId() {
@@ -2490,6 +2491,50 @@
         localStorage.setItem('mahakarya_device_id', devId);
       }
       return devId;
+    }
+
+    function getRegisteredDevices(licenseId) {
+      try {
+        const store = JSON.parse(localStorage.getItem(DEVICE_REGISTRY_KEY) || '{}');
+        const key = (licenseId || 'default').toLowerCase().trim();
+        return store[key] || [];
+      } catch(e) {
+        return [];
+      }
+    }
+
+    function registerDeviceForLicense(licenseId, devId) {
+      try {
+        const store = JSON.parse(localStorage.getItem(DEVICE_REGISTRY_KEY) || '{}');
+        const key = (licenseId || 'default').toLowerCase().trim();
+        let list = store[key] || [];
+        
+        if (list.includes(devId)) {
+          return { allowed: true, devices: list };
+        }
+        
+        if (list.length >= 2) {
+          return { allowed: false, devices: list };
+        }
+        
+        list.push(devId);
+        store[key] = list;
+        localStorage.setItem(DEVICE_REGISTRY_KEY, JSON.stringify(store));
+        return { allowed: true, devices: list };
+      } catch(e) {
+        return { allowed: true, devices: [] };
+      }
+    }
+
+    function unregisterDeviceForLicense(licenseId, devId) {
+      try {
+        const store = JSON.parse(localStorage.getItem(DEVICE_REGISTRY_KEY) || '{}');
+        const key = (licenseId || 'default').toLowerCase().trim();
+        if (store[key]) {
+          store[key] = store[key].filter(d => d !== devId);
+          localStorage.setItem(DEVICE_REGISTRY_KEY, JSON.stringify(store));
+        }
+      } catch(e) {}
     }
 
     function getActiveUserLicenseInfo() {
@@ -2587,6 +2632,11 @@
 
         if (logoutBox) logoutBox.style.display = 'none';
       }
+
+      // Keep recipe list grid & total counts strictly in sync with license state
+      if (typeof render === 'function') {
+        render();
+      }
     }
 
     function openLicenseAuthModal() {
@@ -2604,18 +2654,27 @@
       const emailInput = (document.getElementById('inputLicenseEmail').value || '').trim();
 
       if (!keyInput) {
-        alert('Mohon masukkan Kode Lisensi terlebih dahulu.\n\n(Kode Kunci Demo: MAHAKARYA-PRO-2026 atau SETYO-VIP-KEY)');
+        alert('Mohon masukkan Kode Lisensi / Order ID terlebih dahulu.\n\n(Anda dapat menggunakan Order ID dari email Scalev Anda)');
         return;
       }
 
-      const isValid = VALID_DEMO_KEYS.includes(keyInput) || keyInput.length >= 8;
+      const isValid = VALID_DEMO_KEYS.includes(keyInput) || keyInput.length >= 4;
 
       if (!isValid) {
-        alert('Kode Lisensi tidak valid. Silakan hubungi penjual via Instagram / Mayar.');
+        alert('Kode Lisensi atau Order ID tidak valid. Silakan cek email konfirmasi pembayaran Scalev Anda.');
         return;
       }
 
-      const txnId = '#MHK-' + Math.floor(100000 + Math.random() * 900000);
+      const devId = getOrCreateDeviceId();
+      const licenseId = emailInput || keyInput;
+      const deviceCheck = registerDeviceForLicense(licenseId, devId);
+
+      if (!deviceCheck.allowed) {
+        alert(`⛔ AKSES DITOLAK: Batas Maksimal 2 Perangkat Terlampaui!\n\nLisensi ini (${licenseId}) sudah digunakan pada 2 perangkat lain:\n• Device 1: ${deviceCheck.devices[0]}\n• Device 2: ${deviceCheck.devices[1]}\n\nPerangkat Anda saat ini (${devId}) adalah perangkat ke-3.\nSilakan lakukan Logout / Deaktivasi pada salah satu perangkat sebelumnya terlebih dahulu.`);
+        return;
+      }
+
+      const txnId = keyInput.startsWith('#') ? keyInput : ('#' + keyInput);
       const sessionData = {
         isPro: true,
         key: keyInput,
@@ -2627,16 +2686,21 @@
 
       localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
       updateLicenseUI();
-      alert(`🎉 Selamat! Lisensi Akses Mahakarya Pro Berhasil Diaktifkan!\n\nNama Pembeli: ${sessionData.name}\nEmail: ${sessionData.email}\nID Transaksi: ${sessionData.txnId}\n\nSeluruh 2.962 Resep, AI Assistant, dan PDF Vector Watermarking telah aktif.`);
+      alert(`🎉 Selamat! Akses Mahakarya Pro Berhasil Diaktifkan!\n\nNama Pembeli: ${sessionData.name}\nEmail: ${sessionData.email}\nOrder ID / Lisensi: ${sessionData.txnId}\n\nSeluruh 2.962 Resep, AI Assistant, dan PDF Vector Watermarking telah aktif.`);
       closeLicenseAuthModal();
     }
 
     function deactivateLicense() {
-      if (confirm('Apakah Anda yakin ingin melakukan Deaktivasi / Logout lisensi di perangkat ini?')) {
+      const info = getActiveUserLicenseInfo();
+      if (confirm('Apakah Anda yakin ingin melakukan Logout / Deaktivasi lisensi di perangkat ini?')) {
+        const devId = getOrCreateDeviceId();
+        const licenseId = info.email || info.key || info.txnId;
+        unregisterDeviceForLicense(licenseId, devId);
+
         localStorage.removeItem(LICENSE_STORAGE_KEY);
-        updateLicenseUI();
-        alert('Lisensi berhasil dideaktivasi. Perangkat kembali ke mode Demo / Guest.');
+        alert('Lisensi berhasil dideaktivasi. Perangkat otomatis kembali ke mode Free / Guest.');
         closeLicenseAuthModal();
+        window.location.href = window.location.pathname;
       }
     }
 
@@ -2649,10 +2713,20 @@
 
       // If URL contains parameters from Scalev checkout redirect
       if (paramEmail || paramOrder || paramKey) {
+        const devId = getOrCreateDeviceId();
+        const licenseId = paramEmail || paramOrder || paramKey || 'scalev-customer';
+        const deviceCheck = registerDeviceForLicense(licenseId, devId);
+
+        if (!deviceCheck.allowed) {
+          alert(`⛔ AKSES DITOLAK: Batas Maksimal 2 Perangkat Terlampaui!\n\nLisensi ini (${licenseId}) sudah digunakan pada 2 perangkat lain:\n• Device 1: ${deviceCheck.devices[0]}\n• Device 2: ${deviceCheck.devices[1]}\n\nSilakan lakukan Logout pada salah satu perangkat sebelumnya terlebih dahulu.`);
+          window.history.replaceState({}, document.title, window.location.pathname);
+          return;
+        }
+
         const txnId = paramOrder ? (paramOrder.startsWith('#') ? paramOrder : '#' + paramOrder) : ('#MHK-' + Math.floor(100000 + Math.random() * 900000));
         const sessionData = {
           isPro: true,
-          key: paramKey || 'MAHAKARYA-PRO-2026',
+          key: paramKey || paramOrder || 'SCALEV-PRO-KEY',
           name: paramName || 'Pembeli Resmi Scalev',
           email: paramEmail || 'pembeli@myscalev.com',
           txnId: txnId,
@@ -2664,10 +2738,10 @@
         // Clean URL parameters from browser address bar so URL cannot be forwarded with params
         window.history.replaceState({}, document.title, window.location.pathname);
         
+        updateLicenseUI();
         setTimeout(() => {
-          updateLicenseUI();
           alert(`🎉 Selamat Datang, ${sessionData.name}!\n\nAkses Lisensi Mahakarya Pro Anda dari Scalev telah aktif otomatis!\n\nEmail: ${sessionData.email}\nID Pesanan: ${sessionData.txnId}\n\nSeluruh 2.962 Resep, AI Assistant, dan Watermarking PDF Vektor telah terbuka.`);
-        }, 400);
+        }, 300);
       }
     }
 
