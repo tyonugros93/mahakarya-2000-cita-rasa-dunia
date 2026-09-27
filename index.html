@@ -929,6 +929,10 @@
             <span>➕</span>
             <span>Tambah Resep Saya</span>
           </button>
+          <button onclick="openUserSurveyModal()" style="background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); color: #f0b75f; border: 1px solid #f0b75f; border-radius: 20px; padding: 6px 13px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; height: 38px; box-shadow: 0 2px 8px rgba(17,45,59,0.15); flex-shrink: 0;">
+            <span>✍️</span>
+            <span>Survei &amp; Ulasan</span>
+          </button>
           <label class="search" aria-label="Cari resep"><span>⌕</span><input id="searchInput" type="search" placeholder="Cari nama atau bahan..." /></label>
           <!-- User License Status Badge (Fase 1 & 2 Auth Controller) -->
           <button id="userLicenseBtn" class="user-license-btn" onclick="openLicenseAuthModal()">
@@ -1420,6 +1424,9 @@
 
     function currentChapters() { return collectionMode === 'business' ? businessChapters : coreChapters; }
     function currentRecipes() {
+      if (librarySection === 'user') {
+        return typeof userRecipes !== 'undefined' ? userRecipes : [];
+      }
       let base = collectionMode === 'business' ? businessRecipes : coreRecipes;
       if (typeof userRecipes !== 'undefined' && Array.isArray(userRecipes) && userRecipes.length > 0) {
         return userRecipes.concat(base);
@@ -1464,7 +1471,8 @@
     function renderNavigation() {
       const chaptersForMode = currentChapters();
       const countForChapter = no => currentRecipes().filter(recipe => recipe.chapter === Number(no)).length;
-      const subcategories = `<div class="library-subcategories"><button class="nav-item${librarySection === 'cita' ? ' active' : ''}" data-section="cita"><span><span class="nav-num">01</span> Cita Rasa Dunia</span><small>11 bab</small></button><button class="nav-item${librarySection === 'business' ? ' active' : ''}" data-section="business"><span><span class="nav-num">02</span> Fullset Menu Business F&amp;B</span><small>4 kategori</small></button></div>`;
+      const userCount = typeof userRecipes !== 'undefined' ? userRecipes.length : 0;
+      const subcategories = `<div class="library-subcategories"><button class="nav-item${librarySection === 'cita' ? ' active' : ''}" data-section="cita"><span><span class="nav-num">01</span> Cita Rasa Dunia</span><small>11 bab</small></button><button class="nav-item${librarySection === 'business' ? ' active' : ''}" data-section="business"><span><span class="nav-num">02</span> Fullset Menu Business F&amp;B</span><small>4 kategori</small></button><button class="nav-item${librarySection === 'user' ? ' active' : ''}" data-section="user"><span><span class="nav-num">03</span> Ditambahkan oleh Pengguna</span><small>${userCount} resep</small></button></div>`;
       const childNavigation = librarySection === 'cita'
         ? coreChapters.map(([no, name]) => { const count = countForChapter(no); return `<button class="nav-item${activeChapter === Number(no) ? ' active' : ''}" data-chapter="${no}"><span><span class="nav-num">${no.padStart(2,'0')}</span> ${name}</span><small>${count} unik</small></button>`; }).join('')
         : librarySection === 'business'
@@ -1637,7 +1645,11 @@
       if (visEl) visEl.textContent = isPro ? filtered.length.toLocaleString('id-ID') : '10 Sampel';
       const resEl = document.getElementById('resultLabel');
       if (resEl) resEl.textContent = isPro ? `${filtered.length.toLocaleString('id-ID')} hasil` : `10 sampel resep gratis (Buka Pro untuk 2.962 resep)`;
-      document.querySelectorAll('[data-recipe]').forEach(b => b.addEventListener('click', () => openRecipe(Number(b.dataset.recipe))));
+      document.querySelectorAll('[data-recipe]').forEach(b => b.addEventListener('click', () => {
+        const rawId = b.dataset.recipe;
+        const recId = /^\d+$/.test(rawId) ? Number(rawId) : rawId;
+        openRecipe(recId);
+      }));
     }
 
     function changeRecipePage(p) {
@@ -3639,10 +3651,6 @@
     }
 
     function openAddUserRecipeModal() {
-      if (!getActiveUserLicenseInfo().isPro) {
-        openProUpgradeModal('➕ Tambah Resep Baru oleh Pengguna');
-        return;
-      }
       document.getElementById('addUserRecipeModal').style.display = 'block';
     }
 
