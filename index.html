@@ -59,11 +59,16 @@
     .collection-dock #chapterNav, .collection-dock .business-nav { overflow: hidden; }
     .crumb { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
     
-    /* ── AGGRESSIVE GOOGLE TRANSLATE BANNER NUKE ── */
-    body > *:not(.app):not(script):not(style):not(link):not(#google_translate_element):not(.modal-backdrop):not(#menuBookModal):not(#chefAssistantModal):not(#pantryMatcherModal):not(#recipePickerModal):not(#licenseAuthModal):not(#proUpgradeModal):not(.floating-assistant-btn) {
+    /* ── GOOGLE TRANSLATE BANNER REMOVAL ── */
+    .goog-te-banner-frame,
+    .skiptranslate:not(#google_translate_element),
+    iframe.goog-te-banner-frame,
+    #goog-gt-tt,
+    .goog-te-balloon-frame,
+    .VIpgJd-yDfe-b206uf-i-mW {
       display: none !important;
-      opacity: 0 !important;
       visibility: hidden !important;
+      opacity: 0 !important;
       pointer-events: none !important;
       height: 0 !important;
       width: 0 !important;
@@ -3230,13 +3235,14 @@
     };
 
     function openMenuBook() {
-      if (!getActiveUserLicenseInfo().isPro) {
-        openProUpgradeModal('📖 Generator Buku Menu Restoran & PDF Vektor');
-        return;
-      }
       const modal = document.getElementById('menuBookModal');
-      modal.style.display = 'block';
-      renderMenuBookDOM();
+      if (modal) {
+        modal.style.setProperty('display', 'block', 'important');
+        modal.style.setProperty('visibility', 'visible', 'important');
+        modal.style.setProperty('opacity', '1', 'important');
+        modal.style.setProperty('pointer-events', 'auto', 'important');
+        renderMenuBookDOM();
+      }
     }
 
     function renderMenuBookDOM() {
@@ -3637,11 +3643,20 @@
     }
 
     function openAddUserRecipeModal() {
-      document.getElementById('addUserRecipeModal').style.display = 'block';
+      const modal = document.getElementById('addUserRecipeModal');
+      if (modal) {
+        modal.style.setProperty('display', 'block', 'important');
+        modal.style.setProperty('visibility', 'visible', 'important');
+        modal.style.setProperty('opacity', '1', 'important');
+        modal.style.setProperty('pointer-events', 'auto', 'important');
+      }
     }
 
     function closeAddUserRecipeModal() {
-      document.getElementById('addUserRecipeModal').style.display = 'none';
+      const modal = document.getElementById('addUserRecipeModal');
+      if (modal) {
+        modal.style.setProperty('display', 'none', 'important');
+      }
     }
 
     let uploadedUserImageBase64 = '';
@@ -3749,11 +3764,20 @@
 
     // ── SURVEY & REVIEWS ──
     function openUserSurveyModal() {
-      document.getElementById('userSurveyModal').style.display = 'block';
+      const modal = document.getElementById('userSurveyModal');
+      if (modal) {
+        modal.style.setProperty('display', 'block', 'important');
+        modal.style.setProperty('visibility', 'visible', 'important');
+        modal.style.setProperty('opacity', '1', 'important');
+        modal.style.setProperty('pointer-events', 'auto', 'important');
+      }
     }
 
     function closeUserSurveyModal() {
-      document.getElementById('userSurveyModal').style.display = 'none';
+      const modal = document.getElementById('userSurveyModal');
+      if (modal) {
+        modal.style.setProperty('display', 'none', 'important');
+      }
     }
 
     async function submitUserSurvey() {
