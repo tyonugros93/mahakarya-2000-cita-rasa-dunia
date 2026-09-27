@@ -1558,8 +1558,7 @@
         return matchesChapter && matchesQuery;
       });
 
-      // For Guest view (free mode): only display 10 sample recipes total in the grid (specifically sample recipes without images r.no <= 10)
-      const filtered = isPro ? allMatching : allMatching.filter(r => r.no <= 10).slice(0, 10);
+      const filtered = allMatching;
 
       const totalRecipes = filtered.length;
       const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE) || 1;
@@ -1681,11 +1680,6 @@
       return entries.filter(item => item.length > 1);
     }
     function openRecipe(no) {
-      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
-      if (!isPro && typeof no === 'number' && no > 10) {
-        openProUpgradeModal(`Resep No. ${String(no).padStart(4, '0')}`);
-        return;
-      }
       const r = getAllAvailableRecipes().find(x => String(x.no) === String(no) || String(x.id) === String(no)) || currentRecipes().find(x => String(x.no) === String(no));
       if (!r) return;
 
@@ -3090,10 +3084,6 @@
     }
 
     function openChefAssistant() {
-      if (!getActiveUserLicenseInfo().isPro) {
-        openProUpgradeModal('🤖 Asisten Koki AI (Substitusi & Skala Porsi)');
-        return;
-      }
       document.getElementById('chefAssistantModal').style.display = 'block';
     }
 
@@ -3139,10 +3129,6 @@
 
     // ── 2. SMART PANTRY MATCHER ──
     function openPantryMatcher() {
-      if (!getActiveUserLicenseInfo().isPro) {
-        openProUpgradeModal('🥦 Smart Pantry Matcher (Cari dari Kulkas)');
-        return;
-      }
       document.getElementById('pantryMatcherModal').style.display = 'block';
     }
 
@@ -3190,7 +3176,7 @@
       scored.slice(0, 10).forEach(item => {
         const r = item.recipe;
         html += `
-          <div onclick="document.getElementById('pantryMatcherModal').style.display='none'; openRecipe(${r.no});" style="display:flex; justify-content:space-between; align-items:center; background:#fbfcfc; border:1px solid #e0e8e8; padding:12px 16px; border-radius:10px; cursor:pointer; transition:0.2s;" onmouseover="this.style.borderColor='#78c2ad'" onmouseout="this.style.borderColor='#e0e8e8'">
+          <div onclick="document.getElementById('pantryMatcherModal').style.display='none'; openRecipe('${r.no}');" style="display:flex; justify-content:space-between; align-items:center; background:#fbfcfc; border:1px solid #e0e8e8; padding:12px 16px; border-radius:10px; cursor:pointer; transition:0.2s;" onmouseover="this.style.borderColor='#78c2ad'" onmouseout="this.style.borderColor='#e0e8e8'">
             <div>
               <h4 style="margin:0; font-size:15px; color:#112d3b;">${r.title}</h4>
               <span style="font-size:11px; color:#888;">Bab ${r.chapter || 'Koleksi'} · ${r.cat || 'Menu'}</span>
