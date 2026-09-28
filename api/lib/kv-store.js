@@ -1,17 +1,20 @@
 /**
- * Vercel KV Store abstraction with in-memory fallback.
+ * Vercel KV / Upstash Redis Store abstraction with in-memory fallback.
  * 
- * If KV_REST_API_URL and KV_REST_API_TOKEN env vars are set (from Vercel KV),
- * uses the Vercel KV REST API for persistent storage.
- * Otherwise, falls back to an in-memory Map (data lost on cold start).
+ * Supports environment variables from:
+ * - Upstash (via Vercel Marketplace): UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
+ * - Legacy Vercel KV: KV_REST_API_URL, KV_REST_API_TOKEN
+ * 
+ * Falls back to in-memory Map if no env vars are configured.
  */
 
 // In-memory fallback store
 const memoryStore = new Map();
 
 function getKVConfig() {
-  const url = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
+  // Try Upstash env vars first, then legacy Vercel KV
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || process.env.KV_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || process.env.KV_TOKEN;
   return (url && token) ? { url, token } : null;
 }
 
