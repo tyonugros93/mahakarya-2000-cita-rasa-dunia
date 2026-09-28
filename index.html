@@ -17,6 +17,7 @@
       --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-pill: 999px;
     }
     * { box-sizing: border-box; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     html { scroll-behavior: smooth; }
     body { margin: 0; background: var(--canvas); color: var(--ink); font: 15px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
     button, input { font: inherit; }
@@ -3780,12 +3781,7 @@
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Email Pengirim <span style="color:red">*</span>:</label>
                 <input type="email" id="complaintEmail" value="${userInfo.email || ''}" placeholder="contoh: emailanda@gmail.com" required style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;" />
               </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <div>
-                  <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Kode Akses / Transaksi:</label>
-                  <input type="text" id="complaintKey" value="${userInfo.key || ''}" placeholder="Kode Lisensi" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;" />
-                </div>
-                <div>
+              <div>
                   <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Kategori Kendala:</label>
                   <select id="complaintCategory" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;">
                     <option value="Kendala Akses Pro">Kendala Akses Pro</option>
@@ -3793,7 +3789,6 @@
                     <option value="Saran & Masukan">Saran & Masukan Resep</option>
                     <option value="Lainnya">Pengaduan Lainnya</option>
                   </select>
-                </div>
               </div>
               <div>
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Detail Pengaduan <span style="color:red">*</span>:</label>
@@ -3939,6 +3934,15 @@
           </div>
         `;
       } else {
+        // Check if user is signed in before showing complaint form
+        const userInfo = (typeof getActiveUserLicenseInfo === 'function') ? getActiveUserLicenseInfo() : {};
+        const isSignedIn = userInfo.provider === 'google' || userInfo.provider === 'email' || userInfo.isPro;
+        if (!isSignedIn) {
+          alert('Untuk mengajukan pengaduan, silakan login terlebih dahulu.');
+          document.getElementById('chefAssistantModal').style.display = 'none';
+          openLicenseAuthModal();
+          return;
+        }
         chatbotState.showComplaintForm = true;
         renderChatbotFeed();
       }
@@ -3947,9 +3951,20 @@
 
     async function submitComplaintForm(event) {
       if (event) event.preventDefault();
+
+      // Check if user is signed in
+      const userInfo = (typeof getActiveUserLicenseInfo === 'function') ? getActiveUserLicenseInfo() : {};
+      const isSignedIn = userInfo.provider === 'google' || userInfo.provider === 'email' || userInfo.isPro;
+      
+      if (!isSignedIn) {
+        alert('Untuk mengirim pengaduan, silakan login terlebih dahulu agar identitas Anda terverifikasi.');
+        document.getElementById('chefAssistantModal').style.display = 'none';
+        openLicenseAuthModal();
+        return;
+      }
+
       const name = (document.getElementById('complaintName') || {}).value || '';
       const email = (document.getElementById('complaintEmail') || {}).value || '';
-      const key = (document.getElementById('complaintKey') || {}).value || '';
       const category = (document.getElementById('complaintCategory') || {}).value || 'Pengaduan Umum';
       const message = (document.getElementById('complaintMessage') || {}).value || '';
 
@@ -3958,37 +3973,54 @@
         return;
       }
 
-      try {
-        await fetch('/api/send-complaint', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, key, category, message })
-        });
-      } catch(e) {
-        console.error('Failed to post complaint to API:', e);
+      // Show loading state
+      const submitBtn = event ? event.target.querySelector('button[type="submit"]') : null;
+      const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i data-lucide="loader-2" style="width:14px;height:14px;vertical-align:middle;animation:spin 1s linear infinite;"></i> Mengirim pengaduan...';
       }
 
-      const subject = encodeURIComponent(`[PENGADUAN] ${category} - ${name}`);
-      const bodyText = encodeURIComponent(
-        `Nama: ${name}\nEmail: ${email}\nKode Akses: ${key}\nKategori: ${category}\n\nDetail Pengaduan:\n${message}`
-      );
-      window.open(`mailto:fazzaraihantechno@gmail.com?subject=${subject}&body=${bodyText}`, '_blank');
+      try {
+        const res = await fetch('/api/send-complaint', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, category, message })
+        });
 
-      const feedEl = document.getElementById('chatbotFeed');
-      if (feedEl) {
-        feedEl.innerHTML += `
-          <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
-            <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">🤖</div>
-            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; border-top-left-radius: 2px; padding: 14px 16px; font-size: 13px; color: #166534; max-width: 88%; line-height: 1.5;">
-              <strong>✅ Laporan Pengaduan Berhasil Terkirim!</strong><br>
-              Pengaduan Anda telah diteruskan ke backend dan membuka link email ke <b>fazzaraihantechno@gmail.com</b>. Tim Customer Support kami akan segera memproses laporan Anda.<br><br>
-              <button onclick="resetChatbot()" style="background: #0f766e; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
-                🏠 Kembali ke Menu Utama
-              </button>
-            </div>
-          </div>
-        `;
-        feedEl.scrollTop = feedEl.scrollHeight;
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          // Show success in chatbot feed
+          const feedEl = document.getElementById('chatbotFeed');
+          if (feedEl) {
+            feedEl.innerHTML += `
+              <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
+                <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;"><i data-lucide="bot" style="width:18px;height:18px;"></i></div>
+                <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; border-top-left-radius: 2px; padding: 14px 16px; font-size: 13px; color: #166534; max-width: 88%; line-height: 1.5;">
+                  <strong>✅ Pengaduan Berhasil Terkirim!</strong><br>
+                  ${data.sent ? 'Email pengaduan telah dikirim otomatis ke tim Customer Service.' : 'Pengaduan Anda telah diterima dan dicatat oleh sistem.'}
+                  ${data.ticketId ? '<br>Nomor Tiket: <b>' + data.ticketId + '</b>' : ''}<br><br>
+                  <button onclick="resetChatbot()" style="background: #0f766e; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
+                    <i data-lucide="home" style="width:13px;height:13px;vertical-align:middle;"></i> Kembali ke Menu Utama
+                  </button>
+                </div>
+              </div>
+            `;
+            feedEl.scrollTop = feedEl.scrollHeight;
+            if (window.lucide) lucide.createIcons();
+          }
+        } else {
+          alert('Gagal mengirim pengaduan: ' + (data.message || 'Terjadi kesalahan.'));
+        }
+      } catch (err) {
+        console.error('[submitComplaintForm] Error:', err);
+        alert('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
       }
     }
 
