@@ -430,21 +430,19 @@
         display: none !important;
       }
       .topbar-lang {
-        width: auto !important;
-        flex: 1 !important;
-        min-width: 0 !important;
+        width: 100% !important;
+        flex: none !important;
       }
       .topbar-lang .lang-selector-btn {
-        padding: 6px 10px !important;
+        padding: 6px 12px !important;
         font-size: 11px !important;
         height: 34px !important;
         border-radius: 17px !important;
       }
       .actions {
         display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        align-items: center !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
         gap: 6px !important;
         width: 100% !important;
       }
@@ -452,30 +450,26 @@
         order: -1 !important;
       }
       .actions > button[onclick*="openAddUserRecipeModal"] {
-        flex: 1 !important;
-        min-width: 0 !important;
+        width: 100% !important;
+        justify-content: center !important;
       }
       .user-license-btn {
         order: 0 !important;
-        flex: 1 !important;
-        min-width: 0 !important;
+        width: 100% !important;
         margin-bottom: 0 !important;
-        border-radius: 17px !important;
-        font-size: 10.5px !important;
-        height: 34px !important;
-        padding: 0 10px !important;
+        border-radius: 10px !important;
+        font-size: 11px !important;
+        height: 36px !important;
       }
       .actions > button[onclick*="openUserSurveyModal"] {
-        flex: 1 !important;
-        min-width: 0 !important;
-        height: 34px !important;
-        font-size: 10px !important;
-        padding: 4px 10px !important;
+        width: 100% !important;
+        justify-content: center !important;
+        height: 36px !important;
+        font-size: 11px !important;
       }
       .actions > button[onclick*="openAddUserRecipeModal"] {
-        height: 34px !important;
-        font-size: 10px !important;
-        padding: 4px 10px !important;
+        height: 36px !important;
+        font-size: 11px !important;
       }
       .search {
         order: 1 !important;
@@ -1197,6 +1191,7 @@
 
           <!-- Reviews Grid -->
           <div id="reviewsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;"></div>
+          <div id="reviewsPagination" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 20px; flex-wrap: wrap;"></div>
         </section>
       </div>
     </main>
@@ -5002,8 +4997,25 @@
       if (bar5El && total > 0) bar5El.textContent = `${Math.round((fiveStars / total) * 100)}%`;
       if (bar4El && total > 0) bar4El.textContent = `${Math.round(((total - fiveStars) / total) * 100)}%`;
 
+      // Store reviews globally for pagination
+      window._allReviews = reviews;
+      window._reviewPage = 1;
+      renderReviewPage(1);
+    }
+
+    function renderReviewPage(page) {
+      const reviews = window._allReviews || [];
+      const perPage = 10;
+      const totalPages = Math.ceil(reviews.length / perPage);
+      page = Math.max(1, Math.min(page, totalPages));
+      window._reviewPage = page;
+
+      const start = (page - 1) * perPage;
+      const pageReviews = reviews.slice(start, start + perPage);
+
+      const gridEl = document.getElementById('reviewsGrid');
       if (gridEl) {
-        gridEl.innerHTML = reviews.map(r => `
+        gridEl.innerHTML = pageReviews.map(r => `
           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
               <h4 style="margin: 0; font-size: 14px; color: #112d3b; font-weight: 800;">${r.name}</h4>
@@ -5016,6 +5028,49 @@
             </div>
           </div>
         `).join('');
+      }
+
+      // Render pagination controls
+      const pagEl = document.getElementById('reviewsPagination');
+      if (pagEl && totalPages > 1) {
+        let html = '';
+        const btnBase = 'border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;';
+        
+        // Previous button
+        html += `<button onclick="renderReviewPage(${page - 1})" style="${btnBase}background:${page === 1 ? '#e2e8f0;color:#94a3b8;cursor:default' : '#112d3b;color:#f0b75f'}" ${page === 1 ? 'disabled' : ''}>&laquo; Prev</button>`;
+        
+        // Page numbers
+        const maxVisible = 5;
+        let startP = Math.max(1, page - Math.floor(maxVisible / 2));
+        let endP = Math.min(totalPages, startP + maxVisible - 1);
+        if (endP - startP < maxVisible - 1) startP = Math.max(1, endP - maxVisible + 1);
+        
+        if (startP > 1) html += `<button onclick="renderReviewPage(1)" style="${btnBase}background:#f1f5f9;color:#334155;">1</button>`;
+        if (startP > 2) html += '<span style="color:#94a3b8;font-size:12px;">...</span>';
+        
+        for (let i = startP; i <= endP; i++) {
+          const isActive = i === page;
+          html += `<button onclick="renderReviewPage(${i})" style="${btnBase}${isActive ? 'background:#0f766e;color:#fff;' : 'background:#f1f5f9;color:#334155;'}">${i}</button>`;
+        }
+        
+        if (endP < totalPages - 1) html += '<span style="color:#94a3b8;font-size:12px;">...</span>';
+        if (endP < totalPages) html += `<button onclick="renderReviewPage(${totalPages})" style="${btnBase}background:#f1f5f9;color:#334155;">${totalPages}</button>`;
+        
+        // Next button
+        html += `<button onclick="renderReviewPage(${page + 1})" style="${btnBase}background:${page === totalPages ? '#e2e8f0;color:#94a3b8;cursor:default' : '#112d3b;color:#f0b75f'}" ${page === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
+        
+        // Page info
+        html += `<span style="font-size:11px;color:#64748b;margin-left:8px;">Hal ${page}/${totalPages} (${reviews.length} ulasan)</span>`;
+        
+        pagEl.innerHTML = html;
+      } else if (pagEl) {
+        pagEl.innerHTML = '';
+      }
+      
+      // Scroll to reviews section top
+      if (page > 1) {
+        const gridEl2 = document.getElementById('reviewsGrid');
+        if (gridEl2) gridEl2.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
 
