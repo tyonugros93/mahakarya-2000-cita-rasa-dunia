@@ -2468,12 +2468,12 @@
 
       <div style="padding: 20px 24px; overflow-y: auto; flex: 1;">
         <!-- Tab Navigation -->
-        <div style="display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
-          <button id="tabChatbotBtn" onclick="switchChefTab('chatbot')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #f0b75f; background: #112d3b; color: #f0b75f; font-weight: 700; font-size: 11.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);"><i data-lucide="message-circle" style="width:13px;height:13px;vertical-align:middle;"></i> Chatbot Helpdesk</button>
-          <button id="tabSubBtn" onclick="switchChefTab('sub')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;"><i data-lucide="repeat-2" style="width:13px;height:13px;vertical-align:middle;"></i> Substitusi</button>
-          <button id="tabPortionBtn" onclick="switchChefTab('portion')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;"><i data-lucide="scale" style="width:13px;height:13px;vertical-align:middle;"></i> Scale Porsi</button>
-          <button id="tabFaqBtn" onclick="switchChefTab('faq')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;"><i data-lucide="book-open-check" style="width:13px;height:13px;vertical-align:middle;"></i> Panduan & FAQ</button>
-          <button id="tabTncBtn" onclick="switchChefTab('tnc')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;"><i data-lucide="scale" style="width:13px;height:13px;vertical-align:middle;"></i> Hak Cipta & TNC</button>
+        <div style="display: flex; gap: 5px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; flex-wrap: wrap;">
+          <button id="tabChatbotBtn" onclick="switchChefTab('chatbot')" style="flex: 0 1 auto; padding: 6px 10px; border-radius: 8px; border: 1px solid #f0b75f; background: #112d3b; color: #f0b75f; font-weight: 700; font-size: 10.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);"><i data-lucide="message-circle" style="width:13px;height:13px;vertical-align:middle;"></i> Chatbot Helpdesk</button>
+          <button id="tabSubBtn" onclick="switchChefTab('sub')" style="flex: 0 1 auto; padding: 6px 10px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 10.5px; cursor: pointer;"><i data-lucide="repeat-2" style="width:13px;height:13px;vertical-align:middle;"></i> Substitusi</button>
+          <button id="tabPortionBtn" onclick="switchChefTab('portion')" style="flex: 0 1 auto; padding: 6px 10px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 10.5px; cursor: pointer;"><i data-lucide="scale" style="width:13px;height:13px;vertical-align:middle;"></i> Scale Porsi</button>
+          <button id="tabFaqBtn" onclick="switchChefTab('faq')" style="flex: 0 1 auto; padding: 6px 10px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 10.5px; cursor: pointer;"><i data-lucide="book-open-check" style="width:13px;height:13px;vertical-align:middle;"></i> Panduan & FAQ</button>
+          <button id="tabTncBtn" onclick="switchChefTab('tnc')" style="flex: 0 1 auto; padding: 6px 10px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 10.5px; cursor: pointer;"><i data-lucide="scale" style="width:13px;height:13px;vertical-align:middle;"></i> Hak Cipta & TNC</button>
         </div>
 
         <!-- Tab 0: Interactive Chatbot AI & Helpdesk -->
@@ -2662,20 +2662,6 @@
                 Gunakan tab <strong style="color: #112d3b;">"Substitusi"</strong> pada modal Asisten Koki Pintar. Pilih bahan yang habis (seperti Minyak Wijen, Santan, atau Angciu) untuk melihat daftar rekomendasi alternatif pengganti beserta rasio takaran rincinya.
               </div>
             </div>
-          </div>
-
-          <!-- WhatsApp CS Deeplink Banner -->
-          <div style="margin-top: 16px; background: linear-gradient(135deg, #075e54 0%, #128c7e 100%); border-radius: 12px; padding: 16px; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 4px 14px rgba(18,140,126,0.25); flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 24px;">💬</span>
-              <div>
-                <h5 style="margin: 0; font-size: 13.5px; color: #fff; font-weight: 800;">Butuh Bantuan Kendala atau Pertanyaan Lain?</h5>
-                <span style="font-size: 11px; color: #d1fae5;">Tim Support Customer Mahakarya siap membantu Anda via WhatsApp</span>
-              </div>
-            </div>
-            <a href="https://wa.me/6285174322960?text=Halo%20Tim%20Mahakarya,%20saya%20butuh%20bantuan%20mengenai%20platform" target="_blank" rel="noopener noreferrer" style="background: #25d366; color: #fff; text-decoration: none; padding: 9px 15px; border-radius: 20px; font-weight: 800; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-              💬 Hubungi CS WhatsApp (085174322960)
-            </a>
           </div>
         </div>
 
@@ -4900,6 +4886,80 @@
       loadUserSurveys();
     }
 
+    function generateDefaultReviews() {
+      const names = [
+        'Chef Hendra Setiawan', 'Siti Rahmawati', 'Budi Santoso', 'Dewi Lestari', 'Ahmad Fauzi',
+        'Rina Kartika', 'Eko Prasetyo', 'Maya Anggraini', 'Dimas Saputra', 'Nur Halimah',
+        'Agus Wijaya', 'Fitri Handayani', 'Reza Firmansyah', 'Linda Sari', 'Yusuf Hakim',
+        'Anisa Putri', 'Bambang Suryadi', 'Citra Dewi', 'Fajar Nugroho', 'Gita Pramesti',
+        'Haris Munandar', 'Indah Permata', 'Joko Susilo', 'Kartini Wulandari', 'Lukman Hakim',
+        'Melati Kusuma', 'Nanda Pratama', 'Olivia Tan', 'Putra Aditya', 'Qori Amalia',
+        'Rahmat Hidayat', 'Sari Ramadhani', 'Teguh Prabowo', 'Ulfa Nabila', 'Vino Ardiansyah',
+        'Wati Sulistyo', 'Xena Maharani', 'Yanto Kurniawan', 'Zahra Aulia', 'Arief Budiman',
+        'Bella Safitri', 'Chandra Gunawan', 'Diana Permatasari', 'Edwin Hartono', 'Fanny Octavia',
+        'Gilang Ramadhan', 'Helen Tanoto', 'Irfan Maulana', 'Julia Andriani', 'Kevin Susanto',
+        'Laras Sekar Ayu', 'Miftah Farid', 'Nina Rosalina', 'Oscar Pangestu', 'Putri Maharani',
+        'Qadri Anwar', 'Ratna Kumala', 'Surya Darma', 'Tika Rahayu', 'Umar Faruq',
+        'Vera Wulandari', 'Wahyu Setiabudi', 'Yeni Marlina', 'Zaki Mubarok', 'Ayu Lestari',
+        'Bayu Pamungkas', 'Cantika Sari', 'Deni Hermawan', 'Elsa Novita', 'Farhan Akbar',
+        'Galih Pratama', 'Hana Meirina', 'Ivan Saputro', 'Jenny Wijaya', 'Kurnia Ilahi',
+        'Lina Marlina', 'Mulyadi Sentosa', 'Nita Puspita', 'Omar Bakrie', 'Priska Damayanti',
+        'Qayyum Habibi', 'Rosa Melati', 'Slamet Riyadi', 'Tiara Anindya', 'Udin Sedunia',
+        'Vivian Tanjung', 'Wawan Gunawan', 'Yuliana Sari', 'Zulfikar Nasution', 'Adelia Rahma',
+        'Bagus Mahardika', 'Clara Putri', 'Danu Prakoso', 'Eka Fitriani', 'Faisal Rahman',
+        'Gina Maulida', 'Hadi Wibowo', 'Intan Permata', 'Jasmine Azzahra', 'Kemal Pasha'
+      ];
+      const titles = [
+        'Pemilik Resto', 'Home Chef', 'Food Blogger', 'Catering Owner', 'Cafe Manager',
+        'Ibu Rumah Tangga', 'Koki Profesional', 'Mahasiswa Kuliner', 'Pengusaha F&B', 'Baker',
+        'Patissier', 'Culinary Student', 'Food Vlogger', 'Chef Pribadi', 'Menu Planner',
+        'Kitchen Manager', 'Sous Chef', 'Pastry Chef', 'Wedding Caterer', 'Street Food Vendor'
+      ];
+      const reviewTexts = [
+        'Platform luar biasa! Koleksi resepnya sangat lengkap dan detail.',
+        'Fitur PDF Generator sangat membantu bisnis catering saya.',
+        'Substitusi bahan AI-nya akurat banget, sangat berguna saat bahan langka.',
+        'Resep-resepnya autentik, seperti diajari langsung oleh chef profesional.',
+        'Scale Porsi sangat membantu menghitung kebutuhan bahan untuk acara besar.',
+        'Kualitas konten setara buku masak premium. Worth every penny!',
+        'Pantry Matcher membantu saya memanfaatkan bahan yang ada di rumah.',
+        'Desain interfacenya elegan, nyaman digunakan saat memasak.',
+        'Fitur Chatbot Helpdesk responsive dan informatif.',
+        'Sangat direkomendasikan untuk siapapun yang serius di dunia kuliner.',
+        'Menu book generator membantu saya membuat buku menu resto.',
+        'Koleksi resep dari berbagai negara sangat menginspirasi kreasi masakan.',
+        'Tutorial langkah-langkahnya jelas, mudah diikuti pemula sekalipun.',
+        'Investasi terbaik untuk pengembangan bisnis kuliner saya.',
+        'Fitur pencarian bahan sangat memudahkan saat belanja.',
+        'Aplikasi ini merevolusi cara saya merancang menu mingguan.',
+        'Resep dessert dan pastry-nya world class!',
+        'Sangat puas dengan kualitas dan kelengkapan fiturnya.',
+        'Platform ini wajib punya untuk setiap profesional di bidang F&B.',
+        'Sudah mencoba 50+ resep, semuanya berhasil sempurna!',
+        'Fitur kalkulasi nutrisi sangat membantu untuk menu sehat.',
+        'Customer service responsif dan sangat membantu.',
+        'Update resep berkala membuat saya selalu mendapat inspirasi baru.',
+        'Buku masak digital terlengkap yang pernah saya temui.',
+        'Resep tradisional Nusantaranya sangat otentik dan terjaga keasliannya.'
+      ];
+      const dates = [];
+      for (let i = 0; i < 100; i++) {
+        const d = new Date(2026, 8, 25 - Math.floor(i / 4)); // Sept 25, 2026 backwards
+        dates.push(d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }));
+      }
+      const reviews = [];
+      for (let i = 0; i < 100; i++) {
+        reviews.push({
+          name: names[i] + ' (' + titles[i % titles.length] + ')',
+          rating: i < 85 ? 5 : (i < 95 ? 4 : 3),
+          review: reviewTexts[i % reviewTexts.length],
+          nps: i < 90 ? 'Ya' : 'Mungkin',
+          date: dates[i]
+        });
+      }
+      return reviews;
+    }
+
     async function loadUserSurveys() {
       let reviews = [];
       try {
@@ -4913,12 +4973,12 @@
         reviews = JSON.parse(localStorage.getItem('mahakarya_user_surveys') || '[]');
       }
 
+      const defaults = generateDefaultReviews();
       if (!reviews || reviews.length === 0) {
-        reviews = [
-          { name: "Chef Hendra Setiawan", rating: 5, review: "Platform terbaik untuk inspirasi menu resto. PDF Generator sangat membantu merancang menu buku fine dining!", nps: "Ya", date: "24 Sep 2026" },
-          { name: "Siti Rahmawati (Kuliner Solo)", rating: 5, review: "Koleksi resep Cita Rasa Dunia lengkap banget. Substitusi bumbu AI sangat akurat untuk kebutuhan catering.", nps: "Ya", date: "22 Sep 2026" },
-          { name: "Budi Santoso - Cafe Manager", rating: 5, review: "Sangat puas dengan fitur watermarking PDF dan smart pantry. Investasi terbaik untuk bisnis kuliner!", nps: "Ya", date: "20 Sep 2026" }
-        ];
+        reviews = defaults;
+      } else {
+        // Real reviews on top of defaults
+        reviews = [...reviews, ...defaults];
       }
 
       const total = reviews.length;
@@ -4960,15 +5020,29 @@
     }
 
     // ── LIKES & COMMENTS FOR RECIPES ──
+    // Generate a deterministic static like count per recipe (8-35 range)
+    function getStaticLikeCount(recipeId) {
+      const id = parseInt(recipeId) || 0;
+      // Simple hash to create varied but consistent counts
+      const hash = ((id * 2654435761) >>> 0) % 28;
+      return hash + 8; // Range: 8 to 35
+    }
+
     async function toggleRecipeLike() {
       if (!activeRecipeId) return;
-      const key = `mahakarya_likes_${activeRecipeId}`;
-      let count = parseInt(localStorage.getItem(key) || '12', 10);
-      count += 1;
-      localStorage.setItem(key, count);
+      const key = `mahakarya_liked_${activeRecipeId}`;
+      const baseLikes = getStaticLikeCount(activeRecipeId);
+      const userLikedKey = `mahakarya_user_liked_${activeRecipeId}`;
+      const alreadyLiked = localStorage.getItem(userLikedKey) === '1';
+      
+      if (alreadyLiked) return; // Prevent double-like
+      
+      localStorage.setItem(userLikedKey, '1');
+      const extraLikes = parseInt(localStorage.getItem(key) || '0', 10) + 1;
+      localStorage.setItem(key, extraLikes);
 
       const countEl = document.getElementById('likeCount');
-      if (countEl) countEl.textContent = count;
+      if (countEl) countEl.textContent = baseLikes + extraLikes;
 
       try {
         await fetch('/api/comments', {
@@ -5016,30 +5090,28 @@
       const key = `mahakarya_comments_${recipeId}`;
       let comments = JSON.parse(localStorage.getItem(key) || '[]');
 
-      if (comments.length === 0) {
-        comments = [
-          { author: "Chef Aris", text: "Takaran bumbu sangat seimbang, rasa gurihnya pas!", date: "10:15" },
-          { author: "Maya Cafe Owner", text: "Cocok banget dimasukkan ke menu coffee shop kami.", date: "09:40" }
-        ];
-      }
-
       const listEl = document.getElementById('recipeCommentsList');
       if (listEl) {
-        listEl.innerHTML = comments.map(c => `
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; font-size: 11.5px;">
-            <div style="display: flex; justify-content: space-between; font-weight: 700; color: #112d3b; margin-bottom: 3px;">
-              <span>${c.author}</span>
-              <span style="font-size: 10px; color: #94a3b8;">${c.date || ''}</span>
+        if (comments.length === 0) {
+          listEl.innerHTML = '<div style="text-align:center;color:#94a3b8;font-size:11.5px;padding:12px;">Belum ada komentar. Jadilah yang pertama!</div>';
+        } else {
+          listEl.innerHTML = comments.map(c => `
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; font-size: 11.5px;">
+              <div style="display: flex; justify-content: space-between; font-weight: 700; color: #112d3b; margin-bottom: 3px;">
+                <span>${c.author}</span>
+                <span style="font-size: 10px; color: #94a3b8;">${c.date || ''}</span>
+              </div>
+              <p style="margin: 0; color: #475569;">${c.text}</p>
             </div>
-            <p style="margin: 0; color: #475569;">${c.text}</p>
-          </div>
-        `).join('');
+          `).join('');
+        }
       }
 
-      const likeKey = `mahakarya_likes_${recipeId}`;
-      const count = localStorage.getItem(likeKey) || '12';
+      // Static likes + user-added likes
+      const baseLikes = getStaticLikeCount(recipeId);
+      const extraLikes = parseInt(localStorage.getItem(`mahakarya_liked_${recipeId}`) || '0', 10);
       const countEl = document.getElementById('likeCount');
-      if (countEl) countEl.textContent = count;
+      if (countEl) countEl.textContent = baseLikes + extraLikes;
     }
 
     document.addEventListener('DOMContentLoaded', function() {
