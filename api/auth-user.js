@@ -1,5 +1,7 @@
 // Vercel Serverless Function: api/auth-user.js
-// Handles Google Sign-In and email verification against Scalev Paid Whitelist & Scalev API
+// Handles Google Sign-In verification against Scalev Paid Whitelist & Scalev API
+
+import { checkProStatus } from './lib/check-pro.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -23,46 +25,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Verified Scalev buyer emails & owner master access
-    const paidEmails = [
-      'arinii.sartika@gmail.com',
-      'fazzaraihantechno@gmail.com',
-      'pembeli@myscalev.com',
-      'lisensi.resmi@mahakarya.id',
-      'tyonugros93@gmail.com',
-      'sn.tyonyunu@gmail.com',
-      'sn.tyonunu@gmail.com'
-    ];
-
-    let isPro = paidEmails.includes(email);
-    let verifySource = isPro ? 'whitelist' : 'free';
-
-    // Check Scalev API if SCALEV_API_KEY is configured in Vercel
-    const scalevApiKey = process.env.SCALEV_API_KEY;
-    if (!isPro && scalevApiKey) {
-      try {
-        const scalevRes = await fetch(`https://api.scalev.id/v1/orders?customer_email=${encodeURIComponent(email)}`, {
-          headers: {
-            'Authorization': `Bearer ${scalevApiKey}`,
-            'Accept': 'application/json'
-          }
-        });
-        if (scalevRes.ok) {
-          const orderData = await scalevRes.json();
-          const orders = orderData.data || orderData.results || (Array.isArray(orderData) ? orderData : []);
-          const hasPaidOrder = orders.some(o => {
-            const st = (o.status || o.payment_status || '').toLowerCase();
-            return st === 'paid' || st === 'completed' || st === 'success';
-          });
-          if (hasPaidOrder) {
-            isPro = true;
-            verifySource = 'scalev_api';
-          }
-        }
-      } catch (err) {
-        console.error('Scalev API check error:', err);
-      }
-    }
+    const { isPro, verifySource } = await checkProStatus(email);
 
     return res.status(200).json({
       success: true,
