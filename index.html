@@ -3984,31 +3984,24 @@
       }
 
       try {
-        // Get Web3Forms access key from server
-        const configRes = await fetch('/api/send-complaint');
-        const configData = await configRes.json();
-        
-        if (!configData.success || !configData.key) {
-          throw new Error('Konfigurasi email belum tersedia.');
-        }
-
         const ticketId = 'TKT-' + Date.now();
+        const waktu = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'full', timeStyle: 'medium' });
 
-        // Send directly from browser to Web3Forms (bypasses Cloudflare server-side blocks)
-        const res = await fetch('https://api.web3forms.com/submit', {
+        // Send email via Formsubmit.co (free, no API key needed)
+        // Email delivered directly to fazzaraihantechno@gmail.com
+        const res = await fetch('https://formsubmit.co/ajax/fazzaraihantechno@gmail.com', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify({
-            access_key: configData.key,
-            subject: `[PENGADUAN] ${category} - ${name} (${ticketId})`,
-            from_name: 'Mahakarya Support System',
-            replyto: email,
+            _subject: `[PENGADUAN] ${category} - ${name} (${ticketId})`,
+            _replyto: email,
+            _template: 'table',
             'Nomor Tiket': ticketId,
             'Nama Lengkap': name,
             'Email Pengirim': email,
             'Kategori Kendala': category,
             'Detail Pengaduan': message,
-            'Waktu Laporan': new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'full', timeStyle: 'medium' }),
+            'Waktu Laporan': waktu,
             'Platform': 'Mahakarya 2.962 Cita Rasa Dunia'
           })
         });
