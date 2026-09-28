@@ -2381,6 +2381,8 @@
             </div>
           </div>
 
+          <!-- Manual License Code Section (HIDDEN - no longer needed with Google/Email auth) -->
+          <div style="display: none;">
           <div style="position: relative; text-align: center; margin: 20px 0 18px; border-top: 1px dashed #cbd5e1;">
             <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.04em;">ATAU KODE MANUAL (SUDAH BELI)</span>
           </div>
@@ -2402,6 +2404,7 @@
           <button onclick="activateLicenseKey()" style="width: 100%; padding: 13px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);">✨ Aktivasi Akses Mahakarya Pro</button>
           <div style="font-size: 11px; color: #475569; text-align: center; margin-top: 10px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; line-height: 1.4;">
             💡 <i>Anda dapat menggunakan <strong>Order ID / Nomor Pesanan</strong> yang tertera pada email konfirmasi pembayaran Scalev Anda sebagai Kode Lisensi manual. (Batas maksimal 2 perangkat per lisensi).</i>
+          </div>
           </div>
         </div>
 
@@ -4485,14 +4488,14 @@
           doc.text('© Mahakarya 2.962 Cita Rasa Dunia · Hak Cipta Terdaftar Setyo Nugroho / Fazza Raihan Techno', 14, pageHeight - 7.5);
           doc.text(`Halaman ${p} dari ${pageCount}`, pageWidth - 14, pageHeight - 7.5, { align: 'right' });
 
-          // Baris 2: Lisensi Resmi Pembeli & ID Transaksi (Gold Accent)
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(6.0);
-          doc.setTextColor(165, 125, 60); // Warm gold accent
-          const userLabel = `LISENSI RESMI: ${activeLic.email} (${activeLic.name})`;
-          const txnLabel = `ID TRANSAKSI: ${activeLic.txnId}`;
-          doc.text(userLabel, 14, pageHeight - 4.0);
-          doc.text(txnLabel, pageWidth - 14, pageHeight - 4.0, { align: 'right' });
+          // Baris 2: Lisensi Resmi Pembeli & ID Transaksi (HIDDEN - watermark disabled)
+          // doc.setFont('helvetica', 'bold');
+          // doc.setFontSize(6.0);
+          // doc.setTextColor(165, 125, 60);
+          // const userLabel = `LISENSI RESMI: ${activeLic.email} (${activeLic.name})`;
+          // const txnLabel = `ID TRANSAKSI: ${activeLic.txnId}`;
+          // doc.text(userLabel, 14, pageHeight - 4.0);
+          // doc.text(txnLabel, pageWidth - 14, pageHeight - 4.0, { align: 'right' });
         }
 
         // Save PDF directly with custom License Transaction filename
