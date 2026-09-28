@@ -5,11 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#112d3b" />
   <title>Mahakarya 2.962 Cita Rasa Dunia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --ink: #17242a; --muted: #6d7c82; --line: #dfe7e9; --paper: #fff;
-      --canvas: #f5f8f8; --navy: #112d3b; --teal: #0f766e; --gold: #d88b28;
+      --canvas: #f5f8f8; --navy: #112d3b; --teal: #0f766e; --gold: #f0b75f;
       --soft-teal: #e5f3f0; --soft-gold: #fff4df; --shadow: 0 18px 50px rgba(17,45,59,.08);
+      --danger: #e11d48; --info: #3182ce; --hover-teal: #b9ded7;
+      --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-pill: 999px;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -932,11 +937,11 @@
         </div>
         <div class="actions">
           <button onclick="openAddUserRecipeModal()" style="background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%); color: #fff; border: 1px solid #5eead4; border-radius: 20px; padding: 6px 13px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; height: 38px; box-shadow: 0 2px 8px rgba(15,118,110,0.15); flex-shrink: 0;">
-            <span>➕</span>
+            <span><i data-lucide="plus" style="width:14px;height:14px;"></i></span>
             <span>Tambah Resep Saya</span>
           </button>
           <button onclick="openUserSurveyModal()" style="background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); color: #f0b75f; border: 1px solid #f0b75f; border-radius: 20px; padding: 6px 13px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; height: 38px; box-shadow: 0 2px 8px rgba(17,45,59,0.15); flex-shrink: 0;">
-            <span>✍️</span>
+            <span><i data-lucide="pen-line" style="width:14px;height:14px;"></i></span>
             <span>Survei &amp; Ulasan</span>
           </button>
           <label class="search" aria-label="Cari resep"><span>⌕</span><input id="searchInput" type="search" placeholder="Cari nama atau bahan..." /></label>
@@ -951,7 +956,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             </span>
             <span class="mega-pill-text">
-              <span class="mega-pill-title" id="megaPillTitle">2500+ Mahakarya</span>
+              <span class="mega-pill-title" id="megaPillTitle">2.962 Mahakarya</span>
               <span class="mega-pill-sub">Pilih Kategori Resep Menu</span>
             </span>
             <span class="mega-pill-arrow">
@@ -980,8 +985,8 @@
             <p id="heroDescription">Menjelajah resep otentik dari Nusantara hingga kuliner Tiongkok dalam pengalaman membaca yang terstruktur, tenang, dan mudah dipindai.</p>
             <div class="hero-footer">
               <button class="primary" data-scroll="recipes">Mulai menjelajah resep →</button>
-              <button class="secondary-btn" onclick="openPantryMatcher()" style="border: 1px solid #78c2ad; background: rgba(120,194,173,0.1); color: #78c2ad; border-radius: 8px; padding: 11px 16px; font-weight: 700; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(120,194,173,0.25)'" onmouseout="this.style.background='rgba(120,194,173,0.1)'">🥦 Cari dari Kulkas</button>
-              <button class="secondary-btn" onclick="openMenuBook()" style="border: 1px solid #f0b75f; background: rgba(240,183,95,0.05); color: #f0b75f; border-radius: 8px; padding: 11px 16px; font-weight: 700; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(240,183,95,0.15)'" onmouseout="this.style.background='rgba(240,183,95,0.05)'">📖 Buka Mockup Menu Book</button>
+              <button class="secondary-btn" onclick="openPantryMatcher()" style="border: 1px solid #78c2ad; background: rgba(120,194,173,0.1); color: #78c2ad; border-radius: 8px; padding: 11px 16px; font-weight: 700; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(120,194,173,0.25)'" onmouseout="this.style.background='rgba(120,194,173,0.1)'"><i data-lucide="search" style="width:14px;height:14px;vertical-align:middle;"></i> Cari dari Kulkas</button>
+              <button class="secondary-btn" onclick="openMenuBook()" style="border: 1px solid #f0b75f; background: rgba(240,183,95,0.05); color: #f0b75f; border-radius: 8px; padding: 11px 16px; font-weight: 700; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(240,183,95,0.15)'" onmouseout="this.style.background='rgba(240,183,95,0.05)'"><i data-lucide="book-open" style="width:14px;height:14px;vertical-align:middle;"></i> Buka Mockup Menu Book</button>
               <div class="hero-meta"><div><b id="heroTotal">2.962</b><span id="heroTotalLabel">menu inti</span></div><div><b id="heroChapterCount">11</b><span id="heroChapterLabel">bab pilihan</span></div><div><b>100%</b>terkurasi</div></div>
             </div>
           </div>
@@ -998,7 +1003,7 @@
           <div class="section-head"><div><div class="kicker">01 · Orientasi</div><h2>Mahakarya</h2><p>Catatan pembuka untuk perjalanan rasa Anda.</p></div></div>
           <div class="panel foreword">
             <div class="quote">“Makanan adalah bahasa universal yang menyatukan berbagai budaya.”</div>
-            <p>Buku ini lahir dari sebuah visi besar: mendobrak batasan tanpa mengorbankan keaslian rasa. <b>The Ultimate 2500+ Recipes</b> bukan sekadar kumpulan resep, melainkan ensiklopedia kuliner komprehensif yang dikurasi, diuji, dan diadaptasi secara cermat. Setiap mahakarya dirancang dengan substitusi cerdas untuk mempertahankan wok hei, umami, dan kekayaan rempah Nusantara.</p>
+            <p>Buku ini lahir dari sebuah visi besar: mendobrak batasan tanpa mengorbankan keaslian rasa. <b>The Ultimate 2.962 Recipes</b> bukan sekadar kumpulan resep, melainkan ensiklopedia kuliner komprehensif yang dikurasi, diuji, dan diadaptasi secara cermat. Setiap mahakarya dirancang dengan substitusi cerdas untuk mempertahankan wok hei, umami, dan kekayaan rempah Nusantara.</p>
             <div class="signature">— Setyo Nugroho · Penulis</div>
           </div>
         </section>
@@ -1022,43 +1027,43 @@
                 
                 <div class="quick-cat-grid">
                   <div class="quick-cat-card" data-cat-search="Appetizer" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.78) 100%), url('https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=300&q=80');">
-                    <span class="quick-cat-icon">🥗</span>
+                    <span class="quick-cat-icon"><i data-lucide="salad" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">Appetizers &amp; Starters</span>
                   </div>
                   <div class="quick-cat-card" data-cat-search="Main Course" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.78) 100%), url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=80');">
-                    <span class="quick-cat-icon">🍖</span>
+                    <span class="quick-cat-icon"><i data-lucide="beef" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">Main Course Global</span>
                   </div>
                   <div class="quick-cat-card" data-cat-search="Soup" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.78) 100%), url('https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=300&q=80');">
-                    <span class="quick-cat-icon">🍲</span>
+                    <span class="quick-cat-icon"><i data-lucide="soup" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">Soup &amp; Broth</span>
                   </div>
                   <div class="quick-cat-card" data-cat-search="Dessert" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.78) 100%), url('https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=300&q=80');">
-                    <span class="quick-cat-icon">🍰</span>
+                    <span class="quick-cat-icon"><i data-lucide="cake-slice" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">Dessert &amp; Pastry</span>
                   </div>
                   <div class="quick-cat-card" data-cat-search="Sehat" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.78) 100%), url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80');">
-                    <span class="quick-cat-icon">🥬</span>
+                    <span class="quick-cat-icon"><i data-lucide="leaf" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">Healthy &amp; Diet Friendly</span>
                   </div>
                   <div class="quick-cat-card" data-cat-search="MPASI" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.78) 100%), url('https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=300&q=80');">
-                    <span class="quick-cat-icon">👶</span>
+                    <span class="quick-cat-icon"><i data-lucide="baby" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">MPASI &amp; Kids Meal</span>
                   </div>
                   <div class="quick-cat-card" data-cat-search="Kopi" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.78) 100%), url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=300&q=80');">
-                    <span class="quick-cat-icon">☕</span>
+                    <span class="quick-cat-icon"><i data-lucide="coffee" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">Coffee &amp; Barista</span>
                   </div>
                   <div class="quick-cat-card" data-cat-search="Teh" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.78) 100%), url('https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=300&q=80');">
-                    <span class="quick-cat-icon">🫖</span>
+                    <span class="quick-cat-icon"><i data-lucide="cup-soda" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">Artisan Tea &amp; Infusion</span>
                   </div>
                   <div class="quick-cat-card wide" data-cat-search="Mocktail" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%), url('https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80');">
-                    <span class="quick-cat-icon">🍹</span>
+                    <span class="quick-cat-icon"><i data-lucide="glass-water" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">Craft Mocktails &amp; Beverages</span>
                   </div>
                   <div class="quick-cat-card wide" data-cat-mode="business" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%), url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80');">
-                    <span class="quick-cat-icon">💼</span>
+                    <span class="quick-cat-icon"><i data-lucide="briefcase-business" style="width:18px;height:18px;"></i></span>
                     <span class="quick-cat-title">Fullset Menu Business F&amp;B</span>
                   </div>
                 </div>
@@ -1077,7 +1082,7 @@
               
               <!-- Collection Disclaimer & HD Image Bonus Note -->
               <div style="margin-top: 14px; font-size: 12px; color: #334155; background: #fffaf0; border: 1.5px solid #f0b75f; padding: 12px 16px; border-radius: 10px; display: flex; align-items: center; gap: 12px; line-height: 1.45; box-shadow: 0 4px 12px rgba(240,183,95,0.12);">
-                <span style="font-size: 20px; flex-shrink: 0;">🌟</span>
+                <span style="font-size: 20px; flex-shrink: 0;"><i data-lucide="sparkles" style="width:20px;height:20px;color:#f0b75f;"></i></span>
                 <div>
                   <strong style="color: #112d3b;">Standar Resep &amp; Bonus Foto HD:</strong> Seluruh 2.962 resep disusun dengan takaran gramasi &amp; instruksi memasak otentik yang presisi. Khusus untuk <strong>Menu-Menu Unggulan Pilihan</strong>, kami memberikan <strong>Bonus Panduan Visual &amp; Foto HD</strong>.
                 </div>
@@ -1100,7 +1105,7 @@
               </span>
             </button>
             <button class="subcategory-tab" data-mode-switch="user" aria-label="Lihat Kategori Ditambahkan oleh Pengguna">
-              <span class="sub-tab-icon">📝</span>
+              <span class="sub-tab-icon"><i data-lucide="pen-line" style="width:16px;height:16px;"></i></span>
               <span class="sub-tab-info">
                 <strong>Ditambahkan oleh Pengguna</strong>
                 <small id="userTabSublabel">Kreasi Komunitas Pro</small>
@@ -1120,7 +1125,7 @@
               <p>Evaluasi langsung dari para chef, pebisnis F&amp;B, dan pencinta kuliner dunia.</p>
             </div>
             <button onclick="openUserSurveyModal()" style="background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); color: #f0b75f; border: 1px solid #f0b75f; border-radius: 10px; padding: 10px 18px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(17,45,59,0.15);">
-              ✍️ Beri Penilaian &amp; Ulasan Anda
+              <i data-lucide="pen-line" style="width:14px;height:14px;vertical-align:middle;"></i> Beri Penilaian &amp; Ulasan Anda
             </button>
           </div>
 
@@ -1234,7 +1239,7 @@
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
             <h4 style="margin:0;"><i data-lucide="message-square" style="width:16px;height:16px;color:#f0b75f"></i> Komentar &amp; Apresiasi</h4>
             <button id="likeBtn" onclick="toggleRecipeLike()" style="background: #fff0f3; color: #e11d48; border: 1px solid #fecdd3; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-              ❤️ <span id="likeCount">12</span> Menyukai
+              <i data-lucide="heart" style="width:14px;height:14px;vertical-align:middle;"></i> <span id="likeCount">12</span> Menyukai
             </button>
           </div>
 
@@ -1256,7 +1261,7 @@
               <span style="color: #be123c; font-size: 11px;">Anda dapat menghapus resep ini dari koleksi komunitas.</span>
             </div>
             <button onclick="deleteUserRecipe()" style="background: #e11d48; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(225,29,72,0.2);">
-              🗑️ Hapus Resep Ini
+              <i data-lucide="trash-2" style="width:14px;height:14px;vertical-align:middle;"></i> Hapus Resep Ini
             </button>
           </div>
         </div>
@@ -2068,7 +2073,7 @@
   </script>
   <!-- Floating Chef Assistant Button -->
   <button class="floating-assistant-btn" onclick="openChefAssistant()">
-    <span>🤖 Asisten Koki AI</span>
+    <span><i data-lucide="bot" style="width:16px;height:16px;vertical-align:middle;"></i> Asisten Koki AI</span>
   </button>
 
   <!-- PRO UPGRADE MODAL (High-Converting Luxury Paywall) -->
@@ -2079,11 +2084,11 @@
       <div style="background: linear-gradient(135deg, #112d3b 0%, #0a1c25 100%); color: #fff; padding: 26px 28px; text-align: center; position: relative;">
         <button onclick="closeProUpgradeModal()" style="position: absolute; right: 18px; top: 18px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer;">×</button>
         
-        <div style="width: 56px; height: 56px; background: linear-gradient(135deg, rgba(240,183,95,0.2) 0%, rgba(240,183,95,0.05) 100%); border: 1.5px solid #f0b75f; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(240,183,95,0.2);">👑</div>
+        <div style="width: 56px; height: 56px; background: linear-gradient(135deg, rgba(240,183,95,0.2) 0%, rgba(240,183,95,0.05) 100%); border: 1.5px solid #f0b75f; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(240,183,95,0.2);"><i data-lucide="crown" style="width:32px;height:32px;color:#f0b75f;"></i></div>
         
         <h3 style="margin: 0 0 6px; font-size: 20px; color: #f0b75f; font-weight: 800; letter-spacing: 0.02em;" id="proModalTitle">Buka Akses Penuh Mahakarya Pro</h3>
         <p style="margin: 0; font-size: 12px; color: #cbd5e1; line-height: 1.5;" id="proModalSubtitle">
-          Nikmati 2.962 Resep Otentik Dunia, AI Chef Assistant & Generator Buku Menu Restoran Kualitas HD.
+          Nikmati 2.962 Resep Otentik Dunia, AI Chef Assistant & Generator Buku Menu Restoran Resolusi Tinggi Siap Cetak.
         </p>
       </div>
 
@@ -2092,7 +2097,7 @@
         
         <!-- Feature Alert Reason -->
         <div style="background: #fff8eb; border: 1px solid #fcd34d; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; font-size: 12px; color: #78350f; display: flex; align-items: flex-start; gap: 10px;">
-          <span style="font-size: 18px; flex-shrink: 0;">🔒</span>
+          <span style="font-size: 18px; flex-shrink: 0;"><i data-lucide="lock" style="width:16px;height:16px;"></i></span>
           <div id="proReasonText" style="line-height: 1.5;">
             Fitur ini merupakan fasilitas eksklusif untuk pemilik <strong>Lisensi Mahakarya Pro</strong>.
           </div>
@@ -2121,11 +2126,11 @@
         <!-- Action Buttons -->
         <div style="display: grid; gap: 10px;">
           <a href="https://fazzaraihan-techno.myscalev.com/checkout-mahakarya-cita-rasa-dunia" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); color: #f0b75f; border: 1px solid #f0b75f; border-radius: 10px; font-weight: 800; font-size: 13.5px; text-decoration: none; box-shadow: 0 4px 16px rgba(17,45,59,0.25); text-align: center;">
-            🛍️ Beli Akses Lisensi Pro Sekarang (Scalev Instant Checkout)
+            <i data-lucide="shopping-bag" style="width:16px;height:16px;vertical-align:middle;"></i> Beli Akses Lisensi Pro Sekarang
           </a>
           
           <button onclick="closeProUpgradeModal(); openLicenseAuthModal();" style="padding: 12px; background: #ffffff; color: #0f766e; border: 1px solid #0f766e; border-radius: 10px; font-weight: 700; font-size: 12.5px; cursor: pointer; text-align: center;">
-            🔑 Sudah Punya Kode Kunci Lisensi? Aktivasi Di Sini
+            <i data-lucide="key-round" style="width:14px;height:14px;vertical-align:middle;"></i> Sudah Punya Kode Kunci Lisensi? Aktivasi Di Sini
           </button>
         </div>
 
@@ -2139,10 +2144,10 @@
       <div style="background: linear-gradient(135deg, #112d3b 0%, #0a1c25 100%); color: #fff; padding: 22px 24px; position: relative;">
         <button onclick="closeAddUserRecipeModal()" style="position: absolute; right: 18px; top: 18px; background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer;">×</button>
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 26px;">📝</span>
+          <span style="font-size: 26px;"><i data-lucide="plus-circle" style="width:22px;height:22px;"></i></span>
           <div>
             <h3 style="margin:0; font-size: 18px; color: #f0b75f; font-weight: 800;">Tambah Resep Kreasi Anda</h3>
-            <span style="font-size: 11px; color: #9eb1b5;">Terbitkan resep buatan Anda ke koleksi komunitas Mahakarya Pro</span>
+            <span style="font-size: 11px; color: #9eb1b5;">Terbitkan kreasi kuliner Anda ke koleksi komunitas Mahakarya Pro</span>
           </div>
         </div>
       </div>
@@ -2211,7 +2216,7 @@
             <input type="text" id="newRecNutrition" placeholder="Contoh: 450 kkal Energi, 32g Protein, 48g Karbohidrat" style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;" />
           </div>
 
-          <button type="submit" style="width: 100%; padding: 12px; background: #0f766e; color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(15,118,110,0.25);">✨ Terbitkan Resep Baru Saya</button>
+          <button type="submit" style="width: 100%; padding: 12px; background: #0f766e; color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(15,118,110,0.25);"><i data-lucide="sparkles" style="width:14px;height:14px;vertical-align:middle;"></i> Terbitkan Resep Baru Saya</button>
         </form>
       </div>
     </div>
@@ -2223,7 +2228,7 @@
       <div style="background: linear-gradient(135deg, #112d3b 0%, #0a1c25 100%); color: #fff; padding: 22px 24px; position: relative;">
         <button onclick="closeUserSurveyModal()" style="position: absolute; right: 18px; top: 18px; background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer;">×</button>
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 26px;">✍️</span>
+          <span style="font-size: 26px;"><i data-lucide="message-square-heart" style="width:22px;height:22px;"></i></span>
           <div>
             <h3 style="margin:0; font-size: 18px; color: #f0b75f; font-weight: 800;">Survei Penilaian &amp; Review Pengguna</h3>
             <span style="font-size: 11px; color: #9eb1b5;">Masukan Anda sangat berharga untuk pengembangan platform Mahakarya</span>
@@ -2257,7 +2262,7 @@
           </div>
         </div>
 
-        <button onclick="submitUserSurvey()" style="width: 100%; padding: 12px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);">✨ Kirim Penilaian &amp; Ulasan Saya</button>
+        <button onclick="submitUserSurvey()" style="width: 100%; padding: 12px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);"><i data-lucide="sparkles" style="width:14px;height:14px;vertical-align:middle;"></i> Kirim Penilaian &amp; Ulasan Saya</button>
       </div>
     </div>
   </div>
@@ -2270,10 +2275,10 @@
       <div style="background: linear-gradient(135deg, #112d3b 0%, #0a1c25 100%); color: #fff; padding: 22px 24px; position: relative;">
         <button onclick="closeLicenseAuthModal()" style="position: absolute; right: 18px; top: 18px; background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer;">×</button>
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 28px; background: rgba(240,183,95,0.15); padding: 6px 10px; border-radius: 12px; border: 1px solid rgba(240,183,95,0.3);">🔑</span>
+          <span style="font-size: 28px; background: rgba(240,183,95,0.15); padding: 6px 10px; border-radius: 12px; border: 1px solid rgba(240,183,95,0.3);"><i data-lucide="key-round" style="width:22px;height:22px;"></i></span>
           <div>
             <h3 style="margin: 0; font-size: 18px; color: #f0b75f; font-weight: 800;">Aktivasi Lisensi Mahakarya Pro</h3>
-            <span style="font-size: 11px; color: #9eb1b5;">Akses Penuh 2.962 Resep, AI Assistant & Custom PDF Watermark</span>
+            <span style="font-size: 11px; color: #9eb1b5;">Akses Penuh 2.962 Resep, AI Chef Assistant</span>
           </div>
         </div>
       </div>
@@ -2297,12 +2302,12 @@
         <div id="licenseFormBox">
           <!-- Buy Now Banner for Unlicensed Guests -->
           <div id="licenseBuyBanner" style="background: linear-gradient(135deg, #fffaf0 0%, #fff3d6 100%); border: 1.5px solid #f0b75f; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: center; box-shadow: 0 4px 14px rgba(240,183,95,0.15);">
-            <div style="font-size: 14px; font-weight: 800; color: #112d3b; margin-bottom: 4px;">🛒 Belum Memiliki Lisensi Mahakarya Pro?</div>
+            <div style="font-size: 14px; font-weight: 800; color: #112d3b; margin-bottom: 4px;"><i data-lucide="shopping-cart" style="width:16px;height:16px;vertical-align:middle;"></i> Belum Memiliki Lisensi Mahakarya Pro?</div>
             <p style="font-size: 11.5px; color: #475569; margin: 0 0 12px; line-height: 1.4;">
               Beli lisensi resmi di Scalev. Setelah pembayaran sukses, Anda akan <strong>otomatis diarahkan kembali ke web ini dan teraktivasi instan</strong> tanpa perlu mengetik kode manual!
             </p>
             <a href="https://fazzaraihan-techno.myscalev.com/checkout-mahakarya-cita-rasa-dunia" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; background: linear-gradient(135deg, #112d3b 0%, #1a495e 100%); color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; font-size: 13px; text-decoration: none; box-shadow: 0 4px 12px rgba(17,45,59,0.2); box-sizing: border-box;">
-              🛍️ Beli Akses Pro di Scalev (Checkout Instant) →
+              <i data-lucide="shopping-bag" style="width:14px;height:14px;vertical-align:middle;"></i> Beli Akses Pro di Scalev (Checkout Instant) →
             </a>
           </div>
 
@@ -2323,8 +2328,8 @@
           <div style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
             <!-- Tab Toggle -->
             <div style="display: flex; gap: 0; margin-bottom: 14px; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
-              <button id="tabEmailSignIn" onclick="toggleEmailAuthMode('signin')" style="flex: 1; padding: 9px; border: none; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; background: #112d3b; color: #f0b75f;">🔐 Masuk</button>
-              <button id="tabEmailSignUp" onclick="toggleEmailAuthMode('signup')" style="flex: 1; padding: 9px; border: none; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; background: #fff; color: #64748b;">📝 Daftar Baru</button>
+              <button id="tabEmailSignIn" onclick="toggleEmailAuthMode('signin')" style="flex: 1; padding: 9px; border: none; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; background: #112d3b; color: #f0b75f;"><i data-lucide="log-in" style="width:13px;height:13px;vertical-align:middle;"></i> Masuk</button>
+              <button id="tabEmailSignUp" onclick="toggleEmailAuthMode('signup')" style="flex: 1; padding: 9px; border: none; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; background: #fff; color: #64748b;"><i data-lucide="user-plus" style="width:13px;height:13px;vertical-align:middle;"></i> Daftar Baru</button>
             </div>
 
             <!-- Sign In Form -->
@@ -2337,11 +2342,11 @@
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Password <span style="color: #e11d48;">*</span></label>
                 <div style="position: relative;">
                   <input type="password" id="emailSignInPassword" placeholder="Masukkan password" style="width: 100%; padding: 10px 40px 10px 12px; border-radius: 7px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#3182ce'" onblur="this.style.borderColor='#cbd5e1'" onkeydown="if(event.key==='Enter') handleEmailSignIn()">
-                  <button type="button" onclick="togglePasswordVisibility('emailSignInPassword', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px; color: #94a3b8; padding: 4px;">👁️</button>
+                  <button type="button" onclick="togglePasswordVisibility('emailSignInPassword', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px; color: #94a3b8; padding: 4px;"><i data-lucide="eye" style="width:14px;height:14px;"></i></button>
                 </div>
               </div>
               <div id="emailSignInError" style="display: none; font-size: 11px; color: #e11d48; margin-bottom: 8px; padding: 6px 10px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px;"></div>
-              <button id="emailSignInBtn" onclick="handleEmailSignIn()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%); color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(30,58,95,0.25); transition: all 0.2s;">🔐 Masuk dengan Email</button>
+              <button id="emailSignInBtn" onclick="handleEmailSignIn()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%); color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(30,58,95,0.25); transition: all 0.2s;"><i data-lucide="log-in" style="width:14px;height:14px;vertical-align:middle;"></i> Masuk dengan Email</button>
               <div style="text-align: center; margin-top: 10px;">
                 <span style="font-size: 11px; color: #64748b;">Belum punya akun? </span>
                 <a href="javascript:void(0)" onclick="toggleEmailAuthMode('signup')" style="font-size: 11px; color: #2c5282; font-weight: 700; text-decoration: none;">Daftar Baru →</a>
@@ -2369,7 +2374,7 @@
                 </div>
               </div>
               <div id="emailSignUpError" style="display: none; font-size: 11px; color: #e11d48; margin-bottom: 8px; padding: 6px 10px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px;"></div>
-              <button id="emailSignUpBtn" onclick="handleEmailSignUp()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(15,118,110,0.25); transition: all 0.2s;">📝 Daftar & Masuk</button>
+              <button id="emailSignUpBtn" onclick="handleEmailSignUp()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(15,118,110,0.25); transition: all 0.2s;"><i data-lucide="user-plus" style="width:14px;height:14px;vertical-align:middle;"></i> Daftar & Masuk</button>
               <div style="text-align: center; margin-top: 10px;">
                 <span style="font-size: 11px; color: #64748b;">Sudah punya akun? </span>
                 <a href="javascript:void(0)" onclick="toggleEmailAuthMode('signin')" style="font-size: 11px; color: #0f766e; font-weight: 700; text-decoration: none;">← Masuk</a>
@@ -2420,7 +2425,7 @@
     <div style="max-width: 600px; margin: 40px auto; background: #fff; border-radius: 16px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; max-height: 85vh;">
       <div style="background: #112d3b; color: #fff; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 24px;">🤖</span>
+          <span style="font-size: 24px;"><i data-lucide="bot" style="width:22px;height:22px;"></i></span>
           <div>
             <h3 style="margin:0; font-size: 18px; color: #f0b75f;">Asisten Koki Pintar (Local AI)</h3>
             <span style="font-size: 11px; color: #a0b0b8;">Substitusi Bahan & Kalkulator Porsi Catering</span>
@@ -2432,11 +2437,11 @@
       <div style="padding: 20px 24px; overflow-y: auto; flex: 1;">
         <!-- Tab Navigation -->
         <div style="display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
-          <button id="tabChatbotBtn" onclick="switchChefTab('chatbot')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #f0b75f; background: #112d3b; color: #f0b75f; font-weight: 700; font-size: 11.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);">💬 Chatbot Helpdesk</button>
-          <button id="tabSubBtn" onclick="switchChefTab('sub')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">🔄 Substitusi</button>
-          <button id="tabPortionBtn" onclick="switchChefTab('portion')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">🍲 Scale Porsi</button>
-          <button id="tabFaqBtn" onclick="switchChefTab('faq')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">📖 Panduan & FAQ</button>
-          <button id="tabTncBtn" onclick="switchChefTab('tnc')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;">⚖️ Hak Cipta & TNC</button>
+          <button id="tabChatbotBtn" onclick="switchChefTab('chatbot')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #f0b75f; background: #112d3b; color: #f0b75f; font-weight: 700; font-size: 11.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(17,45,59,0.25);"><i data-lucide="message-circle" style="width:13px;height:13px;vertical-align:middle;"></i> Chatbot Helpdesk</button>
+          <button id="tabSubBtn" onclick="switchChefTab('sub')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;"><i data-lucide="repeat-2" style="width:13px;height:13px;vertical-align:middle;"></i> Substitusi</button>
+          <button id="tabPortionBtn" onclick="switchChefTab('portion')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;"><i data-lucide="scale" style="width:13px;height:13px;vertical-align:middle;"></i> Scale Porsi</button>
+          <button id="tabFaqBtn" onclick="switchChefTab('faq')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;"><i data-lucide="book-open-check" style="width:13px;height:13px;vertical-align:middle;"></i> Panduan & FAQ</button>
+          <button id="tabTncBtn" onclick="switchChefTab('tnc')" style="flex: 1; min-width: max-content; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #555; font-weight: 700; font-size: 11.5px; cursor: pointer;"><i data-lucide="scale" style="width:13px;height:13px;vertical-align:middle;"></i> Hak Cipta & TNC</button>
         </div>
 
         <!-- Tab 0: Interactive Chatbot AI & Helpdesk -->
@@ -2479,7 +2484,7 @@
               <input type="number" id="portionTarget" value="50" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #f0b75f; font-weight: bold; text-align: center; margin-top: 5px; color: #112d3b; background: #fffdf9;">
             </div>
           </div>
-          <button onclick="calculateCateringPortion()" style="width: 100%; padding: 12px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(17,45,59,0.2);">🔢 Hitung Skala Takaran (x<span id="scaleFactor">12.5</span>)</button>
+          <button onclick="calculateCateringPortion()" style="width: 100%; padding: 12px; background: #112d3b; color: #f0b75f; border: 1px solid #f0b75f; border-radius: 8px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(17,45,59,0.2);"><i data-lucide="calculator" style="width:14px;height:14px;vertical-align:middle;"></i> Hitung Skala Takaran (x<span id="scaleFactor">12.5</span>)</button>
           
           <div id="portionResult" style="margin-top: 15px; background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #0f766e; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #334155; box-shadow: 0 4px 12px rgba(17,45,59,0.04);">
             📌 <i>Faktor pengali adalah <b>12.5x</b>. Semua gramasi bahan (daging, bumbu, cairan) pada resep yang Anda buka akan dikalikan 12.5x lipat secara otomatis saat dicetak!</i>
@@ -2720,7 +2725,7 @@
     <div style="max-width: 750px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; max-height: 88vh;">
       <div style="background: #1b3d4f; color: #fff; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 24px;">🥦</span>
+          <span style="font-size: 24px;"><i data-lucide="search-check" style="width:22px;height:22px;"></i></span>
           <div>
             <h3 style="margin:0; font-size: 18px; color: #78c2ad;">Smart Pantry Matcher</h3>
             <span style="font-size: 11px; color: #a0b0b8;">Cari 2.962 Resep Berdasarkan Bahan di Kulkas Anda</span>
@@ -2733,7 +2738,7 @@
         <label style="font-weight: 700; font-size: 13px; color: #333; display: block; margin-bottom: 6px;">Ketik atau Klik Bahan yang Ada di Dapur/Kulkas Anda:</label>
         <div style="display: flex; gap: 10px; margin-bottom: 12px;">
           <input type="text" id="pantryInput" placeholder="Contoh: ayam, kecap, bawang putih, telur..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 13.5px; outline: none;" onkeydown="if(event.key==='Enter') runPantryMatch()">
-          <button onclick="runPantryMatch()" style="padding: 12px 20px; background: #78c2ad; color: #112d3b; border: none; border-radius: 8px; font-weight: 800; cursor: pointer;">🔍 Cari Resep</button>
+          <button onclick="runPantryMatch()" style="padding: 12px 20px; background: #78c2ad; color: #112d3b; border: none; border-radius: 8px; font-weight: 800; cursor: pointer;"><i data-lucide="search" style="width:14px;height:14px;vertical-align:middle;"></i> Cari Resep</button>
         </div>
 
         <!-- Quick Tags -->
@@ -2765,10 +2770,10 @@
       <div style="position: sticky; top: 10px; z-index: 20; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(17,45,59,0.95); backdrop-filter: blur(5px); border-radius: 8px; margin: 15px 15px 0; color: #fff; flex-wrap: wrap; gap: 8px;">
         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
           <span style="font-size: 11.5px; font-weight: 700; color: #f0b75f;">✏️ Mode Edit Buku Menu:</span>
-          <button onclick="openRecipePickerModal()" style="background: #f0b75f; color: #112d3b; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px;">➕ Pilih Resep</button>
+          <button onclick="openRecipePickerModal()" style="background: #f0b75f; color: #112d3b; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px;"><i data-lucide="plus" style="width:13px;height:13px;vertical-align:middle;"></i> Pilih Resep</button>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
-          <button onclick="printMenuBook()" style="background: #78c2ad; color: #112d3b; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer;">🖨️ Vector PDF</button>
+          <button onclick="printMenuBook()" style="background: #78c2ad; color: #112d3b; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer;"><i data-lucide="printer" style="width:13px;height:13px;vertical-align:middle;"></i> Vector PDF</button>
           <button onclick="document.getElementById('menuBookModal').style.display='none'" style="background: rgba(255,255,255,0.2); color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 16px;">×</button>
         </div>
       </div>
@@ -2797,7 +2802,7 @@
     <div style="max-width: 780px; margin: 20px auto; background: #fff; border-radius: 14px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; max-height: 85vh;">
       <div style="background: #112d3b; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 18px;">📖</span>
+          <span style="font-size: 18px;"><i data-lucide="library" style="width:18px;height:18px;"></i></span>
           <div>
             <h3 style="margin:0; font-size: 15px; color: #f0b75f;">Pilih Resep dari Database Mahakarya</h3>
             <span style="font-size: 10.5px; color: #a0b0b8;">Filter berdasarkan 11 Bab Cita Rasa Dunia &amp; Fullset Business F&amp;B</span>
@@ -2985,8 +2990,8 @@
           btn.style.borderColor = '#f0b75f';
           btn.style.color = '#f0b75f';
         }
-        if (icon) icon.textContent = '👑';
-        if (badgeText) badgeText.textContent = `👑 ${firstName} (PRO VVIP)`;
+        if (icon) icon.innerHTML = '<i data-lucide="crown" style="width:16px;height:16px;color:#f0b75f;"></i>'; if(typeof lucide !== 'undefined') lucide.createIcons({nodes:[icon]});
+        if (badgeText) badgeText.textContent = `♛ ${firstName} (PRO VVIP)`;
 
         if (card) {
           card.style.background = '#f4fbf9';
@@ -3010,8 +3015,8 @@
           btn.style.borderColor = '#63b3ed';
           btn.style.color = '#bee3f8';
         }
-        if (icon) icon.textContent = '👤';
-        if (badgeText) badgeText.textContent = `👤 ${firstName} (Signed In)`;
+        if (icon) icon.innerHTML = '<i data-lucide="user" style="width:16px;height:16px;color:#3182ce;"></i>'; if(typeof lucide !== 'undefined') lucide.createIcons({nodes:[icon]});
+        if (badgeText) badgeText.textContent = `● ${firstName} (Signed In)`;
 
         const buyBanner = document.getElementById('licenseBuyBanner');
         if (buyBanner) buyBanner.style.display = 'block';
@@ -3036,7 +3041,7 @@
           btn.style.borderColor = '#d88b28';
           btn.style.color = '#b45309';
         }
-        if (icon) icon.textContent = '🔒';
+        if (icon) icon.innerHTML = '<i data-lucide="lock" style="width:16px;height:16px;color:#d88b28;"></i>'; if(typeof lucide !== 'undefined') lucide.createIcons({nodes:[icon]});
         if (badgeText) badgeText.textContent = 'AKTIVASI LISENSI';
 
         const buyBanner = document.getElementById('licenseBuyBanner');
@@ -3151,6 +3156,7 @@
       updateLicenseUI();
       document.getElementById('licenseAuthModal').style.display = 'block';
       initAndRenderGoogleSignIn();
+      if (window.lucide) lucide.createIcons();
     }
 
     function closeLicenseAuthModal() {
@@ -3273,10 +3279,10 @@
       if (!input) return;
       if (input.type === 'password') {
         input.type = 'text';
-        btn.textContent = '🙈';
+        btn.innerHTML = '<i data-lucide="eye-off" style="width:14px;height:14px;"></i>'; if(typeof lucide !== 'undefined') lucide.createIcons({nodes:[btn]});
       } else {
         input.type = 'password';
-        btn.textContent = '👁️';
+        btn.innerHTML = '<i data-lucide="eye" style="width:14px;height:14px;"></i>'; if(typeof lucide !== 'undefined') lucide.createIcons({nodes:[btn]});
       }
     }
 
@@ -3609,6 +3615,7 @@
         reasonText.innerHTML = `Akses ke <strong>${featureName}</strong> merupakan fasilitas eksklusif untuk pemilik <strong>Lisensi Mahakarya Pro</strong>. Silakan tingkatkan ke Pro untuk membuka kunci penuh.`;
       }
       document.getElementById('proUpgradeModal').style.display = 'block';
+      if (window.lucide) lucide.createIcons();
     }
 
     function closeProUpgradeModal() {
@@ -3727,6 +3734,7 @@
       }
       document.getElementById('chefAssistantModal').style.display = 'block';
       switchChefTab('chatbot');
+      if (window.lucide) lucide.createIcons();
     }
 
     function switchChefTab(tab) {
@@ -3890,7 +3898,7 @@
                     <span style="font-size: 12px; font-weight: 800; color: #475569; display: block; margin-bottom: 10px;">Apakah jawaban ini membantu Anda?</span>
                     <div style="display: flex; gap: 8px; justify-content: center;">
                       <button onclick="handleChatbotFeedback(true)" style="background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
-                        👍 Ya, Sangat Membantu! (Solved)
+                        👍 Ya, Sangat Membantu!
                       </button>
                       <button onclick="handleChatbotFeedback(false)" style="background: #ffe4e6; border: 1px solid #fecdd3; color: #9f1239; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
                         👎 Tidak, Buat Pengaduan
@@ -3922,7 +3930,7 @@
           <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 8px;">
             <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">🤖</div>
             <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; border-top-left-radius: 2px; padding: 14px 16px; font-size: 13px; color: #166534; max-width: 88%; line-height: 1.5;">
-              <strong>🎉 Tiket Bantuan Diselesaikan (Solved Ticket)!</strong><br>
+              <strong>🎉 Tiket Bantuan Berhasil Diselesaikan!</strong><br>
               Terima kasih atas tanggapan Anda. Senang bisa membantu Anda! Selamat memasak bersama Mahakarya 🍳✨<br><br>
               <button onclick="resetChatbot()" style="background: #0f766e; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
                 🔄 Tanya Hal Lain
@@ -3946,7 +3954,7 @@
       const message = (document.getElementById('complaintMessage') || {}).value || '';
 
       if (!name || !email || !message) {
-        alert('Mohon isi seluruh field mandatory pada Form Pengaduan.');
+        alert('Mohon isi seluruh kolom wajib pada Form Pengaduan.');
         return;
       }
 
@@ -4079,7 +4087,7 @@
               <span style="font-size:11px; color:#888;">Bab ${r.chapter || 'Koleksi'} · ${r.cat || 'Menu'}</span>
             </div>
             <div style="text-align:right;">
-              <span style="background:#78c2ad; color:#112d3b; font-weight:800; padding:4px 10px; border-radius:20px; font-size:12px;">${item.score}% Match</span>
+              <span style="background:#78c2ad; color:#112d3b; font-weight:800; padding:4px 10px; border-radius:20px; font-size:12px;">${item.score}% Kecocokan</span>
             </div>
           </div>
         `;
@@ -4323,7 +4331,7 @@
       const originalText = triggerBtn ? triggerBtn.innerHTML : '';
 
       if (triggerBtn) {
-        triggerBtn.innerHTML = '⏳ Generasi PDF...';
+        triggerBtn.innerHTML = '⏳ Memproses PDF...';
         triggerBtn.disabled = true;
       }
 
@@ -4609,12 +4617,12 @@
       const userInfo = getActiveUserLicenseInfo();
 
       if (!title || !mainIngredients || !spices || !sauce || !steps) {
-        alert('Mohon lengkapi seluruh field mandatory pada resep!');
+        alert('Mohon lengkapi seluruh kolom wajib pada resep!');
         return;
       }
 
       if (!uploadedUserImageBase64) {
-        alert('Mohon unggah foto resep terlebih dahulu (mandatory).');
+        alert('Mohon unggah foto resep terlebih dahulu (wajib).');
         return;
       }
 
@@ -4777,7 +4785,7 @@
         reviews = [
           { name: "Chef Hendra Setiawan", rating: 5, review: "Platform terbaik untuk inspirasi menu resto. PDF Generator sangat membantu merancang menu buku fine dining!", nps: "Ya", date: "24 Sep 2026" },
           { name: "Siti Rahmawati (Kuliner Solo)", rating: 5, review: "Koleksi resep Cita Rasa Dunia lengkap banget. Substitusi bumbu AI sangat akurat untuk kebutuhan catering.", nps: "Ya", date: "22 Sep 2026" },
-          { name: "Budi Santoso - Cafe Manager", rating: 5, review: "Sangat puas dengan fitur watermarking PDF dan smart pantry. Investasi 50k paling worth it!", nps: "Ya", date: "20 Sep 2026" }
+          { name: "Budi Santoso - Cafe Manager", rating: 5, review: "Sangat puas dengan fitur watermarking PDF dan smart pantry. Investasi terbaik untuk bisnis kuliner!", nps: "Ya", date: "20 Sep 2026" }
         ];
       }
 
@@ -4905,6 +4913,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       syncUserRecipes();
       loadUserSurveys();
+      // Initialize all Lucide icons in the DOM
+      if (window.lucide) lucide.createIcons();
     });
   </script>
 </body>
