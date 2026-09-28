@@ -2870,13 +2870,14 @@
       if (raw) {
         try {
           const parsed = JSON.parse(raw);
-          if (parsed && parsed.isPro) {
+          if (parsed && (parsed.isPro || parsed.provider === 'google')) {
             return {
-              isPro: true,
-              email: parsed.email || 'lisensi.resmi@mahakarya.id',
-              name: parsed.name || 'Member Resmi',
+              isPro: !!parsed.isPro,
+              email: parsed.email || 'user@mahakarya.id',
+              name: parsed.name || (parsed.isPro ? 'Member Resmi' : 'Google User'),
               txnId: parsed.txnId || '#MHK-' + Math.floor(10000 + Math.random() * 90000),
-              key: parsed.key || 'MAHAKARYA-PRO-2026',
+              key: parsed.key || (parsed.isPro ? 'MAHAKARYA-PRO-2026' : 'GUEST'),
+              provider: parsed.provider || '',
               deviceId: devId
             };
           }
@@ -2889,6 +2890,7 @@
         name: 'Pengunjung Demo',
         txnId: '#DEMO-GUEST',
         key: 'GUEST',
+        provider: '',
         deviceId: devId
       };
     }
@@ -2934,27 +2936,27 @@
         const buyBanner = document.getElementById('licenseBuyBanner');
         if (buyBanner) buyBanner.style.display = 'none';
         if (logoutBox) logoutBox.style.display = 'block';
-      } else if (info.email && info.provider === 'google') {
+      } else if (info.provider === 'google') {
         if (btn) {
-          btn.style.background = '#e2e8f0';
-          btn.style.borderColor = '#94a3b8';
-          btn.style.color = '#1e293b';
+          btn.style.background = 'linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%)';
+          btn.style.borderColor = '#63b3ed';
+          btn.style.color = '#bee3f8';
         }
         if (icon) icon.textContent = '👤';
-        if (badgeText) badgeText.textContent = `👤 ${firstName} (Gratis)`;
+        if (badgeText) badgeText.textContent = `👤 ${firstName} (Signed In)`;
 
         const buyBanner = document.getElementById('licenseBuyBanner');
         if (buyBanner) buyBanner.style.display = 'block';
 
         if (card) {
-          card.style.background = '#fffdf9';
-          card.style.borderColor = '#d88b28';
+          card.style.background = '#ebf8ff';
+          card.style.borderColor = '#63b3ed';
         }
         if (pill) {
-          pill.textContent = 'DEMO / GUEST';
-          pill.style.background = '#d88b28';
+          pill.textContent = 'SIGNED IN (FREE)';
+          pill.style.background = '#3182ce';
         }
-        if (emailEl) emailEl.textContent = info.email + ' (Akses Sampel)';
+        if (emailEl) emailEl.textContent = info.email;
         if (nameEl) nameEl.textContent = info.name;
         if (txnEl) txnEl.textContent = info.txnId;
         if (devEl) devEl.textContent = info.deviceId;
