@@ -3985,7 +3985,7 @@
 
       try {
         // Get Web3Forms access key from server
-        const configRes = await fetch('/api/complaint-config');
+        const configRes = await fetch('/api/send-complaint');
         const configData = await configRes.json();
         
         if (!configData.success || !configData.key) {
