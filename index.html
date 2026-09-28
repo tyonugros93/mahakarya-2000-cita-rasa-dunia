@@ -18,6 +18,7 @@
     }
     * { box-sizing: border-box; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes toastSlideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
     html { scroll-behavior: smooth; }
     body { margin: 0; background: var(--canvas); color: var(--ink); font: 15px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
     button, input { font: inherit; }
@@ -3979,6 +3980,7 @@
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i data-lucide="loader-2" style="width:14px;height:14px;vertical-align:middle;animation:spin 1s linear infinite;"></i> Mengirim pengaduan...';
+        if (window.lucide) lucide.createIcons({nodes:[submitBtn]});
       }
 
       try {
@@ -3991,15 +3993,18 @@
         const data = await res.json();
 
         if (res.ok && data.success) {
-          // Show success in chatbot feed
+          // Hide the complaint form
+          chatbotState.showComplaintForm = false;
+
+          // Replace entire chatbot feed with success message
           const feedEl = document.getElementById('chatbotFeed');
           if (feedEl) {
-            feedEl.innerHTML += `
+            feedEl.innerHTML = `
               <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
                 <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;"><i data-lucide="bot" style="width:18px;height:18px;"></i></div>
                 <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; border-top-left-radius: 2px; padding: 14px 16px; font-size: 13px; color: #166534; max-width: 88%; line-height: 1.5;">
                   <strong>✅ Pengaduan Berhasil Terkirim!</strong><br>
-                  ${data.sent ? 'Email pengaduan telah dikirim otomatis ke tim Customer Service.' : 'Pengaduan Anda telah diterima dan dicatat oleh sistem.'}
+                  ${data.sent ? 'Email pengaduan telah dikirim otomatis ke tim Customer Service <b>fazzaraihantechno@gmail.com</b>.' : 'Pengaduan Anda telah diterima dan tercatat oleh sistem kami.'}
                   ${data.ticketId ? '<br>Nomor Tiket: <b>' + data.ticketId + '</b>' : ''}<br><br>
                   <button onclick="resetChatbot()" style="background: #0f766e; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 11.5px; cursor: pointer;">
                     <i data-lucide="home" style="width:13px;height:13px;vertical-align:middle;"></i> Kembali ke Menu Utama
@@ -4010,18 +4015,65 @@
             feedEl.scrollTop = feedEl.scrollHeight;
             if (window.lucide) lucide.createIcons();
           }
+
+          // Show toast notification popup
+          showToastNotification('Pengaduan berhasil terkirim!' + (data.ticketId ? ' Tiket: ' + data.ticketId : ''), 'success');
+          return; // Skip the finally block's button reset since form is gone
         } else {
-          alert('Gagal mengirim pengaduan: ' + (data.message || 'Terjadi kesalahan.'));
+          showToastNotification('Gagal mengirim pengaduan: ' + (data.message || 'Terjadi kesalahan.'), 'error');
         }
       } catch (err) {
         console.error('[submitComplaintForm] Error:', err);
-        alert('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.');
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalBtnText;
-        }
+        showToastNotification('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
       }
+      // Reset button on error (not on success since form is removed)
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+    }
+
+    // Toast Notification System
+    function showToastNotification(message, type = 'success') {
+      // Remove existing toast if any
+      const existingToast = document.getElementById('mahakarya-toast');
+      if (existingToast) existingToast.remove();
+
+      const bgColor = type === 'success' ? 'linear-gradient(135deg, #0f766e, #059669)' : 
+                       type === 'error' ? 'linear-gradient(135deg, #e11d48, #be123c)' : 
+                       'linear-gradient(135deg, #112d3b, #1a495e)';
+      const icon = type === 'success' ? 'check-circle-2' : type === 'error' ? 'alert-circle' : 'info';
+      
+      const toast = document.createElement('div');
+      toast.id = 'mahakarya-toast';
+      toast.innerHTML = `
+        <div style="
+          position: fixed; top: 20px; right: 20px; z-index: 100000;
+          background: ${bgColor}; color: #fff;
+          padding: 14px 20px; border-radius: 12px;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+          display: flex; align-items: center; gap: 10px;
+          font-family: Inter, sans-serif; font-size: 13px; font-weight: 600;
+          max-width: 400px; min-width: 280px;
+          animation: toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
+        " onclick="this.parentElement.remove()">
+          <i data-lucide="${icon}" style="width:20px;height:20px;flex-shrink:0;"></i>
+          <span>${message}</span>
+        </div>
+      `;
+      document.body.appendChild(toast);
+      if (window.lucide) lucide.createIcons({nodes:[toast]});
+      
+      // Auto-dismiss after 5 seconds
+      setTimeout(() => {
+        if (toast.parentElement) {
+          toast.style.transition = 'opacity 0.3s, transform 0.3s';
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateX(20px)';
+          setTimeout(() => toast.remove(), 300);
+        }
+      }, 5000);
     }
 
     function selectChatbotCategory(catKey) {
