@@ -3984,13 +3984,38 @@
       }
 
       try {
-        const res = await fetch('/api/send-complaint', {
+        // Get Web3Forms access key from server
+        const configRes = await fetch('/api/complaint-config');
+        const configData = await configRes.json();
+        
+        if (!configData.success || !configData.key) {
+          throw new Error('Konfigurasi email belum tersedia.');
+        }
+
+        const ticketId = 'TKT-' + Date.now();
+
+        // Send directly from browser to Web3Forms (bypasses Cloudflare server-side blocks)
+        const res = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, category, message })
+          body: JSON.stringify({
+            access_key: configData.key,
+            subject: `[PENGADUAN] ${category} - ${name} (${ticketId})`,
+            from_name: 'Mahakarya Support System',
+            replyto: email,
+            'Nomor Tiket': ticketId,
+            'Nama Lengkap': name,
+            'Email Pengirim': email,
+            'Kategori Kendala': category,
+            'Detail Pengaduan': message,
+            'Waktu Laporan': new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'full', timeStyle: 'medium' }),
+            'Platform': 'Mahakarya 2.962 Cita Rasa Dunia'
+          })
         });
 
         const data = await res.json();
+        data.ticketId = ticketId;
+        data.sent = data.success;
 
         if (res.ok && data.success) {
           // Hide the complaint form
