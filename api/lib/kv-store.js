@@ -1,9 +1,10 @@
 /**
- * Vercel KV / Upstash Redis Store abstraction with in-memory fallback.
+ * Upstash Redis Store abstraction with in-memory fallback.
  * 
- * Supports environment variables from:
- * - Upstash (via Vercel Marketplace): UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
- * - Legacy Vercel KV: KV_REST_API_URL, KV_REST_API_TOKEN
+ * Supports environment variables (checked in priority order):
+ * 1. UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN (Upstash standard)
+ * 2. KV_REST_API_URL + KV_REST_API_TOKEN (legacy Vercel KV)
+ * 3. REDIS_URL (redis:// or rediss:// protocol URL → auto-derives REST endpoint)
  * 
  * Falls back to in-memory Map if no env vars are configured.
  */
@@ -11,15 +12,47 @@
 // In-memory fallback store
 const memoryStore = new Map();
 
+function parseRedisUrl(redisUrl) {
+  try {
+    // Format: redis://default:<password>@<host>:<port> or rediss://...
+    const url = new URL(redisUrl);
+    const host = url.hostname; // e.g. "apt-moose-12345.upstash.io"
+    const password = url.password || '';
+    if (host && password) {
+      return {
+        url: `https://${host}`,
+        token: password
+      };
+    }
+  } catch (e) {
+    console.error('[KV] Failed to parse REDIS_URL:', e.message);
+  }
+  return null;
+}
+
 function getKVConfig() {
-  // Try Upstash env vars first, then legacy Vercel KV
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || process.env.KV_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || process.env.KV_TOKEN;
-  return (url && token) ? { url, token } : null;
+  // Priority 1: Explicit REST API env vars
+  const restUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const restToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  if (restUrl && restToken) {
+    return { url: restUrl, token: restToken };
+  }
+
+  // Priority 2: Parse from REDIS_URL (redis:// protocol URL)
+  const redisUrl = process.env.REDIS_URL || process.env.KV_URL;
+  if (redisUrl) {
+    const parsed = parseRedisUrl(redisUrl);
+    if (parsed) {
+      console.log('[KV] Derived REST API from REDIS_URL:', parsed.url);
+      return parsed;
+    }
+  }
+
+  return null;
 }
 
 /**
- * Execute a Vercel KV REST API command
+ * Execute an Upstash Redis REST API command
  */
 async function kvCommand(args) {
   const config = getKVConfig();
@@ -35,7 +68,8 @@ async function kvCommand(args) {
       body: JSON.stringify(args)
     });
     if (!res.ok) {
-      console.error('[KV] REST API error:', res.status, await res.text());
+      const errText = await res.text();
+      console.error('[KV] REST API error:', res.status, errText);
       return null;
     }
     const data = await res.json();
@@ -68,7 +102,7 @@ export async function getUser(email) {
   }
 
   // Fallback: in-memory
-  console.warn('[KV] Using in-memory fallback (no Vercel KV configured)');
+  console.warn('[KV] Using in-memory fallback (no Redis configured)');
   return memoryStore.get(key) || null;
 }
 
@@ -89,7 +123,7 @@ export async function setUser(email, data) {
   }
 
   // Fallback: in-memory
-  console.warn('[KV] Using in-memory fallback (no Vercel KV configured)');
+  console.warn('[KV] Using in-memory fallback (no Redis configured)');
   memoryStore.set(key, data);
   return true;
 }
