@@ -2357,6 +2357,7 @@
           </div>
 
           <!-- Official Google Sign-In Section -->
+          <div id="googleLoginSection">
           <div style="position: relative; text-align: center; margin: 20px 0 16px; border-top: 1px dashed #cbd5e1;">
             <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.04em;">MASUK DENGAN AKUN GOOGLE</span>
           </div>
@@ -2365,71 +2366,8 @@
             <div id="googleSignInBtnContainer" style="min-height: 44px; width: 100%; display: flex; justify-content: center; align-items: center;"></div>
             <span style="font-size: 11px; color: #64748b; text-align: center;">Otomatis sinkron ke email akun Anda</span>
           </div>
-
-          <div style="position: relative; text-align: center; margin: 20px 0 16px; border-top: 1px dashed #cbd5e1;">
-            <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.04em;">MASUK DENGAN EMAIL</span>
           </div>
 
-          <div style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
-            <!-- Tab Toggle -->
-            <div style="display: flex; gap: 0; margin-bottom: 14px; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
-              <button id="tabEmailSignIn" onclick="toggleEmailAuthMode('signin')" style="flex: 1; padding: 9px; border: none; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; background: #112d3b; color: #f0b75f;"><i data-lucide="log-in" style="width:13px;height:13px;vertical-align:middle;"></i> Masuk</button>
-              <button id="tabEmailSignUp" onclick="toggleEmailAuthMode('signup')" style="flex: 1; padding: 9px; border: none; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; background: #fff; color: #64748b;"><i data-lucide="user-plus" style="width:13px;height:13px;vertical-align:middle;"></i> Daftar Baru</button>
-            </div>
-
-            <!-- Sign In Form -->
-            <div id="emailSignInForm">
-              <div style="margin-bottom: 10px;">
-                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Email <span style="color: #e11d48;">*</span></label>
-                <input type="email" id="emailSignInEmail" placeholder="email@domain.com" style="width: 100%; padding: 10px 12px; border-radius: 7px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#3182ce'" onblur="this.style.borderColor='#cbd5e1'">
-              </div>
-              <div style="margin-bottom: 12px;">
-                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Password <span style="color: #e11d48;">*</span></label>
-                <div style="position: relative;">
-                  <input type="password" id="emailSignInPassword" placeholder="Masukkan password" style="width: 100%; padding: 10px 40px 10px 12px; border-radius: 7px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#3182ce'" onblur="this.style.borderColor='#cbd5e1'" onkeydown="if(event.key==='Enter') handleEmailSignIn()">
-                  <button type="button" onclick="togglePasswordVisibility('emailSignInPassword', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px; color: #94a3b8; padding: 4px;"><i data-lucide="eye" style="width:14px;height:14px;"></i></button>
-                </div>
-              </div>
-              <div id="emailSignInError" style="display: none; font-size: 11px; color: #e11d48; margin-bottom: 8px; padding: 6px 10px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px;"></div>
-              <button id="emailSignInBtn" onclick="handleEmailSignIn()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%); color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(30,58,95,0.25); transition: all 0.2s;"><i data-lucide="log-in" style="width:14px;height:14px;vertical-align:middle;"></i> Masuk dengan Email</button>
-              <div style="text-align: center; margin-top: 10px;">
-                <span style="font-size: 11px; color: #64748b;">Belum punya akun? </span>
-                <a href="javascript:void(0)" onclick="toggleEmailAuthMode('signup')" style="font-size: 11px; color: #2c5282; font-weight: 700; text-decoration: none;">Daftar Baru →</a>
-              </div>
-            </div>
-
-            <!-- Sign Up Form -->
-            <div id="emailSignUpForm" style="display: none;">
-              <div style="margin-bottom: 10px;">
-                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Nama Lengkap <span style="color: #e11d48;">*</span></label>
-                <input type="text" id="emailSignUpName" placeholder="Nama lengkap Anda" style="width: 100%; padding: 10px 12px; border-radius: 7px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#3182ce'" onblur="this.style.borderColor='#cbd5e1'">
-              </div>
-              <div style="margin-bottom: 10px;">
-                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Email <span style="color: #e11d48;">*</span></label>
-                <input type="email" id="emailSignUpEmail" placeholder="email@domain.com" style="width: 100%; padding: 10px 12px; border-radius: 7px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#3182ce'" onblur="this.style.borderColor='#cbd5e1'">
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-                <div>
-                  <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Password <span style="color: #e11d48;">*</span></label>
-                  <input type="password" id="emailSignUpPassword" placeholder="Min. 6 karakter" style="width: 100%; padding: 10px 12px; border-radius: 7px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#3182ce'" onblur="this.style.borderColor='#cbd5e1'">
-                </div>
-                <div>
-                  <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Ulangi Password <span style="color: #e11d48;">*</span></label>
-                  <input type="password" id="emailSignUpPasswordConfirm" placeholder="Ulangi password" style="width: 100%; padding: 10px 12px; border-radius: 7px; border: 1px solid #cbd5e1; font-size: 12.5px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#3182ce'" onblur="this.style.borderColor='#cbd5e1'" onkeydown="if(event.key==='Enter') handleEmailSignUp()">
-                </div>
-              </div>
-              <div id="emailSignUpError" style="display: none; font-size: 11px; color: #e11d48; margin-bottom: 8px; padding: 6px 10px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px;"></div>
-              <button id="emailSignUpBtn" onclick="handleEmailSignUp()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(15,118,110,0.25); transition: all 0.2s;"><i data-lucide="user-plus" style="width:14px;height:14px;vertical-align:middle;"></i> Daftar & Masuk</button>
-              <div style="text-align: center; margin-top: 10px;">
-                <span style="font-size: 11px; color: #64748b;">Sudah punya akun? </span>
-                <a href="javascript:void(0)" onclick="toggleEmailAuthMode('signin')" style="font-size: 11px; color: #0f766e; font-weight: 700; text-decoration: none;">← Masuk</a>
-              </div>
-            </div>
-
-            <div style="font-size: 10px; color: #94a3b8; text-align: center; margin-top: 10px; line-height: 1.4;">
-              🔒 Password dienkripsi dengan PBKDF2-SHA256. Data Anda aman.
-            </div>
-          </div>
 
           <!-- Manual License Code Section (HIDDEN - no longer needed with Google/Email auth) -->
           <div style="display: none;">
@@ -3217,14 +3155,23 @@
         if (logoutBox) logoutBox.style.display = 'none';
       }
 
-            // Manage login form visibility based on user state
+            // Manage form visibility based on user state
       var formBox = document.getElementById('licenseFormBox');
-      if (formBox) {
-        if (info.isPro) {
-          formBox.style.display = 'none';
-        } else {
-          formBox.style.display = 'block';
-        }
+      var googleLogin = document.getElementById('googleLoginSection');
+      var buyBanner = document.getElementById('licenseBuyBanner');
+      if (info.isPro) {
+        // Pro: hide everything
+        if (formBox) formBox.style.display = 'none';
+      } else if (info.provider === 'google' || info.provider === 'email') {
+        // Free logged-in: show only checkout banner, hide login
+        if (formBox) formBox.style.display = 'block';
+        if (buyBanner) buyBanner.style.display = 'block';
+        if (googleLogin) googleLogin.style.display = 'none';
+      } else {
+        // Guest: show everything
+        if (formBox) formBox.style.display = 'block';
+        if (buyBanner) buyBanner.style.display = 'block';
+        if (googleLogin) googleLogin.style.display = 'block';
       }
 
       // Keep recipe list grid & total counts strictly in sync with license state
@@ -3416,218 +3363,6 @@
 
     // ── EMAIL/PASSWORD AUTH FUNCTIONS ──
 
-    function toggleEmailAuthMode(mode) {
-      const signInForm = document.getElementById('emailSignInForm');
-      const signUpForm = document.getElementById('emailSignUpForm');
-      const tabIn = document.getElementById('tabEmailSignIn');
-      const tabUp = document.getElementById('tabEmailSignUp');
-      const errIn = document.getElementById('emailSignInError');
-      const errUp = document.getElementById('emailSignUpError');
-
-      if (errIn) { errIn.style.display = 'none'; errIn.textContent = ''; }
-      if (errUp) { errUp.style.display = 'none'; errUp.textContent = ''; }
-
-      if (mode === 'signup') {
-        if (signInForm) signInForm.style.display = 'none';
-        if (signUpForm) signUpForm.style.display = 'block';
-        if (tabIn) { tabIn.style.background = '#fff'; tabIn.style.color = '#64748b'; }
-        if (tabUp) { tabUp.style.background = '#112d3b'; tabUp.style.color = '#f0b75f'; }
-      } else {
-        if (signInForm) signInForm.style.display = 'block';
-        if (signUpForm) signUpForm.style.display = 'none';
-        if (tabIn) { tabIn.style.background = '#112d3b'; tabIn.style.color = '#f0b75f'; }
-        if (tabUp) { tabUp.style.background = '#fff'; tabUp.style.color = '#64748b'; }
-      }
-    }
-
-    function togglePasswordVisibility(inputId, btn) {
-      const input = document.getElementById(inputId);
-      if (!input) return;
-      if (input.type === 'password') {
-        input.type = 'text';
-        btn.innerHTML = '<i data-lucide="eye-off" style="width:14px;height:14px;"></i>'; if(typeof lucide !== 'undefined') lucide.createIcons({nodes:[btn]});
-      } else {
-        input.type = 'password';
-        btn.innerHTML = '<i data-lucide="eye" style="width:14px;height:14px;"></i>'; if(typeof lucide !== 'undefined') lucide.createIcons({nodes:[btn]});
-      }
-    }
-
-    function showEmailAuthError(elementId, message) {
-      const el = document.getElementById(elementId);
-      if (el) {
-        el.textContent = message;
-        el.style.display = 'block';
-      }
-    }
-
-    async function handleEmailSignIn() {
-      const emailEl = document.getElementById('emailSignInEmail');
-      const passEl = document.getElementById('emailSignInPassword');
-      const btn = document.getElementById('emailSignInBtn');
-      const errEl = document.getElementById('emailSignInError');
-
-      if (errEl) errEl.style.display = 'none';
-
-      const email = (emailEl?.value || '').trim().toLowerCase();
-      const password = passEl?.value || '';
-
-      // Client-side validation
-      if (!email || !email.includes('@') || !email.includes('.')) {
-        showEmailAuthError('emailSignInError', '⚠️ Masukkan email yang valid.');
-        return;
-      }
-      if (!password) {
-        showEmailAuthError('emailSignInError', '⚠️ Password wajib diisi.');
-        return;
-      }
-
-      // Loading state
-      const originalText = btn ? btn.textContent : '';
-      if (btn) { btn.disabled = true; btn.textContent = '⏳ Memverifikasi...'; }
-
-      try {
-        const res = await fetch('/api/auth-signin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-
-        const data = await res.json();
-
-        if (data.success && data.user) {
-          const sessionData = {
-            isPro: data.user.isPro,
-            key: data.user.isPro ? 'EMAIL-PRO-VVIP' : 'GUEST',
-            name: data.user.name,
-            email: data.user.email,
-            txnId: '#EML-' + Math.floor(10000 + Math.random() * 90000),
-            provider: 'email',
-            activatedAt: new Date().toISOString(),
-          expiresAt: new Date(Date.now() + 365*24*60*60*1000).toISOString()
-          };
-          localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
-          updateLicenseUI();
-          alert(data.message || `🎉 Login berhasil!`);
-          closeLicenseAuthModal();
-          window.location.reload();
-        } else {
-          showEmailAuthError('emailSignInError', data.message || 'Login gagal.');
-        }
-      } catch (e) {
-        console.warn('[Email Auth] Sign-in API error:', e.message);
-        // Fallback: use client-side whitelist
-        const paidWhitelist = ['arinii.sartika@gmail.com', 'fazzaraihantechno@gmail.com', 'pembeli@myscalev.com', 'lisensi.resmi@mahakarya.id', 'tyonugros93@gmail.com', 'sn.tyonyunu@gmail.com', 'sn.tyonunu@gmail.com'];
-        const isOwner = paidWhitelist.includes(email);
-        const sessionData = {
-          isPro: isOwner,
-          key: isOwner ? 'EMAIL-PRO-VVIP' : 'GUEST',
-          name: email.split('@')[0],
-          email: email,
-          txnId: '#EML-' + Math.floor(10000 + Math.random() * 90000),
-          provider: 'email',
-          activatedAt: new Date().toISOString(),
-          expiresAt: new Date(Date.now() + 365*24*60*60*1000).toISOString()
-        };
-        localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
-        updateLicenseUI();
-        alert(isOwner ? `🎉 Login berhasil (Pro VVIP)!\n\nEmail: ${email}` : `🎉 Login berhasil (Free Mode).\n\nEmail: ${email}\n\n⚠️ Server offline, login via fallback lokal.`);
-        closeLicenseAuthModal();
-        window.location.reload();
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = originalText; }
-      }
-    }
-
-    async function handleEmailSignUp() {
-      const nameEl = document.getElementById('emailSignUpName');
-      const emailEl = document.getElementById('emailSignUpEmail');
-      const passEl = document.getElementById('emailSignUpPassword');
-      const confirmEl = document.getElementById('emailSignUpPasswordConfirm');
-      const btn = document.getElementById('emailSignUpBtn');
-      const errEl = document.getElementById('emailSignUpError');
-
-      if (errEl) errEl.style.display = 'none';
-
-      const name = (nameEl?.value || '').trim();
-      const email = (emailEl?.value || '').trim().toLowerCase();
-      const password = passEl?.value || '';
-      const confirmPassword = confirmEl?.value || '';
-
-      // Client-side validation
-      if (!name || name.length < 2) {
-        showEmailAuthError('emailSignUpError', '⚠️ Nama lengkap wajib diisi (min. 2 karakter).');
-        return;
-      }
-      if (!email || !email.includes('@') || !email.includes('.')) {
-        showEmailAuthError('emailSignUpError', '⚠️ Masukkan email yang valid.');
-        return;
-      }
-      if (!password || password.length < 6) {
-        showEmailAuthError('emailSignUpError', '⚠️ Password minimal 6 karakter.');
-        return;
-      }
-      if (password !== confirmPassword) {
-        showEmailAuthError('emailSignUpError', '⚠️ Konfirmasi password tidak cocok.');
-        return;
-      }
-
-      // Loading state
-      const originalText = btn ? btn.textContent : '';
-      if (btn) { btn.disabled = true; btn.textContent = '⏳ Mendaftarkan akun...'; }
-
-      try {
-        const res = await fetch('/api/auth-signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password })
-        });
-
-        const data = await res.json();
-
-        if (data.success && data.user) {
-          const sessionData = {
-            isPro: data.user.isPro,
-            key: data.user.isPro ? 'EMAIL-PRO-VVIP' : 'GUEST',
-            name: data.user.name,
-            email: data.user.email,
-            txnId: '#EML-' + Math.floor(10000 + Math.random() * 90000),
-            provider: 'email',
-            activatedAt: new Date().toISOString(),
-          expiresAt: new Date(Date.now() + 365*24*60*60*1000).toISOString()
-          };
-          localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
-          updateLicenseUI();
-          alert(data.message || `🎉 Akun berhasil dibuat!`);
-          closeLicenseAuthModal();
-          window.location.reload();
-        } else {
-          showEmailAuthError('emailSignUpError', data.message || 'Pendaftaran gagal.');
-        }
-      } catch (e) {
-        console.warn('[Email Auth] Sign-up API error:', e.message);
-        // Fallback: save to localStorage directly (no server)
-        const paidWhitelist = ['arinii.sartika@gmail.com', 'fazzaraihantechno@gmail.com', 'pembeli@myscalev.com', 'lisensi.resmi@mahakarya.id', 'tyonugros93@gmail.com', 'sn.tyonyunu@gmail.com', 'sn.tyonunu@gmail.com'];
-        const isOwner = paidWhitelist.includes(email);
-        const sessionData = {
-          isPro: isOwner,
-          key: isOwner ? 'EMAIL-PRO-VVIP' : 'GUEST',
-          name: name,
-          email: email,
-          txnId: '#EML-' + Math.floor(10000 + Math.random() * 90000),
-          provider: 'email',
-          activatedAt: new Date().toISOString(),
-          expiresAt: new Date(Date.now() + 365*24*60*60*1000).toISOString()
-        };
-        localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
-        updateLicenseUI();
-        alert(isOwner ? `🎉 Akun berhasil dibuat (Pro VVIP)!\n\nEmail: ${email}` : `🎉 Akun berhasil dibuat (Free Mode).\n\nEmail: ${email}\n\n⚠️ Server offline, data disimpan lokal.`);
-        closeLicenseAuthModal();
-        window.location.reload();
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = originalText; }
-      }
-    }
-
     async function activateLicenseKey() {
       const keyInput = (document.getElementById('inputLicenseKey').value || '').trim().toUpperCase();
       const nameInput = (document.getElementById('inputLicenseName').value || '').trim();
@@ -3811,7 +3546,7 @@
           { id: "2.1", q: "2.1 Bagaimana cara menjadi PRO Member?", a: "Klik tombol **Upgrade PRO** di halaman utama, lalu selesaikan pembayaran melalui checkout Scalev. Setelah pembayaran berhasil, akun Anda akan otomatis aktif sebagai PRO Member dengan akses penuh ke seluruh 2.962 resep selama 1 tahun." },
           { id: "2.2", q: "2.2 Mengapa akun PRO saya tidak aktif?", a: "Pastikan Anda login dengan email yang sama saat melakukan pembayaran. Jika pembayaran sudah berhasil namun status masih Free, silakan kirim **Form Pengaduan** di kategori 5.3 atau email ke **fazzaraihantechno@gmail.com** dengan bukti pembayaran." },
           { id: "2.3", q: "2.3 Berapa perangkat yang bisa digunakan per akun PRO?", a: "Satu akun PRO Member dapat digunakan pada maksimal **2 (dua) perangkat** aktif secara bersamaan. Jika ingin berpindah perangkat, lakukan **Logout** pada salah satu perangkat lama terlebih dahulu." },
-          { id: "2.4", q: "2.4 Apakah saya bisa login pakai Google?", a: "Ya! Mahakarya mendukung **Google Sign-In** untuk kemudahan akses. Cukup klik tombol 'Sign in with Google' di halaman login. Jika email Anda sudah terdaftar sebagai PRO Member, akses premium akan otomatis aktif." }
+          { id: "2.4", q: "2.4 Bagaimana cara login?", a: "Mahakarya menggunakan **Google Sign-In** sebagai satu-satunya metode login untuk kemudahan akses. Cukup klik tombol 'Sign in with Google' di halaman login. Jika email Anda sudah terdaftar sebagai PRO Member, akses premium akan otomatis aktif." }
         ]
       },
       3: {
