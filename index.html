@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="theme-color" content="#112d3b" />
   <title>Mahakarya 2.962 Cita Rasa Dunia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -235,7 +235,7 @@
     .nutrition-item { padding: 9px; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfc; }
     .nutrition-item b { display: block; font-size: 14px; color: var(--navy); }
     .nutrition-item span { color: var(--muted); font-size: 10px; }
-    @media (max-width: 1050px) { .app { grid-template-columns: 224px minmax(0,1fr); } .content, .topbar { padding-left: 45px !important; padding-right: 32px !important; } .dashboard-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 1050px) { .app { grid-template-columns: 224px minmax(0,1fr); } .content, .topbar { padding-left: 32px !important; padding-right: 32px !important; } .dashboard-grid { grid-template-columns: 1fr; } }
     @media (max-width: 720px) { .collection-dock { width: calc(100% - 34px); max-width: calc(100% - 34px); } .collection-dock .library-subcategories .nav-item, .collection-dock .nested-nav .nav-item, .collection-dock .business-nav .nav-item { min-width: min(205px, calc(100vw - 78px)); flex-basis: min(205px, calc(100vw - 78px)); } }
     @media (prefers-reduced-motion: no-preference) { .collection-dock #chapterNav, .collection-dock .business-nav { transition: box-shadow .2s ease, border-color .2s ease; } .collection-dock #chapterNav:focus-within, .collection-dock .business-nav:focus-within { border-color: rgba(240,183,95,.72); box-shadow: inset 0 0 0 1px rgba(240,183,95,.18); } }
     @media (max-width: 720px) { .app { display: block; } .sidebar { position: static; height: auto; padding: 17px; } .brand { margin-bottom: 16px; } .sidebar > .side-label, .sidebar > .collection-switch, .sidebar > #chapterNav, .sidebar > .business-nav, .side-note { display: none; } .sidebar nav { display: flex; overflow-x: auto; gap: 5px; } .nav-item { min-width: max-content; } .collection-dock { width: calc(100% - 34px); margin-top: 12px; padding: 10px; } .collection-dock .collection-switch { grid-template-columns: 1fr; } .collection-dock .side-label { display: block; } .topbar { height: auto; padding: 13px 17px; align-items: stretch; flex-direction: column; gap: 10px; } .search { width: 100%; } .content { padding: 22px 17px 50px; } .hero { padding: 30px 24px; min-height: 0; } .hero-meta { gap: 13px; } .stats { grid-template-columns: repeat(2, 1fr); } .recipe-list { grid-template-columns: 1fr; } .section-head { align-items: start; flex-direction: column; gap: 7px; } }
@@ -374,6 +374,10 @@
         width: 100% !important;
         max-width: 100vw !important;
         overflow-x: hidden !important;
+      }
+      /* Prevent iOS auto-zoom on focus */
+      input, select, textarea {
+        font-size: 16px !important;
       }
       .app {
         display: block !important;
@@ -539,6 +543,8 @@
         width: 100% !important;
         max-width: 100vw !important;
         overflow-x: hidden !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
       }
       .content {
         padding: 16px 16px 40px !important;
@@ -1684,9 +1690,9 @@
               <div style="font-size: 32px; margin-bottom: 8px;">👑</div>
               <h4 style="margin: 0 0 6px; color: #f0b75f; font-size: 18px; font-weight: 800;">Akses Terkunci (Mode Gratis 10 Resep Sampel)</h4>
               <p style="margin: 0 0 16px; font-size: 13.5px; color: #cbd5e1; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">
-                Anda sedang berada di Mode Gratis. Untuk membuka seluruh <strong>2.962 Resep Otentik Dunia (Lengkap dengan Foto HD)</strong>, Fitur AI Koki, Substitusi Bahan, Kalkulator Catering & PDF Download, silakan aktivasi lisensi resmi Anda.
+                Anda sedang berada di Mode Gratis. Untuk membuka seluruh <strong>2.962 Resep Otentik Dunia (Lengkap dengan Foto HD)</strong>, Fitur AI Koki, Substitusi Bahan, Kalkulator Catering & PDF Download, silakan upgrade ke PRO Member.
               </p>
-              <button onclick="openLicenseAuthModal()" style="background: #f0b75f; color: #112d3b; border: none; padding: 12px 26px; border-radius: 20px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(240,183,95,0.3);">✨ Input Kode Lisensi / Aktivasi Pro Sekarang</button>
+              <button onclick="openLicenseAuthModal()" style="background: #f0b75f; color: #112d3b; border: none; padding: 12px 26px; border-radius: 20px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(240,183,95,0.3);">✨ Upgrade PRO Member Sekarang</button>
             </div>
           `;
         }
@@ -2345,7 +2351,7 @@
 
           <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
             <div id="googleSignInBtnContainer" style="min-height: 44px; width: 100%; display: flex; justify-content: center; align-items: center;"></div>
-            <span style="font-size: 11px; color: #64748b; text-align: center;">Otomatis sinkron ke email pembeli Scalev untuk aktivasi Pro VVIP</span>
+            <span style="font-size: 11px; color: #64748b; text-align: center;">Otomatis sinkron ke email akun Anda</span>
           </div>
 
           <div style="position: relative; text-align: center; margin: 20px 0 16px; border-top: 1px dashed #cbd5e1;">
@@ -3199,6 +3205,16 @@
         if (logoutBox) logoutBox.style.display = 'none';
       }
 
+      // Hide login forms when user is already logged in
+      const formBox = document.getElementById('licenseFormBox');
+      if (formBox) {
+        if (info.isPro || info.provider === 'google' || info.provider === 'email') {
+          formBox.style.display = 'none';
+        } else {
+          formBox.style.display = 'block';
+        }
+      }
+
       // Keep recipe list grid & total counts strictly in sync with license state
       if (typeof render === 'function') {
         render();
@@ -3778,11 +3794,11 @@
         ]
       },
       2: {
-        title: "2. 🔑 Akses Pro & Kode Lisensi",
+        title: "2. 🔑 Akses PRO Member & Langganan",
         questions: [
-          { id: "2.1", q: "2.1 Bagaimana cara aktivasi Kode Akses Pro?", a: "Klik tombol **Akses Pro** di bagian atas, lalu masukkan Kode Akses Unik dari konfirmasi transaksi Scalev (contoh: `260927XXXXXX`). Sistem akan otomatis memverifikasi dan membuka seluruh 2.962 resep VVIP." },
-          { id: "2.2", q: "2.2 Mengapa Kode Akses saya error / tidak valid?", a: "Pastikan tidak ada salah ketik (huruf besar/kecil). Kode dari transaksi resmi Scalev divalidasi secara real-time. Jika kendala berlanjut, silakan kirim **Form Pengaduan** di kategori 5.3 atau email ke **fazzaraihantechno@gmail.com**." },
-          { id: "2.3", q: "2.3 Berapa perangkat yang bisa pakai 1 Kode Akses?", a: "Satu akun PRO Member dapat digunakan pada maksimal **2 (dua) perangkat** aktif secara bersamaan. Jika ingin berpindah perangkat, lakukan **Logout** pada salah satu perangkat lama terlebih dahulu." },
+          { id: "2.1", q: "2.1 Bagaimana cara menjadi PRO Member?", a: "Klik tombol **Upgrade PRO** di halaman utama, lalu selesaikan pembayaran melalui checkout Scalev. Setelah pembayaran berhasil, akun Anda akan otomatis aktif sebagai PRO Member dengan akses penuh ke seluruh 2.962 resep selama 1 tahun." },
+          { id: "2.2", q: "2.2 Mengapa akun PRO saya tidak aktif?", a: "Pastikan Anda login dengan email yang sama saat melakukan pembayaran. Jika pembayaran sudah berhasil namun status masih Free, silakan kirim **Form Pengaduan** di kategori 5.3 atau email ke **fazzaraihantechno@gmail.com** dengan bukti pembayaran." },
+          { id: "2.3", q: "2.3 Berapa perangkat yang bisa digunakan per akun PRO?", a: "Satu akun PRO Member dapat digunakan pada maksimal **2 (dua) perangkat** aktif secara bersamaan. Jika ingin berpindah perangkat, lakukan **Logout** pada salah satu perangkat lama terlebih dahulu." },
           { id: "2.4", q: "2.4 Apakah saya bisa login pakai Google?", a: "Ya! Mahakarya mendukung **Google Sign-In** untuk kemudahan akses. Cukup klik tombol 'Sign in with Google' di halaman login. Jika email Anda sudah terdaftar sebagai PRO Member, akses premium akan otomatis aktif." }
         ]
       },
