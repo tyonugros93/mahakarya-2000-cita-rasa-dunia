@@ -3865,7 +3865,7 @@
 
     function switchChefTab(tab) {
       // Gate pro-only tabs
-      const proOnlyTabs = ['sub', 'portion', 'faq'];
+      const proOnlyTabs = ['sub', 'portion'];
       if (proOnlyTabs.includes(tab)) {
         const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
         if (!isPro) {
@@ -3907,8 +3907,8 @@
               <b>Form Pengaduan hanya tersedia untuk PRO Member.</b><br>
               <span style="font-size: 12px; color: #64748b;">Silakan upgrade ke PRO Member untuk mengirim form pengaduan langsung ke Customer Service.</span>
             </div>
-          </div>`r
-      ;
+          </div>
+        `;
       }
       return `
         <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
