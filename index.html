@@ -3217,10 +3217,8 @@
         if (logoutBox) logoutBox.style.display = 'none';
       }
 
-      // Manage login form visibility based on user state
-      const formBox = document.getElementById('licenseFormBox');
-      const googleSection = document.querySelector('#googleSignInBtnContainer')?.closest('div[style*=`border-top`]') || document.querySelector('#googleSignInBtnContainer')?.parentElement?.parentElement;
-      const emailSection = document.querySelector('#emailSignInForm')?.closest('div[style*=`border-top`]') || document.querySelector('#tabEmailSignIn')?.parentElement?.parentElement?.parentElement;
+            // Manage login form visibility based on user state
+      var formBox = document.getElementById('licenseFormBox');
       if (formBox) {
         if (info.isPro) {
           formBox.style.display = 'none';
