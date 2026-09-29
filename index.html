@@ -657,7 +657,7 @@
 
       /* SECTION 03 DAFTAR RESEP SPACING & BALANCED PADDING */
       #recipes {
-        padding: 0 !important;
+        padding: 0 8px !important;
         margin-left: 0 !important;
         width: 100% !important;
         box-sizing: border-box !important;
@@ -1199,6 +1199,18 @@
           <div id="reviewsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;"></div>
           <div id="reviewsPagination" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 20px; flex-wrap: wrap;"></div>
         </section>
+
+        <!-- Copyright Footer -->
+        <footer style="margin-top: 40px; padding: 24px 16px; background: linear-gradient(135deg, #112d3b 0%, #2a0a10 100%); border-radius: 12px; color: #fff; text-align: center; border: 1px solid rgba(240,183,95,0.25); margin-bottom: 80px;">
+          <div style="font-size: 13px; font-weight: 800; color: #f0b75f; margin-bottom: 6px;">Mahakarya 2.962 Cita Rasa Dunia</div>
+          <div style="font-size: 11px; color: #e2e8f0; line-height: 1.6; max-width: 500px; margin: 0 auto;">
+            Seluruh konten, database resep, kode sistem, dan antarmuka UI/UX adalah karya cipta terdaftar milik eksklusif
+            <span style="color: #f0b75f; font-weight: 700;">Setyo Nugroho / Fazza Raihan Techno</span>.<br>
+            Dilindungi oleh UU Hak Cipta RI No. 28 Tahun 2014.
+          </div>
+          <div style="font-size: 10px; color: #94a3b8; margin-top: 8px;">&copy; 2026 Fazza Raihan Techno. All Rights Reserved.</div>
+          <div style="font-size: 10px; color: #64748b; margin-top: 4px;">fazzaraihantechno@gmail.com</div>
+        </footer>
       </div>
     </main>
   </div>
@@ -3246,7 +3258,8 @@
               client_id: window.GOOGLE_CLIENT_ID,
               callback: handleGoogleCredentialResponse,
               auto_select: false,
-              use_fedcm_for_prompt: true
+              use_fedcm_for_prompt: true,
+              ux_mode: 'popup'
             });
             _gisInitialized = true;
             console.log('[GIS] Initialized successfully with client_id:', window.GOOGLE_CLIENT_ID, '(FedCM enabled)');
@@ -3845,17 +3858,21 @@
     };
 
     function openChefAssistant() {
-      const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
-      if (!isPro) {
-        openLicenseAuthModal();
-        return;
-      }
       document.getElementById('chefAssistantModal').style.display = 'block';
       switchChefTab('chatbot');
       if (window.lucide) lucide.createIcons();
     }
 
     function switchChefTab(tab) {
+      // Gate pro-only tabs
+      const proOnlyTabs = ['sub', 'portion', 'faq'];
+      if (proOnlyTabs.includes(tab)) {
+        const isPro = typeof getActiveUserLicenseInfo === 'function' ? getActiveUserLicenseInfo().isPro : false;
+        if (!isPro) {
+          alert('Fitur ini hanya tersedia untuk PRO Member. Silakan upgrade untuk mengakses Substitusi, Scale Porsi, dan Panduan lengkap.');
+          return;
+        }
+      }
       const tabs = ['chatbot', 'sub', 'portion', 'faq', 'tnc'];
       tabs.forEach(t => {
         const contentEl = document.getElementById('chefTab' + t.charAt(0).toUpperCase() + t.slice(1));
@@ -3882,6 +3899,17 @@
 
     function renderComplaintFormHtml() {
       const userInfo = (typeof getActiveUserLicenseInfo === 'function') ? getActiveUserLicenseInfo() : {};
+      if (!userInfo.isPro) {
+        return `
+          <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
+            <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">🤖</div>
+            <div style="background: #fff5f5; border: 1px solid #fecaca; border-radius: 12px; padding: 16px; font-size: 13px; color: #991b1b; max-width: 85%;">
+              <b>Form Pengaduan hanya tersedia untuk PRO Member.</b><br>
+              <span style="font-size: 12px; color: #64748b;">Silakan upgrade ke PRO Member untuk mengirim form pengaduan langsung ke Customer Service.</span>
+            </div>
+          </div>`r
+      ;
+      }
       return `
         <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
           <div style="background: #112d3b; color: #f0b75f; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">🤖</div>

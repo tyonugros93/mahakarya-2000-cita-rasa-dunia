@@ -40,11 +40,14 @@ export default async function handler(req, res) {
     }
 
     // Lookup user
+    console.log('[auth-signin] Looking up user:', email);
     const user = await getUser(email);
+    console.log('[auth-signin] User lookup result:', user ? 'FOUND' : 'NOT FOUND');
+    
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: '⚠️ Email belum terdaftar. Silakan buat akun terlebih dahulu.'
+        message: '⚠️ Email belum terdaftar atau data registrasi tidak ditemukan. Silakan buat akun baru melalui menu "Daftar Baru".'
       });
     }
 
@@ -69,7 +72,7 @@ export default async function handler(req, res) {
         verifySource
       },
       message: isPro
-        ? `🎉 Welcome back, ${user.name}! Anda terverifikasi sebagai Member Pro VVIP.`
+        ? `🎉 Welcome back, ${user.name}! Anda terverifikasi sebagai PRO Member.`
         : `🎉 Welcome back, ${user.name}! Login berhasil.`
     });
 

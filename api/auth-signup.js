@@ -48,6 +48,7 @@ export default async function handler(req, res) {
     }
 
     // Check if email already registered
+    console.log('[auth-signup] Checking existing user:', email);
     const existingUser = await getUser(email);
     if (existingUser) {
       return res.status(409).json({
@@ -68,13 +69,20 @@ export default async function handler(req, res) {
       createdAt: new Date().toISOString()
     };
 
+    console.log('[auth-signup] Saving user:', email);
     const saved = await setUser(email, userData);
+    console.log('[auth-signup] Save result:', saved);
+    
     if (!saved) {
       return res.status(500).json({
         success: false,
         message: 'Gagal menyimpan akun. Silakan coba lagi.'
       });
     }
+
+    // Verify the save worked by reading back
+    const verifyUser = await getUser(email);
+    console.log('[auth-signup] Verify save:', verifyUser ? 'SUCCESS' : 'FAILED');
 
     // Check Pro status
     const { isPro, verifySource } = await checkProStatus(email);
@@ -88,7 +96,7 @@ export default async function handler(req, res) {
         verifySource
       },
       message: isPro
-        ? `🎉 Selamat, ${name}! Akun berhasil dibuat & terverifikasi sebagai Member Pro VVIP.`
+        ? `🎉 Selamat, ${name}! Akun berhasil dibuat & terverifikasi sebagai PRO Member.`
         : `🎉 Selamat, ${name}! Akun berhasil dibuat. Anda login sebagai Member Free.`
     });
 

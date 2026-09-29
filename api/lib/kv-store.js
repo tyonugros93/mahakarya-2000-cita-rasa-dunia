@@ -43,7 +43,6 @@ function getKVConfig() {
   if (redisUrl) {
     const parsed = parseRedisUrl(redisUrl);
     if (parsed) {
-      console.log('[KV] Derived REST API from REDIS_URL:', parsed.url);
       return parsed;
     }
   }
@@ -52,14 +51,17 @@ function getKVConfig() {
 }
 
 /**
- * Execute an Upstash Redis REST API command
+ * Execute an Upstash Redis REST API command via pipeline
  */
 async function kvCommand(args) {
   const config = getKVConfig();
   if (!config) return null;
 
   try {
-    const res = await fetch(`${config.url}`, {
+    // Upstash REST API: POST to /pipeline with array of commands
+    // Single command: POST to / with body as array
+    const apiUrl = config.url.replace(/\/+$/, '');
+    const res = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${config.token}`,
@@ -73,7 +75,7 @@ async function kvCommand(args) {
       return null;
     }
     const data = await res.json();
-    return data.result;
+    return data.result !== undefined ? data.result : null;
   } catch (err) {
     console.error('[KV] REST API fetch error:', err.message);
     return null;
