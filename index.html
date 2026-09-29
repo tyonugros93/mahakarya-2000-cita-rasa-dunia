@@ -1617,6 +1617,18 @@
     let recipeCurrentPage = 1;
     const RECIPES_PER_PAGE = 100;
 
+    function openGeminiSearch(keyword) {
+      const prompt = 'Berikan 3 resep lengkap untuk "' + keyword + '" dengan format berikut untuk setiap resep:\n\n'
+        + '1. Nama Resep\n'
+        + '2. Deskripsi singkat\n'
+        + '3. Bahan-bahan (dengan takaran lengkap)\n'
+        + '4. Langkah-langkah memasak (step by step)\n'
+        + '5. Tips & variasi\n'
+        + '6. Estimasi waktu memasak\n\n'
+        + 'Gunakan Bahasa Indonesia. Berikan resep yang autentik dan mudah diikuti.';
+      const url = 'https://gemini.google.com/app?q=' + encodeURIComponent(prompt);
+      window.open(url, '_blank', 'noopener');
+    }
     function render() {
       const listEl = document.getElementById('recipeList');
       const searchTerms = searchRequirements(query);
@@ -1666,7 +1678,7 @@
                 </article>
               `;
             }).join('') 
-          : `<div class="empty" style="text-align:center;padding:24px;"><div style="font-size:28px;margin-bottom:8px;">🔍</div><div style="font-size:14px;font-weight:700;color:#112d3b;margin-bottom:6px;">Tidak ditemukan di Mahakarya</div><div style="font-size:12px;color:#64748b;margin-bottom:16px;line-height:1.5;">Resep <b>${escapeHtml(query)}</b> tidak tersedia di database 2.962 resep kami.</div><a href="https://gemini.google.com/app" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,#1a73e8,#4285f4);color:#fff;border-radius:24px;font-weight:800;font-size:13px;text-decoration:none;box-shadow:0 4px 16px rgba(66,133,244,0.3);">Cari Referensi Lain di Gemini AI →</a><div style="font-size:10px;color:#94a3b8;margin-top:10px;">Menggunakan akun Google Anda · 100% Gratis</div></div>`;
+          : `<div class="empty" style="text-align:center;padding:24px;"><div style="font-size:28px;margin-bottom:8px;">🔍</div><div style="font-size:14px;font-weight:700;color:#112d3b;margin-bottom:6px;">Tidak ditemukan di Mahakarya</div><div style="font-size:12px;color:#64748b;margin-bottom:16px;line-height:1.5;">Resep <b>${escapeHtml(query)}</b> tidak tersedia di database 2.962 resep kami.</div><a href="javascript:void(0)" onclick="openGeminiSearch(document.getElementById('searchInput').value)" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,#1a73e8,#4285f4);color:#fff;border-radius:24px;font-weight:800;font-size:13px;text-decoration:none;box-shadow:0 4px 16px rgba(66,133,244,0.3);cursor:pointer;">Cari Referensi Lain di Gemini AI →</a><div style="font-size:10px;color:#94a3b8;margin-top:10px;">Menggunakan akun Google Anda · 100% Gratis</div></div>`;
         
         if (isPro && totalPages > 1) {
           let navBtns = '';
@@ -1718,7 +1730,7 @@
                 <span style="font-size: 14px; font-weight: 800; color: #1e3a5f;">Ingin Referensi Lain?</span>
               </div>
               <p style="font-size: 12px; color: #475569; margin: 0 0 12px; line-height: 1.5;">Jelajahi lebih banyak resep & ide memasak tentang <b>"`+escapeHtml(query)+`"</b> dari AI Gemini.</p>
-              <a href="https://gemini.google.com/app" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; background: linear-gradient(135deg, #1a73e8, #4285f4); color: #fff; border-radius: 20px; font-weight: 800; font-size: 12px; text-decoration: none; box-shadow: 0 3px 12px rgba(66,133,244,0.25);">
+              <a href="javascript:void(0)" onclick="openGeminiSearch(document.getElementById('searchInput').value)" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; background: linear-gradient(135deg, #1a73e8, #4285f4); color: #fff; border-radius: 20px; font-weight: 800; font-size: 12px; text-decoration: none; box-shadow: 0 3px 12px rgba(66,133,244,0.25); cursor: pointer;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="white"/></svg>
                 Tanya Gemini AI →
               </a>
