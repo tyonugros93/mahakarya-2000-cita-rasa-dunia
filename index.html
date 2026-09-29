@@ -1618,7 +1618,7 @@
     const RECIPES_PER_PAGE = 100;
 
     function openGeminiSearch(keyword) {
-      const prompt = 'Berikan 3 resep lengkap untuk "' + keyword + '" dengan format berikut untuk setiap resep:\n\n'
+      var prompt = 'Berikan 3 resep lengkap untuk "' + keyword + '" dengan format:\n\n'
         + '1. Nama Resep\n'
         + '2. Deskripsi singkat\n'
         + '3. Bahan-bahan (dengan takaran lengkap)\n'
@@ -1626,9 +1626,22 @@
         + '5. Tips & variasi\n'
         + '6. Estimasi waktu memasak\n\n'
         + 'Gunakan Bahasa Indonesia. Berikan resep yang autentik dan mudah diikuti.';
-      const url = 'https://gemini.google.com/app?q=' + encodeURIComponent(prompt);
-      window.open(url, '_blank', 'noopener');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(prompt).then(function() {
+          window.open('https://gemini.google.com/app', '_blank', 'noopener');
+          if (typeof showToast === 'function') showToast('Prompt sudah di-copy! Buka Gemini, Paste (Ctrl+V / tekan tahan) lalu Enter.', 'success', 6000);
+        }).catch(function() {
+          window.open('https://gemini.google.com/app', '_blank', 'noopener');
+        });
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = prompt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        window.open('https://gemini.google.com/app', '_blank', 'noopener');
+        if (typeof showToast === 'function') showToast('Prompt sudah di-copy! Buka Gemini, Paste (Ctrl+V / tekan tahan) lalu Enter.', 'success', 6000);
+      }
     }
+
     function render() {
       const listEl = document.getElementById('recipeList');
       const searchTerms = searchRequirements(query);
