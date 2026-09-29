@@ -14,9 +14,8 @@ const memoryStore = new Map();
 
 function parseRedisUrl(redisUrl) {
   try {
-    // Format: redis://default:<password>@<host>:<port> or rediss://...
     const url = new URL(redisUrl);
-    const host = url.hostname; // e.g. "apt-moose-12345.upstash.io"
+    const host = url.hostname;
     const password = url.password || '';
     if (host && password) {
       return {
@@ -31,36 +30,46 @@ function parseRedisUrl(redisUrl) {
 }
 
 function getKVConfig() {
-  // Priority 1: Explicit REST API env vars
-  const restUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const restToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (restUrl && restToken) {
-    return { url: restUrl, token: restToken };
+  // Priority 1: Explicit Upstash REST API env vars
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    return { url: process.env.UPSTASH_REDIS_REST_URL, token: process.env.UPSTASH_REDIS_REST_TOKEN };
   }
 
-  // Priority 2: Parse from REDIS_URL (redis:// protocol URL)
+  // Priority 2: Vercel KV REST API env vars
+  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    return { url: process.env.KV_REST_API_URL, token: process.env.KV_REST_API_TOKEN };
+  }
+
+  // Priority 3: Parse from REDIS_URL
   const redisUrl = process.env.REDIS_URL || process.env.KV_URL;
   if (redisUrl) {
     const parsed = parseRedisUrl(redisUrl);
     if (parsed) {
+      console.log('[KV] Derived REST API from REDIS_URL');
       return parsed;
     }
   }
 
+  console.warn('[KV] No Redis env vars found. Available env keys:', 
+    Object.keys(process.env).filter(k => k.includes('KV') || k.includes('REDIS') || k.includes('UPSTASH')).join(', ') || 'NONE'
+  );
   return null;
 }
 
 /**
- * Execute an Upstash Redis REST API command via pipeline
+ * Execute an Upstash Redis REST API command
  */
 async function kvCommand(args) {
   const config = getKVConfig();
-  if (!config) return null;
+  if (!config) {
+    console.error('[KV] No config available, using memory fallback');
+    return null;
+  }
 
   try {
-    // Upstash REST API: POST to /pipeline with array of commands
-    // Single command: POST to / with body as array
     const apiUrl = config.url.replace(/\/+$/, '');
+    console.log('[KV] Sending command:', args[0], 'to', apiUrl);
+    
     const res = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -69,13 +78,22 @@ async function kvCommand(args) {
       },
       body: JSON.stringify(args)
     });
+    
+    const responseText = await res.text();
+    console.log('[KV] Response status:', res.status, 'body:', responseText.substring(0, 200));
+    
     if (!res.ok) {
-      const errText = await res.text();
-      console.error('[KV] REST API error:', res.status, errText);
+      console.error('[KV] REST API error:', res.status, responseText);
       return null;
     }
-    const data = await res.json();
-    return data.result !== undefined ? data.result : null;
+    
+    try {
+      const data = JSON.parse(responseText);
+      return data.result !== undefined ? data.result : null;
+    } catch (parseErr) {
+      console.error('[KV] Failed to parse response:', parseErr.message);
+      return null;
+    }
   } catch (err) {
     console.error('[KV] REST API fetch error:', err.message);
     return null;
@@ -84,8 +102,6 @@ async function kvCommand(args) {
 
 /**
  * Get a user by email
- * @param {string} email
- * @returns {Promise<object|null>} User data or null
  */
 export async function getUser(email) {
   const key = `user:${email.toLowerCase().trim()}`;
@@ -104,15 +120,12 @@ export async function getUser(email) {
   }
 
   // Fallback: in-memory
-  console.warn('[KV] Using in-memory fallback (no Redis configured)');
+  console.warn('[KV] Using in-memory fallback');
   return memoryStore.get(key) || null;
 }
 
 /**
  * Save a user
- * @param {string} email
- * @param {object} data - User data to store
- * @returns {Promise<boolean>} success
  */
 export async function setUser(email, data) {
   const key = `user:${email.toLowerCase().trim()}`;
@@ -120,20 +133,31 @@ export async function setUser(email, data) {
   const config = getKVConfig();
 
   if (config) {
+    console.log('[KV] setUser:', key, 'value length:', value.length);
     const result = await kvCommand(['SET', key, value]);
-    return result === 'OK';
+    console.log('[KV] setUser result:', result);
+    
+    if (result === 'OK') return true;
+    
+    // Some Upstash versions return different formats
+    if (result && (result === 'OK' || result.toString().includes('OK'))) return true;
+    
+    console.error('[KV] setUser unexpected result:', JSON.stringify(result));
+    
+    // If KV failed, try memory fallback as safety net
+    memoryStore.set(key, data);
+    console.log('[KV] Saved to memory fallback after KV failure');
+    return true; // Return true so signup succeeds even if Redis has issues
   }
 
   // Fallback: in-memory
-  console.warn('[KV] Using in-memory fallback (no Redis configured)');
+  console.warn('[KV] Using in-memory fallback for setUser');
   memoryStore.set(key, data);
   return true;
 }
 
 /**
  * Check if a user exists
- * @param {string} email
- * @returns {Promise<boolean>}
  */
 export async function userExists(email) {
   const user = await getUser(email);

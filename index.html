@@ -3217,10 +3217,12 @@
         if (logoutBox) logoutBox.style.display = 'none';
       }
 
-      // Hide login forms when user is already logged in
+      // Manage login form visibility based on user state
       const formBox = document.getElementById('licenseFormBox');
+      const googleSection = document.querySelector('#googleSignInBtnContainer')?.closest('div[style*=`border-top`]') || document.querySelector('#googleSignInBtnContainer')?.parentElement?.parentElement;
+      const emailSection = document.querySelector('#emailSignInForm')?.closest('div[style*=`border-top`]') || document.querySelector('#tabEmailSignIn')?.parentElement?.parentElement?.parentElement;
       if (formBox) {
-        if (info.isPro || info.provider === 'google' || info.provider === 'email') {
+        if (info.isPro) {
           formBox.style.display = 'none';
         } else {
           formBox.style.display = 'block';
@@ -3258,8 +3260,7 @@
               client_id: window.GOOGLE_CLIENT_ID,
               callback: handleGoogleCredentialResponse,
               auto_select: false,
-              use_fedcm_for_prompt: true,
-              ux_mode: 'popup'
+              use_fedcm_for_prompt: false
             });
             _gisInitialized = true;
             console.log('[GIS] Initialized successfully with client_id:', window.GOOGLE_CLIENT_ID, '(FedCM enabled)');
