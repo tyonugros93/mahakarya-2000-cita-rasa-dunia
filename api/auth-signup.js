@@ -85,7 +85,7 @@ export default async function handler(req, res) {
     console.log('[auth-signup] Verify save:', verifyUser ? 'SUCCESS' : 'FAILED');
 
     // Check Pro status
-    const { isPro, verifySource } = await checkProStatus(email);
+    const { isPro, verifySource, plan, activatedAt, expiresAt } = await checkProStatus(email);
 
     return res.status(201).json({
       success: true,
@@ -93,7 +93,10 @@ export default async function handler(req, res) {
         email,
         name,
         isPro,
-        verifySource
+        verifySource,
+        plan: plan || (isPro ? 'yearly' : null),
+        activatedAt: activatedAt || null,
+        expiresAt: expiresAt !== undefined ? expiresAt : null
       },
       message: isPro
         ? `🎉 Selamat, ${name}! Akun berhasil dibuat & terverifikasi sebagai PRO Member.`

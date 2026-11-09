@@ -61,7 +61,7 @@ export default async function handler(req, res) {
     }
 
     // Check Pro status (re-check every login for fresh Scalev data)
-    const { isPro, verifySource } = await checkProStatus(email);
+    const { isPro, verifySource, plan, activatedAt, expiresAt } = await checkProStatus(email);
 
     return res.status(200).json({
       success: true,
@@ -69,7 +69,10 @@ export default async function handler(req, res) {
         email: user.email,
         name: user.name,
         isPro,
-        verifySource
+        verifySource,
+        plan: plan || (isPro ? 'yearly' : null),
+        activatedAt: activatedAt || null,
+        expiresAt: expiresAt !== undefined ? expiresAt : null
       },
       message: isPro
         ? `🎉 Welcome back, ${user.name}! Anda terverifikasi sebagai PRO Member.`

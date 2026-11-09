@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="id">
 <head>
   <meta charset="utf-8" />
@@ -3399,8 +3399,9 @@
             email: data.user.email,
             txnId: '#GGL-' + Math.floor(10000 + Math.random() * 90000),
             provider: 'google',
-            activatedAt: new Date().toISOString(),
-          expiresAt: new Date(Date.now() + 365*24*60*60*1000).toISOString()
+            plan: data.user.plan || (data.user.isPro ? 'yearly' : null),
+            activatedAt: data.user.activatedAt || new Date().toISOString(),
+            expiresAt: data.user.expiresAt !== undefined ? data.user.expiresAt : (data.user.isPro ? new Date(Date.now() + 365*24*60*60*1000).toISOString() : null)
           };
 
           localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
@@ -3414,22 +3415,28 @@
       } catch(e) {
         console.warn('[GIS] API fetch failed (expected on localhost):', e.message);
         console.log('[GIS] Fallback whitelist check for email:', email);
-        const paidWhitelist = ['arinii.sartika@gmail.com', 'fazzaraihantechno@gmail.com', 'pembeli@myscalev.com', 'lisensi.resmi@mahakarya.id', 'tyonugros93@gmail.com', 'sn.tyonyunu@gmail.com', 'sn.tyonunu@gmail.com'];
+        // Fallback: VVIP Members with plan metadata (must stay in sync with api/lib/check-pro.js VVIP_MEMBERS)
+        const vvipFallback = { 'herubahrudin92@gmail.com': { plan: 'yearly', activatedAt: '2026-11-09T00:00:00.000Z', expiresAt: '2027-11-09T23:59:59.999Z' } };
+        const paidWhitelist = ['arinii.sartika@gmail.com', 'fazzaraihantechno@gmail.com', 'pembeli@myscalev.com', 'lisensi.resmi@mahakarya.id', 'tyonugros93@gmail.com', 'sn.tyonyunu@gmail.com', 'sn.tyonunu@gmail.com', 'herubahrudin92@gmail.com'];
         const isOwner = paidWhitelist.includes(email);
-        console.log('[GIS] Whitelist match result:', isOwner, '| Email checked:', email);
+        const vvipEntry = vvipFallback[email] || null;
+        const fallbackExpired = vvipEntry && vvipEntry.expiresAt ? new Date(vvipEntry.expiresAt) < new Date() : false;
+        const isProFallback = isOwner && !fallbackExpired;
+        console.log('[GIS] Whitelist match result:', isProFallback, '| Email checked:', email);
         const sessionData = {
-          isPro: isOwner,
-          key: isOwner ? 'GOOGLE-PRO-VVIP' : 'GUEST',
+          isPro: isProFallback,
+          key: isProFallback ? 'GOOGLE-PRO-VVIP' : 'GUEST',
           name: name,
           email: email,
           txnId: '#GGL-' + Math.floor(10000 + Math.random() * 90000),
           provider: 'google',
-          activatedAt: new Date().toISOString(),
-          expiresAt: new Date(Date.now() + 365*24*60*60*1000).toISOString()
+          plan: vvipEntry ? vvipEntry.plan : (isProFallback ? 'lifetime' : null),
+          activatedAt: vvipEntry ? vvipEntry.activatedAt : new Date().toISOString(),
+          expiresAt: vvipEntry ? vvipEntry.expiresAt : (isProFallback ? null : null)
         };
         localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(sessionData));
         updateLicenseUI();
-        alert(isOwner ? `🎉 Welcome, ${name}! Login Google Berhasil (Member Pro VVIP).\n\nEmail: ${email}` : `🎉 Welcome, ${name}! Login Google Berhasil (Member Gratis).\n\nEmail: ${email}\n\nJika email ini seharusnya Pro, hubungi admin.`);
+        alert(isProFallback ? `🎉 Welcome, ${name}! Login Google Berhasil (Member Pro VVIP).\n\nEmail: ${email}` : `🎉 Welcome, ${name}! Login Google Berhasil (Member Gratis).\n\nEmail: ${email}\n\nJika email ini seharusnya Pro, hubungi admin.`);
         closeLicenseAuthModal();
         window.location.reload();
       }

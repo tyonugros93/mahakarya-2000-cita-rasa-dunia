@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const { isPro, verifySource } = await checkProStatus(email);
+    const { isPro, verifySource, plan, activatedAt, expiresAt } = await checkProStatus(email);
 
     return res.status(200).json({
       success: true,
@@ -33,7 +33,10 @@ export default async function handler(req, res) {
         email: email,
         name: name,
         isPro: isPro,
-        verifySource: verifySource
+        verifySource: verifySource,
+        plan: plan || (isPro ? 'yearly' : null),
+        activatedAt: activatedAt || null,
+        expiresAt: expiresAt !== undefined ? expiresAt : null
       },
       message: isPro 
         ? `🎉 Welcome, ${name}! Akun Google Anda terverifikasi Member Pro VVIP.` 

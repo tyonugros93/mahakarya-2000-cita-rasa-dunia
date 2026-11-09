@@ -14,19 +14,46 @@ const PAID_EMAILS = [
 ];
 
 /**
+ * VVIP Pro Members — manually granted with plan type and expiry date.
+ * Format: { email, plan, activatedAt, expiresAt (null = lifetime) }
+ */
+const VVIP_MEMBERS = [
+  {
+    email: 'herubahrudin92@gmail.com',
+    plan: 'yearly',
+    activatedAt: '2026-11-09T00:00:00.000Z',
+    expiresAt: '2027-11-09T23:59:59.999Z'
+  }
+];
+
+/**
  * Check if an email has Pro (paid) status
  * @param {string} email - Lowercase trimmed email
- * @returns {Promise<{ isPro: boolean, verifySource: string }>}
+ * @returns {Promise<{ isPro: boolean, verifySource: string, plan?: string, activatedAt?: string, expiresAt?: string|null }>}
  */
 export async function checkProStatus(email) {
   const normalizedEmail = email.toLowerCase().trim();
 
-  // 1. Check hardcoded whitelist
-  if (PAID_EMAILS.includes(normalizedEmail)) {
-    return { isPro: true, verifySource: 'whitelist' };
+  // 1. Check VVIP members list (with plan & expiry metadata)
+  const vvipMember = VVIP_MEMBERS.find(m => m.email === normalizedEmail);
+  if (vvipMember) {
+    const now = new Date();
+    const isExpired = vvipMember.expiresAt !== null && new Date(vvipMember.expiresAt) < now;
+    return {
+      isPro: !isExpired,
+      verifySource: 'whitelist',
+      plan: vvipMember.plan,
+      activatedAt: vvipMember.activatedAt,
+      expiresAt: vvipMember.expiresAt
+    };
   }
 
-  // 2. Check Scalev API if configured
+  // 2. Check hardcoded whitelist (lifetime access, no expiry)
+  if (PAID_EMAILS.includes(normalizedEmail)) {
+    return { isPro: true, verifySource: 'whitelist', plan: 'lifetime', expiresAt: null };
+  }
+
+  // 3. Check Scalev API if configured
   const scalevApiKey = process.env.SCALEV_API_KEY;
   if (scalevApiKey) {
     try {
@@ -47,7 +74,7 @@ export async function checkProStatus(email) {
           return st === 'paid' || st === 'completed' || st === 'success';
         });
         if (hasPaidOrder) {
-          return { isPro: true, verifySource: 'scalev_api' };
+          return { isPro: true, verifySource: 'scalev_api', plan: 'yearly', expiresAt: null };
         }
       }
     } catch (err) {
